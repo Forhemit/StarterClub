@@ -10,6 +10,7 @@ import { ActionSection } from "./sections/ActionSection";
 
 // Existing Components
 import { IdentitySection } from "@/components/IdentitySection";
+import { HowItWorksSection } from "@/components/HowItWorksSection";
 import { IdeaRealityGapSection } from "@/components/IdeaRealityGapSection";
 import { InfinityDivider } from "@/components/InfinityDivider";
 import { SpacesSection } from "@/components/SpacesSection";
@@ -116,6 +117,14 @@ export const homeSections: SectionConfig[] = [
         order: 100,
         containerType: "contained",
         // Note: Originally marked as FULL WIDTH in comments but inside container
+    },
+    {
+        id: "how-it-works",
+        component: HowItWorksSection,
+        name: "How It Works",
+        enabled: true,
+        order: 105,
+        containerType: "contained",
     },
     {
         id: "insiders",

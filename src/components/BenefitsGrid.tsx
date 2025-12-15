@@ -5,28 +5,10 @@ import { motion } from "framer-motion";
 
 const benefits = [
     {
-        title: "Clarity",
-        quote: "“I finally know what to do next.”",
-        description: "Members go from scattered ideas to a step-by-step roadmap, curated resources, and expert guidance.",
-        image: "/hero-1.jpeg" // Reusing hero images for now
-    },
-    {
-        title: "Momentum",
-        quote: "“I’m actually making progress now.”",
-        description: "With weekly classes, passport milestones, accountability check-ins, and visible progress on the Milestone Wall, they stay moving.",
-        image: "/hero-2.jpeg"
-    },
-    {
-        title: "Confidence",
-        quote: "“I feel legit.”",
-        description: "Professional environment, community support, and structured wins make people feel like real entrepreneurs, not hobbyists.",
-        image: "/hero-3.jpeg"
-    },
-    {
-        title: "Community",
-        quote: "“These are my people.”",
-        description: "A tribe of others building things in San Francisco — meaning real relationships, collaborations, and support.",
-        image: "/hero-4.jpeg"
+        title: "Opportunity",
+        quote: "“Doors are opening for me.”",
+        description: "Introductions to partners, accelerators, banks, service providers, and sponsors who want to support emerging SF talent.",
+        image: "/hero-2.jpeg" // Repeating image 2
     },
     {
         title: "Access",
@@ -35,10 +17,28 @@ const benefits = [
         image: "/hero-1.jpeg" // Repeating image 1
     },
     {
-        title: "Opportunity",
-        quote: "“Doors are opening for me.”",
-        description: "Introductions to partners, accelerators, banks, service providers, and sponsors who want to support emerging SF talent.",
-        image: "/hero-2.jpeg" // Repeating image 2
+        title: "Community",
+        quote: "“These are my people.”",
+        description: "A tribe of others building things in San Francisco — meaning real relationships, collaborations, and support.",
+        image: "/hero-4.jpeg"
+    },
+    {
+        title: "Confidence",
+        quote: "“I feel legit.”",
+        description: "Professional environment, community support, and structured wins make people feel like real entrepreneurs, not hobbyists.",
+        image: "/hero-3.jpeg"
+    },
+    {
+        title: "Momentum",
+        quote: "“I’m actually making progress now.”",
+        description: "With weekly classes, passport milestones, accountability check-ins, and visible progress on the Milestone Wall, they stay moving.",
+        image: "/hero-2.jpeg"
+    },
+    {
+        title: "Clarity",
+        quote: "“I finally know what to do next.”",
+        description: "Members go from scattered ideas to a step-by-step roadmap, curated resources, and expert guidance.",
+        image: "/hero-1.jpeg" // Reusing hero images for now
     }
 ];
 

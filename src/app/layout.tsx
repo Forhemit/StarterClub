@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
 import { Bebas_Neue, Inter } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/context/ToastContext";
@@ -27,16 +28,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${bebasNeue.variable} ${inter.variable} antialiased bg-background text-foreground`}
-      >
-        <ToastProvider>
-          {children}
-          <Toaster />
-          <GlobalFormListener />
-        </ToastProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
+        <body
+          className={`${bebasNeue.variable} ${inter.variable} antialiased bg-background text-foreground`}
+        >
+          <ToastProvider>
+            {children}
+            <Toaster />
+            <GlobalFormListener />
+          </ToastProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

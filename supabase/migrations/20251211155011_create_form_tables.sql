@@ -12,13 +12,25 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- =============================================================================
 
 -- Status for Waitlist Submissions
-CREATE TYPE waitlist_status AS ENUM ('pending', 'approved', 'waitlisted', 'contacted', 'archived');
+DO $$ BEGIN
+    CREATE TYPE waitlist_status AS ENUM ('pending', 'approved', 'waitlisted', 'contacted', 'archived');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- Status for Partner Inquiries
-CREATE TYPE inquiry_status AS ENUM ('new', 'viewed', 'contacted', 'converted', 'rejected');
+DO $$ BEGIN
+    CREATE TYPE inquiry_status AS ENUM ('new', 'viewed', 'contacted', 'converted', 'rejected');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- Source of the submission (e.g., specific form variant)
-CREATE TYPE submission_source AS ENUM ('main_form', 'modal_popup', 'other');
+DO $$ BEGIN
+    CREATE TYPE submission_source AS ENUM ('main_form', 'modal_popup', 'other');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- =============================================================================
 -- 2. UTILITY FUNCTIONS
@@ -41,7 +53,7 @@ $$ language 'plpgsql';
 -- Table: waitlist_submissions
 -- Consolidates data from WaitlistForm.tsx and WaitlistModal.tsx
 -- -----------------------------------------------------------------------------
-CREATE TABLE waitlist_submissions (
+CREATE TABLE IF NOT EXISTS waitlist_submissions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     
     -- Contact Info
@@ -65,10 +77,11 @@ CREATE TABLE waitlist_submissions (
 );
 
 -- Index for faster filtering by status and email lookups
-CREATE INDEX idx_waitlist_status ON waitlist_submissions(status);
-CREATE INDEX idx_waitlist_email ON waitlist_submissions(email);
+CREATE INDEX IF NOT EXISTS idx_waitlist_status ON waitlist_submissions(status);
+CREATE INDEX IF NOT EXISTS idx_waitlist_email ON waitlist_submissions(email);
 
 -- Trigger for updated_at
+DROP TRIGGER IF EXISTS update_waitlist_modtime ON waitlist_submissions;
 CREATE TRIGGER update_waitlist_modtime
     BEFORE UPDATE ON waitlist_submissions
     FOR EACH ROW
@@ -79,7 +92,7 @@ CREATE TRIGGER update_waitlist_modtime
 -- Table: partner_inquiries
 -- Handles data from PartnerInquiryForm.tsx
 -- -----------------------------------------------------------------------------
-CREATE TABLE partner_inquiries (
+CREATE TABLE IF NOT EXISTS partner_inquiries (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     
     -- Partner Details
@@ -102,9 +115,10 @@ CREATE TABLE partner_inquiries (
 );
 
 -- Index for status filtering
-CREATE INDEX idx_partner_status ON partner_inquiries(status);
+CREATE INDEX IF NOT EXISTS idx_partner_status ON partner_inquiries(status);
 
 -- Trigger for updated_at
+DROP TRIGGER IF EXISTS update_partner_modtime ON partner_inquiries;
 CREATE TRIGGER update_partner_modtime
     BEFORE UPDATE ON partner_inquiries
     FOR EACH ROW
@@ -125,6 +139,8 @@ ALTER TABLE partner_inquiries ENABLE ROW LEVEL SECURITY;
 -- -----------------------------------------------------------------------------
 
 -- 1. Public Insert: Allow anyone (anon) to sign up
+-- Note: Policy creation needs existence check or drop first.
+DROP POLICY IF EXISTS "Public can join waitlist" ON waitlist_submissions;
 CREATE POLICY "Public can join waitlist"
 ON waitlist_submissions FOR INSERT
 TO anon
@@ -135,6 +151,7 @@ WITH CHECK (true);
 -- -----------------------------------------------------------------------------
 
 -- 1. Public Insert: Allow anyone to submit inquiry
+DROP POLICY IF EXISTS "Public can submit inquiry" ON partner_inquiries;
 CREATE POLICY "Public can submit inquiry"
 ON partner_inquiries FOR INSERT
 TO anon

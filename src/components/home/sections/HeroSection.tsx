@@ -18,7 +18,7 @@ export function HeroSection() {
 
                 <div className="max-w-xl mx-auto md:mx-0">
                     <h2 className="font-sans text-xl md:text-2xl text-black/80 leading-relaxed font-light">
-                        Starter Club is a place where people bring their ideas to life and dreams to reality
+                        Starter Club is a place where people bring their ideas to life and dreams to reality for free.
                     </h2>
                 </div>
 

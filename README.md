@@ -1,36 +1,180 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Starter Club
 
-## Getting Started
+**San Francisco's launchpad for community creators**
 
-First, run the development server:
+Starter Club is a platform that bridges the gap between idea and action, helping neighbors build the projects, businesses, and groups that make San Francisco better. We provide a supportive environment where anyone can become creators, founders, and opportunity-makers.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🎯 About The Project
+
+Starter Club is more than just a coworking space - it's an intentional community designed to help people bring their ideas to life. We offer:
+
+- **Three-phase onboarding process**: Orientation → Check-ins → Integration
+- **Tiered membership system**: From free Starter Members to Starter Founders
+- **Resource library**: Access to curated learning materials and tools
+- **Community events**: Regular gatherings and networking opportunities
+- **Partner ecosystem**: Connections with local businesses and organizations
+
+## 🛠️ Tech Stack
+
+This project is built with modern web technologies:
+
+- **Framework**: [Next.js 16](https://nextjs.org) (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS 4
+- **UI Components**: [Radix UI](https://www.radix-ui.com/) + [shadcn/ui](https://ui.shadcn.com/)
+- **Animation**: Framer Motion
+- **Authentication**: [Clerk](https://clerk.com/)
+- **Database**: [Supabase](https://supabase.com/) (PostgreSQL)
+- **Forms**: React Hook Form + Zod validation
+- **Deployment**: Cloudflare Pages (via Wrangler)
+- **Icons**: Lucide React
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 20 or higher
+- npm, yarn, pnpm, or bun
+- A Supabase account and project
+- A Clerk account and application
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd starter-club
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   
+   Create a `.env.local` file in the root directory with the following variables:
+
+   ```env
+   # Supabase
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+   # Clerk Authentication
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+   CLERK_SECRET_KEY=your_clerk_secret_key
+   NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+   NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+   ```
+
+   See `.env.local.example` for a template.
+
+4. **Set up the database**
+   
+   The project includes Supabase migrations in the `supabase` directory. To apply them:
+
+   ```bash
+   # Install Supabase CLI if you haven't already
+   npm install -g supabase
+
+   # Link to your Supabase project
+   npx supabase link --project-ref your-project-ref
+
+   # Push migrations to your database
+   npx supabase db push
+
+   # (Optional) Seed the database with initial data
+   node scripts/seed.mjs
+   ```
+
+5. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+   Open [http://localhost:3000](http://localhost:3000) to view the application.
+
+## 📁 Project Structure
+
+```
+starter-club/
+├── src/
+│   ├── app/                    # Next.js App Router pages
+│   │   ├── dashboard/          # Dashboard routes (role-based)
+│   │   │   ├── super-admin/    # Super admin dashboard
+│   │   │   └── partner/        # Partner dashboard
+│   │   └── page.tsx            # Landing page
+│   ├── components/             # Reusable UI components
+│   │   ├── ui/                 # shadcn/ui components
+│   │   └── ...                 # Custom components
+│   └── lib/                    # Utility functions and clients
+│       ├── supabaseClient.ts   # Supabase client
+│       └── utils.ts            # Helper functions
+├── supabase/                   # Database schema and migrations
+├── public/                     # Static assets
+└── scripts/                    # Utility scripts (seeds, etc.)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🗄️ Database Schema
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The application uses the following main tables:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **`waitlist_submissions`**: Stores waitlist form submissions
+- **`partner_inquiries`**: Stores partner application inquiries
+- **`users`**: User profiles and role management
+- **`resources`**: Resource library documents and materials
+- **`events`**: Community events and gatherings
 
-## Learn More
+See the `supabase/migrations` directory for the complete schema.
 
-To learn more about Next.js, take a look at the following resources:
+## 🔐 Authentication & Authorization
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The application uses **Clerk** for authentication with role-based access control:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Public**: Landing page, waitlist, partner inquiry forms
+- **Super Admin**: Full system access, user management, resource management
+- **Partner Admin**: Partner-specific dashboard and reporting
+- **Member**: Member dashboard and resources
 
-## Deploy on Vercel
+Roles are managed through Clerk's metadata system and synced with the Supabase database.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📝 Available Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run dev` - Start the development server
+- `npm run build` - Build the production application
+- `npm run start` - Start the production server
+- `npm run deploy` - Build and deploy to Cloudflare Pages
+- `npm run lint` - Run ESLint
+
+## 🚢 Deployment
+
+The application is configured for deployment on **Cloudflare Pages** using Wrangler:
+
+```bash
+npm run deploy
+```
+
+This will build the Next.js application and deploy it to Cloudflare Pages.
+
+## 🤝 Contributing
+
+This is a private project for Starter Club. If you have access and would like to contribute:
+
+1. Create a new branch for your feature
+2. Make your changes
+3. Test thoroughly
+4. Submit a pull request
+
+## 📄 License
+
+Private and proprietary. All rights reserved.
+
+## 🔗 Links
+
+- [Supabase Dashboard](https://app.supabase.com/)
+- [Clerk Dashboard](https://dashboard.clerk.com/)
+- [Next.js Documentation](https://nextjs.org/docs)
+
+---
+
+Built with ❤️ for the San Francisco community
