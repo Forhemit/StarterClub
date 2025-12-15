@@ -1,7 +1,7 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import ResourcesClient from "./ResourcesClient";
 
-export const dynamic = "force-static"; // Changed to force-static since resources are likely not changing every request
+export const dynamic = "force-dynamic"; // Changed to force-dynamic to support auth()
 export const revalidate = 3600; // Revalidate every hour
 
 
