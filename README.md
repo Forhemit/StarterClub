@@ -21,6 +21,7 @@ This project is built with modern web technologies:
 - **Framework**: [Next.js 16](https://nextjs.org) (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS 4
+- **Library**: [React 19](https://react.dev)
 - **UI Components**: [Radix UI](https://www.radix-ui.com/) + [shadcn/ui](https://ui.shadcn.com/)
 - **Animation**: Framer Motion
 - **Authentication**: [Clerk](https://clerk.com/)
@@ -143,18 +144,16 @@ Roles are managed through Clerk's metadata system and synced with the Supabase d
 - `npm run dev` - Start the development server
 - `npm run build` - Build the production application
 - `npm run start` - Start the production server
-- `npm run deploy` - Build and deploy to Cloudflare Pages
 - `npm run lint` - Run ESLint
 
 ## 🚢 Deployment
 
-The application is configured for deployment on **Cloudflare Pages** using Wrangler:
+The application is optimized for deployment on **Vercel**.
 
-```bash
-npm run deploy
-```
-
-This will build the Next.js application and deploy it to Cloudflare Pages.
+1. Connect your repository to Vercel.
+2. Vercel will automatically detect the Next.js configuration.
+3. Add the environment variables from `.env.local` to your Vercel project settings.
+4. Click Deploy.
 
 ## 🤝 Contributing
 
