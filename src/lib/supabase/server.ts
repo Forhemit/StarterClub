@@ -14,22 +14,16 @@ export async function createSupabaseServerClient() {
     let token = null;
 
     try {
-        try {
-            token = await getToken({ template: "supabase" });
-        } catch (error) {
-            // This usually means the "supabase" template is missing in Clerk.
-            console.warn("Failed to get Supabase token from Clerk. Ensure 'supabase' JWT template exists in Clerk Dashboard.");
-        }
-
-        if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-            console.error("Supabase environment variables are missing on server!");
-            // Return dummy client to prevent crash
-            return createClient("https://placeholder.supabase.co", "placeholder");
-        }
-
-        return createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-            global: {
-                headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-            },
-        });
+        token = await getToken({ template: "supabase" });
+    } catch (error) {
+        // If getToken fails, token remains null, and the client will be unauthenticated.
+        // Log the error for debugging purposes.
+        console.error("Failed to get Supabase token:", error);
     }
+
+    return createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!, {
+        global: {
+            headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        },
+    });
+}

@@ -5,8 +5,6 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "pages:build": "npx opennextjs-cloudflare build && cp -r .open-next/assets/* .open-next/ && mv .open-next/worker.js .open-next/_worker.js",
-    "deploy": "npm run pages:build && wrangler pages deploy .open-next",
     "start": "next start",
     "lint": "eslint",
     "analyze": "cross-env ANALYZE=true next build --webpack"

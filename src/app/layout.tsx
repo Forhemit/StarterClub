@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   description: "San Francisco is Done Waiting. It’s Time to Start. A workshop for founders, creators, and organizers.",
 };
 
-export const runtime = "edge";
+
 
 
 export default function RootLayout({

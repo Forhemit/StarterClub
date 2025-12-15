@@ -1,8 +1,0 @@
-name = "starter-club"
-compatibility_date = "2024-09-23"
-compatibility_flags = ["nodejs_compat"]
-pages_build_output_dir = ".open-next"
-
-# OpenNext specific configuration
-# main = ".open-next/worker.js" # Removed for Pages compatibility
-# assets = { directory = ".open-next/assets", binding = "ASSETS" } # Reserved in Pages
