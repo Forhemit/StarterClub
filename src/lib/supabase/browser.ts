@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 // NOTE: You must check "Project Settings > API" in Supabase dashboard to get these
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON;
 
 /**
  * React hook to get a Supabase client authenticated with the current Clerk user.

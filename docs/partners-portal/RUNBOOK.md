@@ -18,7 +18,7 @@ NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
 ### Supabase (Database)
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+NEXT_PUBLIC_SUPABASE_ANON=eyJ...
 
 # Required for Admin Dashboard actions (Bypasses RLS)
 # Find this in Supabase Dashboard > Project Settings > API > service_role

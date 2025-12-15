@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 
 // NOTE: You must check "Project Settings > API" in Supabase dashboard to get these
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON;
 
 /**
  * Get a Supabase client authenticated with the current Clerk user.
