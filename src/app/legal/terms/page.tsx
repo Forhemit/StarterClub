@@ -1,3 +1,7 @@
+import { type Metadata } from "next";
+
+export const dynamic = "force-static";
+
 export default function TermsOfUse() {
     return (
         <div className="space-y-6">

@@ -1,7 +1,19 @@
 import type { NextConfig } from "next";
 
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+})
+
 const nextConfig: NextConfig = {
-  // output: "export", // Commented out to enable Clerk Middleware
+  output: "standalone",
+  experimental: {
+    // optimizePackageImports didn't work, trying modularizeImports
+  },
+  modularizeImports: {
+    "lucide-react": {
+      transform: "lucide-react/dist/esm/icons/{{kebabCase member}}.js",
+    },
+  },
   images: {
     unoptimized: true,
   },
@@ -21,4 +33,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);

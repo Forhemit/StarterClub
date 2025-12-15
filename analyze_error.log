@@ -1,0 +1,36 @@
+
+> web@0.1.0 analyze
+> cross-env ANALYZE=true next build --webpack
+
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/stephenstokes/package-lock.json as the root directory.
+ To silence this warning, set `outputFileTracingRoot` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/output#caveats for more information.
+ Detected additional lockfiles: 
+   * /Users/stephenstokes/Downloads/Projects/12 December 2025/Starter Club/package-lock.json
+
+   ▲ Next.js 16.0.8 (webpack)
+   - Environments: .env.local, .env
+
+ ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+   Creating an optimized production build ...
+Webpack Bundle Analyzer saved report to /Users/stephenstokes/Downloads/Projects/12 December 2025/Starter Club/.next/analyze/nodejs.html
+Webpack Bundle Analyzer saved report to /Users/stephenstokes/Downloads/Projects/12 December 2025/Starter Club/.next/analyze/edge.html
+Failed to compile.
+
+./src/lib/server/security.ts:1:1
+Module not found: Can't resolve 'crypto'
+> 1 | import { createHash, randomBytes } from "crypto";
+    | ^
+  2 |
+  3 | /**
+  4 |  * hashes a key using SHA-256.
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./src/app/dashboard/super-admin/actions.ts
+./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fstephenstokes%2FDownloads%2FProjects%2F12%20December%202025%2FStarter%20Club%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fserver-actions.js%22%2C%5B%7B%22id%22%3A%227fe6a84c62ad90d0ac4223badff94e37601bdb3fcf%22%2C%22exportedName%22%3A%22invalidateCacheAction%22%2C%22filename%22%3A%22..%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fserver-actions.js%22%7D%5D%5D%2C%5B%22%2FUsers%2Fstephenstokes%2FDownloads%2FProjects%2F12%20December%202025%2FStarter%20Club%2Fsrc%2Fapp%2Fdashboard%2Fsuper-admin%2Factions.ts%22%2C%5B%7B%22id%22%3A%224024841c5c610918b526f6a5598e213d9a3cd351c0%22%2C%22exportedName%22%3A%22createOrgAction%22%2C%22filename%22%3A%22app%2Fdashboard%2Fsuper-admin%2Factions.ts%22%7D%2C%7B%22id%22%3A%22405fce5aaf8768304c7e80a4c475a15dc3c067057b%22%2C%22exportedName%22%3A%22deleteResourceAction%22%2C%22filename%22%3A%22app%2Fdashboard%2Fsuper-admin%2Factions.ts%22%7D%2C%7B%22id%22%3A%2240612b20a7d8c40538cdc0ffaa21d55b129607f51b%22%2C%22exportedName%22%3A%22createCaseStudyAction%22%2C%22filename%22%3A%22app%2Fdashboard%2Fsuper-admin%2Factions.ts%22%7D%2C%7B%22id%22%3A%22406e94b9383a252053059b43dc5db5882357a5ebe7%22%2C%22exportedName%22%3A%22revokeApiKeyAction%22%2C%22filename%22%3A%22app%2Fdashboard%2Fsuper-admin%2Factions.ts%22%7D%2C%7B%22id%22%3A%2240acd89423a9924e3718bb696c2d6cbc139029d738%22%2C%22exportedName%22%3A%22deleteCaseStudyAction%22%2C%22filename%22%3A%22app%2Fdashboard%2Fsuper-admin%2Factions.ts%22%7D%2C%7B%22id%22%3A%2240b552ab1d68773f68fd351462cc46163f57b484bb%22%2C%22exportedName%22%3A%22createUserAction%22%2C%22filename%22%3A%22app%2Fdashboard%2Fsuper-admin%2Factions.ts%22%7D%2C%7B%22id%22%3A%2240bf90c96e4b9c1d430cf72ecb379a3d6ce6ea6a37%22%2C%22exportedName%22%3A%22createResourceAction%22%2C%22filename%22%3A%22app%2Fdashboard%2Fsuper-admin%2Factions.ts%22%7D%2C%7B%22id%22%3A%22607a80d1d2af548f587f669a23859ae2ee516a9544%22%2C%22exportedName%22%3A%22linkUserOrgAction%22%2C%22filename%22%3A%22app%2Fdashboard%2Fsuper-admin%2Factions.ts%22%7D%2C%7B%22id%22%3A%2260bf023220c8b90bcdc0f9555bd7d8e7fe99648483%22%2C%22exportedName%22%3A%22updateResourceAction%22%2C%22filename%22%3A%22app%2Fdashboard%2Fsuper-admin%2Factions.ts%22%7D%2C%7B%22id%22%3A%2260db7c7756102aa64adcfd9e281ad231cdfadeaae9%22%2C%22exportedName%22%3A%22createApiKeyAction%22%2C%22filename%22%3A%22app%2Fdashboard%2Fsuper-admin%2Factions.ts%22%7D%2C%7B%22id%22%3A%2260edff1130bc5adca523f3ce0c9ca5dbe37a80cd1e%22%2C%22exportedName%22%3A%22updateUserRoleAction%22%2C%22filename%22%3A%22app%2Fdashboard%2Fsuper-admin%2Factions.ts%22%7D%5D%5D%5D&__client_imported__=true!
+
+
+> Build failed because of webpack errors

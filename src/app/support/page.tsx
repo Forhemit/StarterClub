@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Mail } from "lucide-react";
 
+export const dynamic = "force-static";
+
 export default function SupportPage() {
     return (
         <div className="max-w-2xl mx-auto py-12 text-center space-y-6">

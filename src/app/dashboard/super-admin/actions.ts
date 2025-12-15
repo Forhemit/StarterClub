@@ -268,7 +268,7 @@ export async function createApiKeyAction(name: string, orgId: string | null = nu
         async (data) => {
             // Generate Secure Token
             const rawKey = generateSecureToken(); // sk_....
-            const keyHash = hashApiKey(rawKey);   // SHA-256 hex
+            const keyHash = await hashApiKey(rawKey);   // SHA-256 hex
 
             const supabase = createAdminClient();
             const { data: res, error } = await supabase.from("api_keys").insert({

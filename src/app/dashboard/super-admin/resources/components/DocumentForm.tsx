@@ -24,7 +24,7 @@ export function DocumentForm({ defaultValues, onSubmit }: DocumentFormProps) {
 
     // Set robust defaults
     const form = useForm<DocumentFormValues>({
-        resolver: zodResolver(ResourceAssetSchema),
+        resolver: zodResolver(ResourceAssetSchema) as any,
         defaultValues: {
             title: "",
             description: "",

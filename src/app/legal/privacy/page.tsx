@@ -1,3 +1,7 @@
+export { type Metadata } from "next";
+
+export const dynamic = "force-static";
+
 export default function PrivacyPolicy() {
     return (
         <div className="space-y-6">

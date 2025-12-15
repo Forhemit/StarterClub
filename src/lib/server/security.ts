@@ -1,17 +1,17 @@
-import { createHash, randomBytes } from "crypto";
-
 /**
- * hashes a key using SHA-256.
- * Note: For passwords, use bcrypt/argon2. For API keys (high entropy), fast hashing like SHA-256 is acceptable
- * if the keys are long and random enough, but generally for "hashed tokens" SHA-256 is standard pattern (like Github).
+ * hashes a key using SHA-256 using Web Crypto API (Edge compatible).
  */
-export function hashApiKey(key: string): string {
-    return createHash("sha256").update(key).digest("hex");
+export async function hashApiKey(key: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(key);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
 }
 
 export function generateSecureToken(prefix: string = "sk"): string {
-    const bytes = randomBytes(24);
-    // Convert to hex
-    const token = bytes.toString("hex");
+    const array = new Uint8Array(24);
+    crypto.getRandomValues(array);
+    const token = Array.from(array).map(b => b.toString(16).padStart(2, "0")).join("");
     return `${prefix}_${token}`;
 }

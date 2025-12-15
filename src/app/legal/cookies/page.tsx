@@ -1,8 +1,11 @@
+import { type Metadata } from "next";
+
+export const dynamic = "force-static";
+
 export default function CookiesPolicy() {
     return (
         <div className="space-y-6">
             <h1 className="font-bebas text-4xl mb-8">About Cookies</h1>
-            <p className="text-sm text-black/60 italic">Last updated: {new Date().toLocaleDateString()}</p>
 
             <section className="space-y-4">
                 <h2 className="font-bold text-xl uppercase">1. What Are Cookies?</h2>
@@ -39,6 +42,6 @@ export default function CookiesPolicy() {
                     <strong>Address:</strong> 55 9th Street, San Francisco, CA 94103
                 </p>
             </section>
-        </div>
+        </div >
     );
 }

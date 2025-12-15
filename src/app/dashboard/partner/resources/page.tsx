@@ -1,7 +1,9 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import ResourcesClient from "./ResourcesClient";
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static"; // Changed to force-static since resources are likely not changing every request
+export const revalidate = 3600; // Revalidate every hour
+
 
 export default async function ResourcesPage() {
     const supabase = await createSupabaseServerClient();
