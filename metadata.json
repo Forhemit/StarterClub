@@ -1,0 +1,8 @@
+{
+  "name": "Starter Club Reception",
+  "description": "Receptionist workflow app for tracking member check-ins, guest onboarding, and CRA compliance metrics.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
