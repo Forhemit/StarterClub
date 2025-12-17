@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Toaster } from 'sonner';
-import { UserPlus, UserCheck, LayoutDashboard, Menu, X, FileText, ClipboardList, Monitor, Loader2 } from 'lucide-react';
+import { UserPlus, UserCheck, LayoutDashboard, Menu, X, FileText, ClipboardList, Monitor, Loader2, Home } from 'lucide-react';
 import { NewMemberFlow, MemberFlow, QuickLogFlow, KioskFlow } from './components/Flows';
 import { Dashboard } from './components/Dashboard';
 import { VisitorLogs } from './components/VisitorLogs';
-import { APP_NAME } from './constants';
+import { APP_NAME, MARKETING_WEBSITE_URL } from './constants';
 import { db } from './services/database';
 import { VisitRecord, Member } from './types';
 
@@ -201,7 +201,13 @@ export default function App() {
                 </button>
               </div>
             </nav>
-            <div className="absolute bottom-6 left-6 right-6">
+            <div className="absolute bottom-6 left-6 right-6 space-y-4">
+              <a
+                href={MARKETING_WEBSITE_URL}
+                className="w-full text-center px-4 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 flex items-center justify-center gap-2 text-slate-600 text-sm"
+              >
+                <Home size={16} /> Back to Website
+              </a>
               <p className="text-xs text-slate-400 text-center">Version 1.0.1<br />Supabase Connected</p>
             </div>
           </div>

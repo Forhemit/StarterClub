@@ -1,6 +1,7 @@
 import { Member, RoomOption } from './types';
 
 export const APP_NAME = "Starter Club Reception";
+export const MARKETING_WEBSITE_URL = import.meta.env.VITE_MARKETING_URL || "http://localhost:3000";
 
 export const MOCK_MEMBERS: (Member & { phone: string })[] = [
   {
