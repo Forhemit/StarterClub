@@ -29,6 +29,11 @@ const nextConfig: NextConfig = {
         destination: "/dashboard/super-admin",
         permanent: true,
       },
+      {
+        source: "/onboard",
+        destination: process.env.NEXT_PUBLIC_ONBOARD_URL || "http://localhost:3001",
+        permanent: false,
+      },
     ];
   },
 };

@@ -1,4 +1,4 @@
-import { Member } from './types';
+import { Member, RoomOption } from './types';
 
 export const APP_NAME = "Starter Club Reception";
 
@@ -36,19 +36,14 @@ export const MOCK_MEMBERS: (Member & { phone: string })[] = [
 ];
 
 export const RESOURCE_PRICES: Record<string, number> = {
-  'Workstation': 0, 
+  'Workstation': 0,
   'Creator Room': 50,
   'Meeting Room': 75,
   'Podcast Studio': 60,
   'None': 0
 };
 
-export interface RoomOption {
-  id: string;
-  name: string;
-  price: number;
-  description?: string;
-}
+
 
 export const ROOM_CATEGORIES: Record<string, RoomOption[]> = {
   "Core Builders Rooms": [
