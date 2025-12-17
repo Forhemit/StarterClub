@@ -8,6 +8,11 @@
         "dev:marketing": "npm run dev --workspace=@starter-club/marketing-website",
         "build:marketing": "npm run build --workspace=@starter-club/marketing-website",
         "dev:onboard": "npm run dev --workspace=@starter-club/onboard-app",
-        "build:onboard": "npm run build --workspace=@starter-club/onboard-app"
+        "build:onboard": "npm run build --workspace=@starter-club/onboard-app",
+        "dev": "concurrently \"npm run dev:marketing\" \"npm run dev:onboard\" --names \"MARKETING,ONBOARD\" --prefix-colors \"blue,green\"",
+        "build": "concurrently \"npm run build:marketing\" \"npm run build:onboard\""
+    },
+    "devDependencies": {
+        "concurrently": "^9.2.1"
     }
 }

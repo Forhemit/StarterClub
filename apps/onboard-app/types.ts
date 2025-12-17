@@ -17,6 +17,13 @@ export enum WorkGoal {
   OTHER = 'Other',
 }
 
+export interface RoomOption {
+  id: string;
+  name: string;
+  price: number;
+  description?: string;
+}
+
 export enum ResourceType {
   NONE = 'None',
   WORKSTATION = 'Workstation',
