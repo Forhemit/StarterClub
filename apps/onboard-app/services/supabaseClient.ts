@@ -7,4 +7,6 @@ if (!supabaseUrl || !supabaseKey) {
     console.warn("Missing Supabase env vars in Onboard App");
 }
 
-export const supabase = createClient(supabaseUrl || "", supabaseKey || "");
+import { Database } from '@starter-club/shared-types';
+
+export const supabase = createClient<Database>(supabaseUrl || "", supabaseKey || "");

@@ -11,11 +11,16 @@ This repository is a **Monorepo** managing multiple applications sharing a commo
 ```
 starter-club/
 ├── apps/
-│   ├── marketing-website/    # Main platform (Next.js, Tailwind, Clerk, Supabase)
-│   └── onboard-app/          # Kiosk/Reception Tablet App (Vite, React, Supabase)
-├── supabase/                 # Shared Database Migrations & Config
-├── scripts/                  # Utility scripts
-└── package.json              # Root workspace configuration
+│   ├── marketing-website/    # Main platform
+│   ├── onboard-app/          # Kiosk/Tablet App
+│   ├── flight-deck/          # Member Dashboard
+│   └── super-admin/          # [NEW] Admin Consolidation App
+├── packages/
+│   ├── shared-types/         # Unified Database Types
+│   ├── ui/                   # Shared Shadcn Components
+│   └── utils/                # Shared Logic
+├── supabase/                 # Shared Database config
+└── package.json              # Root workspace (Turborepo)
 ```
 
 ## 🎯 Applications
@@ -32,6 +37,18 @@ starter-club/
 - **Port**: `3001`
 - **Tech**: Vite, React SPA.
 - **Function**: Tablet-based kiosk for check-ins, guest registration, and room booking.
+
+### 3. Flight Deck (`@starter-club/flight-deck`)
+- **Path**: `apps/flight-deck`
+- **Port**: `3002`
+- **Tech**: Next.js 15, Tailwind.
+- **Function**: Internal member dashboard.
+
+### 4. Super Admin (`@starter-club/super-admin`)
+- **Path**: `apps/super-admin`
+- **Port**: `3003` (Default Next.js port if others taken)
+- **Tech**: Next.js 15, Shadcn UI, Shared Packages.
+- **Function**: Consolidated admin dashboard for all systems.
 
 ---
 
@@ -75,6 +92,7 @@ starter-club/
    npm run dev
    # Marketing at localhost:3000
    # Onboard at localhost:3001
+   # Flight Deck at localhost:3002
    ```
 
    Or run them independently:
@@ -85,6 +103,9 @@ starter-club/
 
    # Run Onboard App (localhost:3001)
    npm run dev:onboard
+
+   # Run Flight Deck (localhost:3002)
+   npm run dev:flight-deck
    ```
 
 4. **Verify Setup**
@@ -104,9 +125,29 @@ Shared tables are defined in `supabase/migrations`. Both apps read/write to the 
 
 To apply migrations:
 ```bash
-npx supabase link --project-ref <your-ref>
+npx supabase link --project-ref exancwcrkqivoaqhmapr
 npx supabase db push
 ```
+
+### Type Generation
+To generate TypeScript types (unified for all apps):
+```bash
+# Must be logged in: npx supabase login
+npm run db:generate-types
+# This updates packages/shared-types/src/database.types.ts
+```
+
+## 🚀 Deployment (Monorepo)
+
+Deploying with **Vercel**:
+1. Import the repository.
+2. Add a project for each app (`apps/marketing-website`, etc.).
+3. **Important**: In Vercel Project Settings > General:
+   - Set **Root Directory** to `apps/[app-name]`.
+   - Vercel will automatically detect Next.js/Vite.
+   - Turborepo will handle dependency caching.
+
+**Note**: `npm run build` at the root verifies the entire monorepo builds correctly.
 
 ## 🔐 Navigation
 
@@ -122,6 +163,7 @@ npx supabase db push
    ```bash
    npm run build:marketing
    npm run build:onboard
+   npm run build:flight-deck
    ```
 
 ## 📄 License
