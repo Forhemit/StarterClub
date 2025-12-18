@@ -32,8 +32,11 @@ export class DatabaseService {
         };
     }
 
-    async getMembers(): Promise<Member[]> {
-        const { data, error } = await supabase.from('profiles').select('*');
+    async getMembers(limit: number = 100): Promise<Member[]> {
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .limit(limit);
         if (error) {
             console.error("Error fetching members:", error);
             return [];
@@ -41,8 +44,12 @@ export class DatabaseService {
         return data.map(this.mapProfileToMember);
     }
 
-    async getVisits(): Promise<VisitRecord[]> {
-        const { data, error } = await supabase.from('activity_log').select('*').order('created_at', { ascending: false });
+    async getVisits(limit: number = 50, offset: number = 0): Promise<VisitRecord[]> {
+        const { data, error } = await supabase
+            .from('activity_log')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .range(offset, offset + limit - 1);
         if (error) {
             console.error("Error fetching visits:", error);
             return [];
@@ -82,16 +89,23 @@ export class DatabaseService {
         const cleanId = identifier.toLowerCase().trim();
         const cleanLast = lastName.toLowerCase().trim();
 
-        // Search by ID or phone. 
-        // Using ILIKE for flexibility? Or exact match.
-        // Profiles has 'phone' and 'id'.
-
-        const { data, error } = await supabase
+        // Search by ID first (using parameterized query via .eq())
+        let { data, error } = await supabase
             .from('profiles')
             .select('*')
-            .or(`id.eq.${cleanId},phone.eq.${cleanId}`)
+            .eq('id', cleanId)
             .ilike('last_name', cleanLast)
             .maybeSingle();
+
+        // If not found by ID, try phone match
+        if (!data && !error) {
+            ({ data, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('phone', cleanId)
+                .ilike('last_name', cleanLast)
+                .maybeSingle());
+        }
 
         if (error) console.error("Error finding member:", error);
         if (!data) return undefined;

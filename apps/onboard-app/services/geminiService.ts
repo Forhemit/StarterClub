@@ -1,11 +1,12 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
 const getAiClient = () => {
-  if (!process.env.API_KEY) {
-    console.warn("API_KEY is missing. AI features will be disabled or mocked.");
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  if (!apiKey) {
+    console.warn("VITE_GEMINI_API_KEY is missing. AI features will be disabled or mocked.");
     return null;
   }
-  return new GoogleGenAI({ apiKey: process.env.API_KEY });
+  return new GoogleGenAI({ apiKey });
 };
 
 /**
@@ -31,7 +32,7 @@ export const categorizeWorkActivity = async (description: string): Promise<strin
         }
       }
     });
-    
+
     const text = response.text;
     if (!text) return "Uncategorized";
     const json = JSON.parse(text);
@@ -88,16 +89,16 @@ export const analyzeAddressCompliance = async (address: string): Promise<{ isTar
  * Generates a warm welcome script.
  */
 export const generateWelcomeScript = async (name: string, intent: string): Promise<string> => {
-    const ai = getAiClient();
-    if (!ai) return `Welcome back, ${name}. Let's get you set up for ${intent}.`;
-  
-    try {
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: `Generate a short (1 sentence), warm, professional welcome message for a receptionist to say to a club member named ${name} who is here to "${intent}".`,
-      });
-      return response.text || `Welcome back, ${name}.`;
-    } catch (e) {
-      return `Welcome back, ${name}.`;
-    }
+  const ai = getAiClient();
+  if (!ai) return `Welcome back, ${name}. Let's get you set up for ${intent}.`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: `Generate a short (1 sentence), warm, professional welcome message for a receptionist to say to a club member named ${name} who is here to "${intent}".`,
+    });
+    return response.text || `Welcome back, ${name}.`;
+  } catch (e) {
+    return `Welcome back, ${name}.`;
+  }
 }

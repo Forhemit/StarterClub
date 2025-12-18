@@ -8,12 +8,21 @@ export default async function SuperAdminDashboardLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const { userId } = await auth();
-    const user = await currentUser();
+    // Check for temporary simple connection
+    const isSimpleAuth = process.env.NEXT_PUBLIC_USE_SIMPLE_AUTH === 'true';
 
-    if (!userId) {
-        redirect("/sign-in");
+    // Only check Clerk auth if not in simple mode
+    if (!isSimpleAuth) {
+        const { userId } = await auth();
+        if (!userId) {
+            redirect("/sign-in");
+        }
     }
+
+
+    // In simple auth, we skip currentUser check too, or mock it?
+    // The explicit role check below relies on `user`.
+    const user = !isSimpleAuth ? await currentUser() : null;
 
     // Role check
     const role = user?.publicMetadata?.role;

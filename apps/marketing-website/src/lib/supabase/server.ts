@@ -21,6 +21,18 @@ export async function createSupabaseServerClient() {
         console.error("Failed to get Supabase token:", error);
     }
 
+    // Check for temporary simple connection
+    // NOTE: This uses the SERVICE ROLE key, bypassing RLS. Use ONLY in development.
+    if (process.env.NEXT_PUBLIC_USE_SIMPLE_AUTH === 'true' && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        return createClient(SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY, {
+            auth: {
+                persistSession: false,
+                autoRefreshToken: false,
+                detectSessionInUrl: false,
+            },
+        });
+    }
+
     return createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!, {
         global: {
             headers: token ? { Authorization: `Bearer ${token}` } : undefined,

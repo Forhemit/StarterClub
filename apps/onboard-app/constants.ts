@@ -3,7 +3,8 @@ import { Member, RoomOption } from './types';
 export const APP_NAME = "Starter Club Reception";
 export const MARKETING_WEBSITE_URL = import.meta.env.VITE_MARKETING_URL || "http://localhost:3000";
 
-export const MOCK_MEMBERS: (Member & { phone: string })[] = [
+// Development-only mock data - empty in production builds
+export const MOCK_MEMBERS: (Member & { phone: string })[] = import.meta.env.DEV ? [
   {
     id: 'M001',
     firstName: 'Alice',
@@ -34,7 +35,7 @@ export const MOCK_MEMBERS: (Member & { phone: string })[] = [
     isInBuilding: true,
     phone: '555-0103'
   }
-];
+] : [];
 
 export const RESOURCE_PRICES: Record<string, number> = {
   'Workstation': 0,
