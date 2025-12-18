@@ -6,7 +6,7 @@ import * as z from "zod";
 import { ResourceAssetSchema } from "@/app/dashboard/super-admin/schemas";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
@@ -33,7 +33,7 @@ export function DocumentForm({ defaultValues, onSubmit }: DocumentFormProps) {
             status: "draft",
             visibility: "partner",
             type: "pdf",
-            file_url: "", // Can be empty initially if not strictly required by UI logic, but Schema validates usage
+            file_url: "",
             content: "",
             ...defaultValues
         }
@@ -51,101 +51,173 @@ export function DocumentForm({ defaultValues, onSubmit }: DocumentFormProps) {
     };
 
     return (
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            <div className="space-y-2">
-                <Label htmlFor="title">Title</Label>
-                <Input id="title" {...form.register("title")} placeholder="e.g. Q4 Policy Update" />
-                {form.formState.errors.title && <p className="text-destructive text-sm">{form.formState.errors.title.message}</p>}
-            </div>
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+                <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Title</FormLabel>
+                            <FormControl>
+                                <Input placeholder="e.g. Q4 Policy Update" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
-            <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                    <Label>Type</Label>
-                    <Select defaultValue={form.getValues("doc_type")} onValueChange={v => form.setValue("doc_type", v as any)}>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="asset">Asset (File)</SelectItem>
-                            <SelectItem value="policy">Policy</SelectItem>
-                            <SelectItem value="guide">Guide</SelectItem>
-                            <SelectItem value="template">Template</SelectItem>
-                            <SelectItem value="api">API Doc</SelectItem>
-                        </SelectContent>
-                    </Select>
+                <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                        control={form.control}
+                        name="doc_type"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Type</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select type" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="asset">Asset (File)</SelectItem>
+                                        <SelectItem value="policy">Policy</SelectItem>
+                                        <SelectItem value="guide">Guide</SelectItem>
+                                        <SelectItem value="template">Template</SelectItem>
+                                        <SelectItem value="api">API Doc</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="track"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Track</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select track" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="shared">Shared</SelectItem>
+                                        <SelectItem value="banks">Banks</SelectItem>
+                                        <SelectItem value="insurance">Insurance</SelectItem>
+                                        <SelectItem value="hardware">Hardware</SelectItem>
+                                        <SelectItem value="saas">SaaS</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                 </div>
 
-                <div className="space-y-2">
-                    <Label>Track</Label>
-                    <Select defaultValue={form.getValues("track")} onValueChange={v => form.setValue("track", v as any)}>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select track" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="shared">Shared</SelectItem>
-                            <SelectItem value="banks">Banks</SelectItem>
-                            <SelectItem value="insurance">Insurance</SelectItem>
-                            <SelectItem value="hardware">Hardware</SelectItem>
-                            <SelectItem value="saas">SaaS</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-            </div>
+                <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Description</FormLabel>
+                            <FormControl>
+                                <Textarea placeholder="Short description..." {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
-            <div className="space-y-2">
-                <Label>Description</Label>
-                <Textarea {...form.register("description")} placeholder="Short description..." />
-            </div>
+                {/* Dynamic Fields based on Type */}
+                {docType === 'asset' || docType === 'template' ? (
+                    <FormField
+                        control={form.control}
+                        name="file_url"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>File URL</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="https://..." {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                ) : (
+                    <FormField
+                        control={form.control}
+                        name="content"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Content (Markdown)</FormLabel>
+                                <FormControl>
+                                    <Textarea className="min-h-[150px] font-mono" placeholder="# Markdown content here..." {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                )}
 
-            {/* Dynamic Fields based on Type */}
-            {docType === 'asset' || docType === 'template' ? (
-                <div className="space-y-2">
-                    <Label>File URL</Label>
-                    <Input {...form.register("file_url")} placeholder="https://..." />
-                    {form.formState.errors.file_url && <p className="text-destructive text-sm">{form.formState.errors.file_url.message}</p>}
-                </div>
-            ) : (
-                <div className="space-y-2">
-                    <Label>Content (Markdown)</Label>
-                    <Textarea {...form.register("content")} className="min-h-[150px] font-mono" placeholder="# Markdown content here..." />
-                    {form.formState.errors.content && <p className="text-destructive text-sm">{form.formState.errors.content.message}</p>}
-                </div>
-            )}
+                <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                        control={form.control}
+                        name="status"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Status</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="draft">Draft</SelectItem>
+                                        <SelectItem value="published">Published</SelectItem>
+                                        <SelectItem value="archived">Archived</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-            <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                    <Label>Status</Label>
-                    <Select defaultValue={form.getValues("status")} onValueChange={v => form.setValue("status", v as any)}>
-                        <SelectTrigger>
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="draft">Draft</SelectItem>
-                            <SelectItem value="published">Published</SelectItem>
-                            <SelectItem value="archived">Archived</SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <FormField
+                        control={form.control}
+                        name="visibility"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Visibility</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="partner">Partner</SelectItem>
+                                        <SelectItem value="admin">Admin Only</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                 </div>
-                <div className="space-y-2">
-                    <Label>Visibility</Label>
-                    <Select defaultValue={form.getValues("visibility")} onValueChange={v => form.setValue("visibility", v as any)}>
-                        <SelectTrigger>
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="partner">Partner</SelectItem>
-                            <SelectItem value="admin">Admin Only</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-            </div>
 
-            <div className="flex justify-end pt-4">
-                <Button type="submit" disabled={loading}>
-                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Save Document
-                </Button>
-            </div>
-        </form>
+                <div className="flex justify-end pt-4">
+                    <Button type="submit" disabled={loading}>
+                        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Save Document
+                    </Button>
+                </div>
+            </form>
+        </Form>
     );
 }

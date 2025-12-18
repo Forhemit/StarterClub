@@ -8,10 +8,15 @@ export default async function PartnerAdminDashboardLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const { userId } = await auth();
+    // Check for temporary simple connection
+    const isSimpleAuth = process.env.NEXT_PUBLIC_USE_SIMPLE_AUTH === 'true';
 
-    if (!userId) {
-        redirect("/sign-in");
+    if (!isSimpleAuth) {
+        const { userId } = await auth();
+
+        if (!userId) {
+            redirect("/sign-in");
+        }
     }
 
     return (

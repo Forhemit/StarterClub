@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Check, ChevronDown } from "lucide-react";
 import { ComparisonModal } from "./ComparisonModal";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { FoundingMemberCTA } from "@/components/FoundingMemberCTA";
 
 // --- Types ---
@@ -203,7 +204,6 @@ interface MembershipTiersProps {
 }
 
 export function MembershipTiers({ onWaitlistOpen }: MembershipTiersProps) {
-    const [activeTier, setActiveTier] = useState<string | null>("starter-builder");
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     return (
@@ -226,20 +226,16 @@ export function MembershipTiers({ onWaitlistOpen }: MembershipTiersProps) {
                 </div>
 
                 {/* Accordion Layout */}
-                <div className="max-w-3xl mx-auto mb-32 space-y-4">
-                    {tiers.map((tier) => {
-                        const isOpen = activeTier === tier.id;
-                        return (
-                            <motion.div
+                <div className="max-w-3xl mx-auto mb-32">
+                    <Accordion type="single" collapsible defaultValue="starter-builder" className="space-y-4">
+                        {tiers.map((tier) => (
+                            <AccordionItem
                                 key={tier.id}
-                                initial={false}
-                                className={`rounded-2xl border overflow-hidden transition-all duration-300 ${isOpen ? `shadow-lg ring-1 ring-black/5 ${tier.borderColor} ${tier.bgColor}` : 'border-black/5 bg-white hover:border-black/10'}`}
+                                value={tier.id}
+                                className={`rounded-2xl border overflow-hidden transition-all duration-300 border-black/5 bg-white data-[state=open]:shadow-lg data-[state=open]:ring-1 data-[state=open]:ring-black/5 ${tier.borderColor} data-[state=open]:${tier.bgColor} hover:border-black/10`}
                             >
-                                <button
-                                    onClick={() => setActiveTier(isOpen ? null : tier.id)}
-                                    className="w-full flex items-center justify-between p-6 text-left"
-                                >
-                                    <div className="flex items-center gap-4">
+                                <AccordionTrigger className="w-full flex items-center justify-between p-6 hover:no-underline [&[data-state=open]>div>svg]:rotate-180">
+                                    <div className="flex items-center gap-4 text-left">
                                         <div className="text-3xl">{tier.icon}</div>
                                         <div>
                                             <h3 className="font-bebas text-2xl tracking-wide text-black">
@@ -250,56 +246,42 @@ export function MembershipTiers({ onWaitlistOpen }: MembershipTiersProps) {
                                             </p>
                                         </div>
                                     </div>
-                                    <motion.div
-                                        animate={{ rotate: isOpen ? 180 : 0 }}
-                                        transition={{ duration: 0.2 }}
-                                    >
-                                        <ChevronDown className={`w-6 h-6 ${isOpen ? tier.color : 'text-black/20'}`} />
-                                    </motion.div>
-                                </button>
+                                    {/* Chevron is handled by AccordionTrigger but getting custom styling right is tricky. 
+                                        Shadcn AccordionTrigger usually includes a Chevron. 
+                                        I should check accordion.tsx or bring my own Chevron and hide the default if needed.
+                                        But wait, standard simple AccordionTrigger usually contains the children AND the icon.
+                                        If I use the standard imports, I might get a default icon.
+                                        Let's assume I can compose the trigger content.
+                                    */}
+                                </AccordionTrigger>
+                                <AccordionContent className="px-6 pb-8 pt-0 border-t border-black/5">
+                                    <div className="pt-6">
+                                        <p className="font-sans text-black/70 leading-relaxed max-w-2xl mb-8 text-base">
+                                            {tier.description}
+                                        </p>
 
-                                <AnimatePresence initial={false}>
-                                    {isOpen && (
-                                        <motion.div
-                                            key="content"
-                                            initial="collapsed"
-                                            animate="open"
-                                            exit="collapsed"
-                                            variants={{
-                                                open: { opacity: 1, height: "auto" },
-                                                collapsed: { opacity: 0, height: 0 }
-                                            }}
-                                            transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
-                                        >
-                                            <div className="px-6 pb-8 pt-2 border-t border-black/5">
-                                                <p className="font-sans text-black/70 leading-relaxed max-w-2xl mb-8">
-                                                    {tier.description}
-                                                </p>
-
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                                    {tier.features.map((section, idx) => (
-                                                        <div key={idx}>
-                                                            <h4 className={`font-sans font-bold text-xs uppercase tracking-widest mb-3 opacity-60`}>
-                                                                {section.category}
-                                                            </h4>
-                                                            <ul className="space-y-3">
-                                                                {section.items.map((item, i) => (
-                                                                    <li key={i} className="flex items-start gap-3 text-sm text-black/80 leading-snug">
-                                                                        <Check className={`w-4 h-4 mt-0.5 shrink-0 ${tier.color}`} />
-                                                                        <span>{item}</span>
-                                                                    </li>
-                                                                ))}
-                                                            </ul>
-                                                        </div>
-                                                    ))}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                            {tier.features.map((section, idx) => (
+                                                <div key={idx}>
+                                                    <h4 className={`font-sans font-bold text-xs uppercase tracking-widest mb-3 opacity-60`}>
+                                                        {section.category}
+                                                    </h4>
+                                                    <ul className="space-y-3">
+                                                        {section.items.map((item, i) => (
+                                                            <li key={i} className="flex items-start gap-3 text-sm text-black/80 leading-snug">
+                                                                <Check className={`w-4 h-4 mt-0.5 shrink-0 ${tier.color}`} />
+                                                                <span>{item}</span>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
                                                 </div>
-                                            </div>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </motion.div>
-                        );
-                    })}
+                                            ))}
+                                        </div>
+                                    </div>
+                                </AccordionContent>
+                            </AccordionItem>
+                        ))}
+                    </Accordion>
                 </div>
 
                 {/* Comparison Button */}

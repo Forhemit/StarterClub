@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowRight, Check } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { useToast } from "@/context/ToastContext";
+import { checkRateLimit, recordSubmission } from "@/lib/rateLimit";
 
 export function PartnerInquiryForm({ onSuccess }: { onSuccess: () => void }) {
     const { toast } = useToast();
@@ -17,6 +18,14 @@ export function PartnerInquiryForm({ onSuccess }: { onSuccess: () => void }) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Rate limit check
+        const { allowed } = checkRateLimit('partner_inquiry');
+        if (!allowed) {
+            toast.error("Too many submissions. Please try again later.");
+            return;
+        }
+
         setStatus("submitting");
 
         try {
@@ -33,6 +42,7 @@ export function PartnerInquiryForm({ onSuccess }: { onSuccess: () => void }) {
 
             if (error) throw error;
 
+            recordSubmission('partner_inquiry');
             onSuccess();
             setStatus("idle");
             setFormData({ name: "", email: "", organization: "", message: "" }); // Clear form

@@ -26,6 +26,8 @@ const teasers = [
     },
 ];
 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 export function TeaserCards() {
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 w-full max-w-6xl mx-auto px-6 py-12 md:py-24">
@@ -43,17 +45,23 @@ function TeaserCard({ teaser, delay }: { teaser: any; delay: number }) {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay, ease: "easeOut" }}
             viewport={{ once: true }}
-            className="flex flex-col items-center text-center space-y-4 group"
+            className="h-full"
         >
-            <div className="p-4 rounded-full border border-black/10 bg-black/5 backdrop-blur-sm group-hover:border-[var(--accent)]/50 transition-colors duration-300">
-                {teaser.icon}
-            </div>
-            <h3 className="font-bebas text-2xl md:text-3xl tracking-wide uppercase text-black">
-                {teaser.headline}
-            </h3>
-            <p className="font-sans text-black/70 text-sm md:text-base leading-relaxed max-w-xs">
-                {teaser.copy}
-            </p>
+            <Card className="flex flex-col items-center text-center space-y-4 group bg-transparent border-none shadow-none h-full">
+                <CardHeader className="p-0 flex flex-col items-center space-y-4">
+                    <div className="p-4 rounded-full border border-black/10 bg-black/5 backdrop-blur-sm group-hover:border-[var(--accent)]/50 transition-colors duration-300">
+                        {teaser.icon}
+                    </div>
+                    <CardTitle className="font-bebas text-2xl md:text-3xl tracking-wide uppercase text-black">
+                        {teaser.headline}
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                    <p className="font-sans text-black/70 text-sm md:text-base leading-relaxed max-w-xs mx-auto">
+                        {teaser.copy}
+                    </p>
+                </CardContent>
+            </Card>
         </motion.div>
     );
 }

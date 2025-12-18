@@ -9,8 +9,10 @@
         "build:marketing": "npm run build --workspace=@starter-club/marketing-website",
         "dev:onboard": "npm run dev --workspace=@starter-club/onboard-app",
         "build:onboard": "npm run build --workspace=@starter-club/onboard-app",
-        "dev": "concurrently \"npm run dev:marketing\" \"npm run dev:onboard\" --names \"MARKETING,ONBOARD\" --prefix-colors \"blue,green\"",
-        "build": "concurrently \"npm run build:marketing\" \"npm run build:onboard\""
+        "dev:flight-deck": "npm run dev --workspace=@starter-club/flight-deck",
+        "build:flight-deck": "npm run build --workspace=@starter-club/flight-deck",
+        "dev": "concurrently \"npm run dev:marketing\" \"npm run dev:onboard\" \"npm run dev:flight-deck\" --names \"MARKETING,ONBOARD,FLIGHT\" --prefix-colors \"blue,green,magenta\"",
+        "build": "concurrently \"npm run build:marketing\" \"npm run build:onboard\" \"npm run build:flight-deck\""
     },
     "devDependencies": {
         "concurrently": "^9.2.1"

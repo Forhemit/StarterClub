@@ -46,7 +46,7 @@ export default function SignUpForm() {
             setPendingVerification(true);
             toast.success("Account created! Please check your email for the verification code.");
         } catch (err: any) {
-            console.error(JSON.stringify(err, null, 2));
+            console.error('Auth signup error:', err.errors?.[0]?.code || 'unknown_error');
             toast.error(err.errors?.[0]?.message || "Something went wrong.");
         } finally {
             setLoading(false);
@@ -66,7 +66,10 @@ export default function SignUpForm() {
             if (completeSignUp.status !== "complete") {
                 /*  investigate the response, to see if there was an error
                     or if the user needs to complete more steps.*/
-                console.log(JSON.stringify(completeSignUp, null, 2));
+                // Log only status for debugging (no sensitive data)
+                if (process.env.NODE_ENV === 'development') {
+                    console.log('Verification status:', completeSignUp.status);
+                }
                 toast.error("Verification failed. Please try again.");
             }
 
@@ -76,7 +79,7 @@ export default function SignUpForm() {
                 toast.success("Welcome to the Partner Portal!");
             }
         } catch (err: any) {
-            console.error(JSON.stringify(err, null, 2));
+            console.error('Auth verification error:', err.errors?.[0]?.code || 'unknown_error');
             toast.error(err.errors?.[0]?.message || "Invalid code.");
         } finally {
             setLoading(false);
