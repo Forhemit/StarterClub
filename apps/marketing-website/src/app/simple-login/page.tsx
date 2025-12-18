@@ -1,9 +1,10 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { login } from './action'
 
-export default function SimpleLoginPage() {
+function SimpleLoginContent() {
     const searchParams = useSearchParams()
     const error = searchParams.get('error')
 
@@ -58,5 +59,13 @@ export default function SimpleLoginPage() {
                 </div>
             </div>
         </div>
+    )
+}
+
+export default function SimpleLoginPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <SimpleLoginContent />
+        </Suspense>
     )
 }
