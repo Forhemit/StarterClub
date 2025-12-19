@@ -21,12 +21,12 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/partners",
-        destination: "/dashboard/partner",
+        destination: process.env.NEXT_PUBLIC_PARTNER_URL || "/dashboard/partner",
         permanent: true,
       },
       {
         source: "/partners/admin",
-        destination: "/dashboard/super-admin",
+        destination: process.env.NEXT_PUBLIC_ADMIN_URL || "/dashboard/super-admin",
         permanent: true,
       },
       {
