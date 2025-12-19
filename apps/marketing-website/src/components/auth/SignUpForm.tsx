@@ -75,7 +75,7 @@ export default function SignUpForm() {
 
             if (completeSignUp.status === "complete") {
                 await setActive({ session: completeSignUp.createdSessionId });
-                router.push("/partners");
+                router.push("/dashboard/partner");
                 toast.success("Welcome to the Partner Portal!");
             }
         } catch (err: any) {

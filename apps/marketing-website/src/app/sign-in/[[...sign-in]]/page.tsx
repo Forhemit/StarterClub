@@ -8,7 +8,7 @@ export default function SignInPage() {
                     <h1 className="text-2xl font-bebas text-[var(--accent)] text-4xl mb-2">PARTNER LOGIN</h1>
                     <p className="text-muted-foreground text-sm">Welcome back to the club.</p>
                 </div>
-                <SignIn />
+                <SignIn forceRedirectUrl="/dashboard" />
             </div>
         </div>
     );

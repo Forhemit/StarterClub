@@ -56,6 +56,22 @@ echo $MARKETING_URL | vercel env add VITE_MARKETING_URL production --project "$O
 echo $MARKETING_URL | vercel env add VITE_MARKETING_URL preview --project "$ONBOARD"
 echo $MARKETING_URL | vercel env add VITE_MARKETING_URL development --project "$ONBOARD"
 
+# 4. Configure Clerk (Interactive)
+echo "🔑 Configuring Clerk Keys..."
+echo "Please enter your NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY (Production):"
+read -r CLERK_PUB_KEY
+echo "Please enter your CLERK_SECRET_KEY (Production):"
+read -r CLERK_SECRET_KEY
+
+if [ -n "$CLERK_PUB_KEY" ] && [ -n "$CLERK_SECRET_KEY" ]; then
+    echo "Setting Clerk Keys for $MARKETING..."
+    echo "$CLERK_PUB_KEY" | vercel env add NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY production --project "$MARKETING"
+    echo "$CLERK_SECRET_KEY" | vercel env add CLERK_SECRET_KEY production --project "$MARKETING"
+    echo "Done!"
+else
+    echo "Skipping Clerk setup (missing keys)."
+fi
+
 echo "✅ Setup Complete!"
 echo ""
 echo "IMPORTANT NEXT STEPS:"
