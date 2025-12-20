@@ -7,6 +7,7 @@ import "./globals.css";
 import { ToastProvider } from "@/context/ToastContext";
 import { Toaster } from "@/components/ui/Toaster";
 import { GlobalFormListener } from "@/components/GlobalFormListener";
+import { EnvironmentBanner } from "@starter-club/ui";
 
 const bebasNeue = Bebas_Neue({
   variable: "--font-bebas-neue",
@@ -38,6 +39,7 @@ export default function RootLayout({
         <body
           className={`${bebasNeue.variable} ${inter.variable} antialiased bg-background text-foreground`}
         >
+          <EnvironmentBanner />
           <ToastProvider>
             {children}
             <Toaster />

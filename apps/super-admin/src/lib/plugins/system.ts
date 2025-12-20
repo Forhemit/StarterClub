@@ -8,14 +8,16 @@ const systemModule: Module = {
     roles: ['admin'], // Super Admin only
     navigation: [
         {
-            label: 'User Management',
+            label: 'Users',
             href: '/system/users',
             icon: Users,
+            capability: 'CAN_VIEW_SYSTEM_SETTINGS'
         },
         {
             label: 'Settings',
             href: '/system/settings',
-            icon: Settings
+            icon: Settings,
+            capability: 'CAN_VIEW_SYSTEM_SETTINGS'
         }
     ]
 };

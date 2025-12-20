@@ -4,7 +4,7 @@
 # This script automates the creation of Vercel projects and environment variables.
 
 # Define project names
-MARKETING="starter-club-marketing"
+MARKETING="starter-club"
 ONBOARD="starter-club-onboard"
 PARTNER="starter-club-flight-deck"
 ADMIN="starter-club-super-admin"

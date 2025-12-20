@@ -51,10 +51,36 @@ export default function App() {
     setView(ViewState.HOME);
   };
 
-  // Auto-close menu on selection
+  // --- PIN LOGIC ---
+  const [isPinOpen, setIsPinOpen] = useState(false);
+  const [pinInput, setPinInput] = useState("");
+  const [pendingView, setPendingView] = useState<ViewState | null>(null);
+
   const handleNav = (v: ViewState) => {
+    // Protected Routes
+    if (v === ViewState.DASHBOARD || v === ViewState.LOGS || v === ViewState.QUICK_LOG) {
+      setPendingView(v);
+      setIsPinOpen(true);
+      setShowMenu(false);
+      return;
+    }
+    // Public Routes
     setView(v);
     setShowMenu(false);
+  };
+
+  const verifyPin = () => {
+    // Simple client-side guard. In production, use Clerk or server validation.
+    // Default PIN: 9999
+    if (pinInput === "9999") {
+      if (pendingView) setView(pendingView);
+      setIsPinOpen(false);
+      setPinInput("");
+      setPendingView(null);
+      return;
+    }
+    alert("Incorrect PIN");
+    setPinInput("");
   };
 
   const renderContent = () => {
@@ -119,7 +145,7 @@ export default function App() {
               </button>
 
               <button
-                onClick={() => setView(ViewState.QUICK_LOG)}
+                onClick={() => handleNav(ViewState.QUICK_LOG)}
                 className="group relative overflow-hidden bg-slate-800 p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all text-left h-72 flex flex-col justify-between"
               >
                 <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition text-white">
@@ -213,6 +239,42 @@ export default function App() {
           </div>
         </div>
       )}
+
+      {/* PIN Modal */}
+      {isPinOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-sm mx-4">
+            <h3 className="text-xl font-bold mb-4 text-center">Staff Access Required</h3>
+            <p className="text-sm text-gray-500 text-center mb-6">Please enter your PIN to continue.</p>
+            <div className="space-y-4">
+              <input
+                type="password"
+                value={pinInput}
+                onChange={(e) => setPinInput(e.target.value)}
+                autoFocus
+                className="w-full text-center text-3xl tracking-widest border-b-2 border-slate-200 focus:border-blue-500 outline-none pb-2 font-mono"
+                maxLength={4}
+              />
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <button
+                  onClick={() => { setIsPinOpen(false); setPinInput(""); setPendingView(null); }}
+                  className="w-full py-3 rounded-xl bg-slate-100 hover:bg-slate-200 font-medium transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={verifyPin}
+                  disabled={pinInput.length < 4}
+                  className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium transition disabled:opacity-50"
+                >
+                  Unlock
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Toaster />
     </div>
   );

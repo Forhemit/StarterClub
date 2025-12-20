@@ -1,5 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createAdminClient } from "@/lib/privileged/supabase-admin";
 import { Card } from "@/components/ui/card";
 import { Users, Rocket, Building, ShieldCheck } from "lucide-react";
 import { redirect } from "next/navigation";

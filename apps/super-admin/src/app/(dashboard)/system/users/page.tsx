@@ -1,4 +1,4 @@
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createAdminClient } from "@/lib/privileged/supabase-admin";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import UsersClient, { PartnerUser, PartnerOrg } from "./UsersClient";

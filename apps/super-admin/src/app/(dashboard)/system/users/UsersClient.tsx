@@ -9,6 +9,17 @@ import { useToast } from "@/hooks/use-toast";
 import { RefreshCw, User, Building, UserPlus, Edit, Trash } from "lucide-react";
 import { formatDate } from "@starter-club/utils";
 import { createOrgAction, inviteUserAction, deleteUserAction, updateUserAction } from "@/app/actions/users";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@starter-club/ui";
 
 
 import { useRouter } from "next/navigation";
@@ -150,7 +161,7 @@ export default function UsersClient({
     };
 
     const handleDeleteUser = async (user: PartnerUser) => {
-        if (!confirm("Are you sure you want to delete this user? This cannot be undone.")) return;
+        // Confirmation handled by AlertDialog
         setLoading(true);
         try {
             const { success, error } = await deleteUserAction(user.id, user.clerk_user_id);
@@ -236,7 +247,7 @@ export default function UsersClient({
                                     <div className="space-y-2">
                                         <Label>Email Address</Label>
                                         <Input value={addEmail} onChange={(e) => setAddEmail(e.target.value)} placeholder="email@example.com" />
-                                        <p className="text-[10px] text-muted-foreground">Default password: StarterClub!2025</p>
+                                        <p className="text-[10px] text-muted-foreground">A temporary password will be generated. The user should reset it via email.</p>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">
@@ -320,9 +331,53 @@ export default function UsersClient({
                                             <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-blue-600" onClick={() => openEditUser(u)}>
                                                 <Edit className="h-4 w-4" />
                                             </Button>
-                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-red-600" onClick={() => handleDeleteUser(u)}>
-                                                <Trash className="h-4 w-4" />
-                                            </Button>
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-red-600">
+                                                        <Trash className="h-4 w-4" />
+                                                    </Button>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                                        <AlertDialogDescription>
+                                                            This action will soft-delete the user from the database and remove them from Clerk.
+                                                            This cannot be easily undone.
+                                                        </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <div className="my-4 p-4 bg-red-50 text-red-900 text-sm rounded border border-red-200">
+                                                        <p className="font-bold mb-2">Type the full Clerk User ID to confirm:</p>
+                                                        <code className="bg-white px-1 py-0.5 rounded border select-all">{u.clerk_user_id}</code>
+                                                        <Input
+                                                            className="mt-2 bg-white"
+                                                            placeholder={u.clerk_user_id}
+                                                            onChange={(e) => {
+                                                                const btn = document.getElementById(`confirm-delete-${u.id}`) as HTMLButtonElement;
+                                                                if (btn) btn.disabled = e.target.value !== u.clerk_user_id;
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                        <AlertDialogAction
+                                                            id={`confirm-delete-${u.id}`}
+                                                            disabled={true}
+                                                            className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                handleDeleteUser(u);
+                                                                // Close dialog manually if needed, or rely on re-render. 
+                                                                // Shadcn AlertDialogAction usually closes on click. 
+                                                                // Since we preventDefault to wait for async, we should probably handle open state if we wanted to be perfect, 
+                                                                // but for now let's just trigger the action.
+                                                                // Actually, standard behavior is fine if we just let it close and show toast.
+                                                            }}
+                                                        >
+                                                            Delete User
+                                                        </AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
                                         </div>
                                     </td>
                                 </tr>

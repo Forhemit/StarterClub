@@ -9,13 +9,13 @@
     "scripts": {
         "dev:marketing": "npm run dev --workspace=@starter-club/marketing-website",
         "build:marketing": "npm run build --workspace=@starter-club/marketing-website",
-        "dev:onboard": "npm run dev --workspace=@starter-club/onboard-app",
         "build:onboard": "npm run build --workspace=@starter-club/onboard-app",
         "dev:flight-deck": "npm run dev --workspace=@starter-club/flight-deck",
         "build:flight-deck": "npm run build --workspace=@starter-club/flight-deck",
-        "dev": "concurrently \"npm run dev:marketing\" \"npm run dev:onboard\" \"npm run dev:flight-deck\" --names \"MARKETING,ONBOARD,FLIGHT\" --prefix-colors \"blue,green,magenta\"",
+        "dev": "turbo dev --filter=marketing-website --filter=onboard-app --filter=super-admin",
         "build": "turbo run build",
-        "db:generate-types": "npx supabase gen types typescript --project-id $PROJECT_ID > packages/shared-types/src/database.types.ts"
+        "db:generate-types": "npx supabase gen types typescript --project-id $PROJECT_ID > packages/shared-types/src/database.types.ts",
+        "check-safety": "./scripts/check-env-safety.sh"
     },
     "devDependencies": {
         "concurrently": "^9.2.1",

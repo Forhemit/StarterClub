@@ -20,8 +20,8 @@ export function Footer() {
                     {/* Logins Row */}
                     <div className="flex gap-6 text-black/60 font-sans">
                         <Link href="/login" className="hover:text-black transition-colors">Member Login</Link>
-                        <Link href="/partner-portal" className="hover:text-black transition-colors">Partner Login</Link>
-                        <Link href="/employee-portal" className="hover:text-black transition-colors">Employee Login</Link>
+                        <Link href="/partner-login" className="hover:text-black transition-colors">Partner Login</Link>
+                        <Link href="/employee-login" className="hover:text-black transition-colors">Employee Login</Link>
                     </div>
 
                     {/* Legal Links */}
