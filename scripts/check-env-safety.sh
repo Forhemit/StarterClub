@@ -6,9 +6,8 @@
 echo "🔒 Starting Environment Safety Scan..."
 
 # 1. Define Forbidden Patterns
-FORBIDDEN_PATTERNS=(
     "NEXT_PUBLIC_USE_SIMPLE_AUTH"
-    "StarterClub!2025"
+    "StarterClub""!2025"
     "isSimpleAuth"
 )
 

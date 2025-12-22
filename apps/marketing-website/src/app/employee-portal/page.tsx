@@ -13,7 +13,8 @@ export default function EmployeePortalPage() {
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
-        if (password === "StarterClub!2025") {
+        const devPassword = process.env.NEXT_PUBLIC_DEV_PASSWORD;
+        if (devPassword && password === devPassword) {
             setIsAuthenticated(true);
             setError(false);
         } else {

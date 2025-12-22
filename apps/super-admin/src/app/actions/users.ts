@@ -3,6 +3,7 @@
 import { createAdminClient } from "@/lib/privileged/supabase-admin";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/auth";
 
 export type ActionResult<T = null> = {
     success: boolean;
@@ -27,18 +28,21 @@ import { hasCapability, UserRole } from "@/lib/modules";
 // ... (existing code)
 
 export async function createOrgAction(name: string) {
-    const currentUser = await getCurrentUser();
-    if (!currentUser || currentUser.role !== "admin") return { success: false, error: "Unauthorized" };
+    try {
+        const currentUser = await requireAdmin(); // Enforce Admin
 
-    const supabase = createAdminClient();
-    const { data: org, error } = await supabase.from("partner_orgs").insert({ name }).select().single();
+        const supabase = createAdminClient();
+        const { data: org, error } = await supabase.from("partner_orgs").insert({ name }).select().single();
 
-    if (error) return { success: false, error: error.message };
+        if (error) return { success: false, error: error.message };
 
-    await logAdminAction(currentUser.clerk_user_id, "ORG_CREATE", org.id, "ORG", { name });
+        await logAdminAction(currentUser.clerk_user_id, "ORG_CREATE", org.id, "ORG", { name });
 
-    revalidatePath("/system/users");
-    return { success: true };
+        revalidatePath("/system/users");
+        return { success: true };
+    } catch (e: any) {
+        return { success: false, error: e.message };
+    }
 }
 
 export async function inviteUserAction(
@@ -49,11 +53,11 @@ export async function inviteUserAction(
     lastName?: string
 ): Promise<ActionResult<any>> {
     const client = await clerkClient();
-    const currentUser = await getCurrentUser();
 
-    // In super-admin, we assume the user is a Super Admin (since they can access this app)
-    // But we check DB role to be safe.
-    if (!currentUser || !hasCapability(currentUser.role as UserRole, 'CAN_INVITE_ADMIN')) {
+    // Auth Check
+    const currentUser = await requireAdmin();
+    // Capability Check (Optional: Could be moved into requireAdmin or separate utility)
+    if (!hasCapability(currentUser.role as UserRole, 'CAN_INVITE_ADMIN')) {
         return { success: false, error: "Unauthorized: Missing Capability CAN_INVITE_ADMIN" };
     }
 
@@ -123,9 +127,9 @@ export async function inviteUserAction(
 
 export async function deleteUserAction(userId: string, clerkId: string): Promise<ActionResult> {
     const client = await clerkClient();
-    const currentUser = await getCurrentUser();
+    const currentUser = await requireAdmin();
 
-    if (!currentUser || !hasCapability(currentUser.role as UserRole, 'CAN_INVITE_ADMIN')) return { success: false, error: "Unauthorized" };
+    if (!hasCapability(currentUser.role as UserRole, 'CAN_INVITE_ADMIN')) return { success: false, error: "Unauthorized" };
 
     try {
         // Clerk Deletion (Hard Delete - Remote)
@@ -158,9 +162,7 @@ export async function updateUserAction(
     data: { firstName: string; lastName: string; role: string; orgId: string | null }
 ): Promise<ActionResult> {
     const client = await clerkClient();
-    const currentUser = await getCurrentUser();
-
-    if (!currentUser || currentUser.role !== "admin") return { success: false, error: "Unauthorized" };
+    const currentUser = await requireAdmin(); // Enforce Admin
 
     try {
         await client.users.updateUser(clerkId, {

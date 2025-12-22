@@ -45,7 +45,8 @@ export const KioskFlow: React.FC<KioskFlowProps> = ({ onUnlock, members, onCompl
     }, []);
 
     const handleUnlockSubmit = () => {
-        if (password === 'StarterClub!2025') {
+        const devPassword = import.meta.env.VITE_DEV_PASSWORD;
+        if (devPassword && password === devPassword) {
             toast.success('Kiosk unlocked');
             onUnlock();
         } else {

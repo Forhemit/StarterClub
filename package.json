@@ -12,7 +12,7 @@
         "build:onboard": "npm run build --workspace=@starter-club/onboard-app",
         "dev:flight-deck": "npm run dev --workspace=@starter-club/flight-deck",
         "build:flight-deck": "npm run build --workspace=@starter-club/flight-deck",
-        "dev": "turbo dev --filter=marketing-website --filter=onboard-app --filter=super-admin",
+        "dev": "turbo dev --filter=@starter-club/marketing-website --filter=@starter-club/onboard-app --filter=@starter-club/super-admin",
         "build": "turbo run build",
         "db:generate-types": "npx supabase gen types typescript --project-id $PROJECT_ID > packages/shared-types/src/database.types.ts",
         "check-safety": "./scripts/check-env-safety.sh"

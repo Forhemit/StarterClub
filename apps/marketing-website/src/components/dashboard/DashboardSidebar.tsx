@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
-    LayoutDashboard, BookOpen, Users, Calculator, Library, FileText, Package, Send, BarChart, ShieldCheck, Menu, Database, Flag
+    LayoutDashboard, BookOpen, Users, Calculator, Library, FileText, Package, Send, BarChart, ShieldCheck, Menu, Database, Flag, CheckSquare
 } from "lucide-react";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { useState } from "react";
@@ -30,6 +30,7 @@ export function DashboardSidebar({ className, mobile, onLinkClick, role = "partn
             { href: "/dashboard/partner", label: "Dashboard", icon: LayoutDashboard },
             { href: "/dashboard/partner/story", label: "Our Story", icon: BookOpen },
             { href: "/dashboard/partner/intros", label: "Intros", icon: Users },
+            { href: "/dashboard/partner/foundation", label: "Foundation", icon: CheckSquare },
             { href: "/dashboard/partner/roi", label: "ROI Lab", icon: Calculator },
             { href: "/dashboard/partner/resources", label: "Resources", icon: Library },
             { href: "/dashboard/partner/case-studies", label: "Case Studies", icon: FileText },
@@ -87,7 +88,10 @@ export function DashboardSidebar({ className, mobile, onLinkClick, role = "partn
                     </div>
                 </ScrollArea>
 
-                <div className="px-4 mt-auto border-t border-black/5 pt-4 mx-4">
+                <div className="px-4 mt-auto border-t border-black/5 pt-4 mx-4 space-y-2">
+                    <div className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground opacity-50 text-center">
+                        {process.env.NODE_ENV === 'production' ? 'Production' : 'Development'}
+                    </div>
                     <div className="flex items-center gap-3">
                         <UserButton afterSignOutUrl="/" />
                         <div className="text-xs">
