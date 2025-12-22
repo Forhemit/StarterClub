@@ -18,8 +18,9 @@ export default function DevLogin({ title, targetUrl, description }: DevLoginProp
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (password === "StarterClub!2025") {
-            window.location.href = targetUrl;
+        const devPassword = process.env.NEXT_PUBLIC_DEV_PASSWORD;
+        if (devPassword && password === devPassword) {
+            window.location.href = targetUrl; // Found 1 instance
         } else {
             setError("Incorrect Dev Password");
         }

@@ -18,7 +18,7 @@ export default function SecretMenuPage() {
                     <div className="space-y-2">
                         <label className="text-xs uppercase tracking-widest text-zinc-600 font-bold">Universal Password</label>
                         <div className="text-xl bg-black p-4 rounded border border-zinc-800 select-all hover:border-green-800 transition-colors">
-                            StarterClub!2025
+                            [REDACTED]
                         </div>
                     </div>
 

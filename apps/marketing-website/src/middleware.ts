@@ -7,22 +7,21 @@ const isAdminRoute = createRouteMatcher(["/dashboard/super-admin(.*)"]);
 export default clerkMiddleware(async (auth, req) => {
 
     try {
+        // BLOCK DANGEROUS DEV ROUTES IN PRODUCTION
+        if (process.env.NODE_ENV === "production") {
+            const path = req.nextUrl.pathname;
+            if (path.startsWith("/secret-menu") || path.startsWith("/employee-portal") || path.startsWith("/simple-login")) {
+                return NextResponse.redirect(new URL("/", req.url));
+            }
+        }
+
         // Protect all dashboard routes
         if (isDashboardRoute(req)) {
             await auth.protect();
         }
 
-        // Additional role check for super-admin routes
-        if (isAdminRoute(req)) {
-            const { sessionClaims } = await auth();
-            const role = (sessionClaims?.publicMetadata as { role?: string } | undefined)?.role;
-
-            if (role !== 'admin') {
-                // Redirect non-admins to partner dashboard
-                const redirectUrl = new URL('/dashboard/partner', req.url);
-                return NextResponse.redirect(redirectUrl);
-            }
-        }
+        // Removed legacy legacy checks for super-admin routes from marketing middleware
+        // Super Admin app should handle its own auth via its own middleware.
     } catch (error) {
         console.error("Middleware Error:", error);
         // Allow public routes to proceed even if auth fails
