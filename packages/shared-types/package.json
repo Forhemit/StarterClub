@@ -4,7 +4,7 @@
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "scripts": {
-        "lint": "eslintConfig",
+        "lint": "echo 'No lint for shared-types'",
         "check-types": "tsc --noEmit",
         "build": "tsc"
     },

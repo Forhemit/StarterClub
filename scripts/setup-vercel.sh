@@ -80,9 +80,23 @@ echo "Please enter your CLERK_SECRET_KEY (Production):"
 read -r CLERK_SECRET_KEY
 
 if [ -n "$CLERK_PUB_KEY" ] && [ -n "$CLERK_SECRET_KEY" ]; then
-    echo "Setting Clerk Keys for $MARKETING..."
+    echo "Setting Clerk Keys..."
+    
+    # Marketing
+    echo " -> for $MARKETING"
     add_env "$MARKETING" "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY" "$CLERK_PUB_KEY" "production"
     add_env "$MARKETING" "CLERK_SECRET_KEY" "$CLERK_SECRET_KEY" "production"
+
+    # Flight Deck (Partner)
+    echo " -> for $PARTNER"
+    add_env "$PARTNER" "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY" "$CLERK_PUB_KEY" "production"
+    add_env "$PARTNER" "CLERK_SECRET_KEY" "$CLERK_SECRET_KEY" "production"
+
+    # Super Admin
+    echo " -> for $ADMIN"
+    add_env "$ADMIN" "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY" "$CLERK_PUB_KEY" "production"
+    add_env "$ADMIN" "CLERK_SECRET_KEY" "$CLERK_SECRET_KEY" "production"
+    
     echo "Done!"
 else
     echo "Skipping Clerk setup (missing keys)."
