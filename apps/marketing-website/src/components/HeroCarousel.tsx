@@ -38,7 +38,7 @@ export function HeroCarousel() {
                         alt="Starter Club Workspace"
                         fill
                         className="object-cover"
-                        priority
+                        loading="eager"
                     />
                     {/* Inner Shadow Gradient for depth */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />

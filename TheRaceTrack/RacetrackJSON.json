@@ -1,0 +1,142 @@
+{
+  "project_manifest": {
+    "project_name": "Starter Club",
+    "version": "10.1.0 (Harmonized Master)",
+    "last_updated": "2025-12-23",
+    "legal_structure": "Public Benefit Corporation (PBC)",
+    "mission_charter": "To build and sustain viable, long-term economic resilience for San Francisco businesses.",
+    "core_philosophy": "Build First, Don't Break. (Structure Creates Speed).",
+    "technical_imperative": "NO_BOOLEANS_STRICT_LIFECYCLE (Status is never 'True', it is 'Verified_at_[Timestamp]' or 'Expired')."
+  },
+
+  "brand_identity_engine": {
+    "theme": "High-Performance Racing (Formula 1 Style)",
+    "tagline": "Built for Speed. Built to Win. Built to Last.",
+    "visual_language": "Dark mode, Neon telemetry, Carbon fiber textures.",
+    "kinetic_vocabulary_map": {
+      "member": "Driver",
+      "staff": "Crew Chief / Race Engineer",
+      "dashboard_ui": "The Cockpit",
+      "business_entity": "The Car",
+      "market_environment": "The Track",
+      "checklist_audit": "The Chassis Spec / Tech Inspection",
+      "data_storage": "The Paddock Vault",
+      "crisis_simulation": "The Simulator / War Room",
+      "foundation_score": "Resilience Moat Rating (RMR)"
+    }
+  },
+
+  "global_role_architecture": {
+    "driver": {
+      "type": "User",
+      "access": "Read/Write Own Data",
+      "key_feature": "Can generate 'Secure Tokens' for external viewing."
+    },
+    "crew_chief": {
+      "type": "Staff",
+      "access": "Verify/Certify",
+      "constraint": "Cannot view raw 'Vault' files without Driver's token."
+    },
+    "scout": {
+      "type": "Referral Partner (Broker/VC)",
+      "access": "Commission Dashboard Only",
+      "goal": "Monetize deal flow via 'The Resilience Audit'."
+    },
+    "crisis_delegate": {
+      "type": "Designated Survivor",
+      "access": "Conditional",
+      "trigger": "System State = 'Active_Crisis' AND (Biometric_Auth + Death_Cert_Upload)."
+    }
+  },
+
+  "product_ecosystem": {
+    "entry_points": {
+      "tool_1": "The Moat Gap Analysis",
+      "description": "Interactive 'Report Card' using compound conditional questions.",
+      "tool_2": "The Wall Simulator",
+      "description": "Onboarding hook. Simulates a crash (e.g., Server Failure) to sell resilience."
+    },
+    "membership_tiers": {
+      "paddock_pass": {
+        "cost": "Free",
+        "features": ["Community Access", "Basic Checklists", "Ribbon-Cutting Report"],
+        "strategy": "Lead Gen / Civic Good."
+      },
+      "grid_access": {
+        "cost": "$129/mo",
+        "ui_context": "Access to 'The Cockpit' Dashboard.",
+        "features": ["War Room Simulators", "Vault Storage", "Tech Inspections", "Coworking"],
+        "strategy": "Recurring Revenue (Gas Money)."
+      },
+      "factory_team": {
+        "cost": "$8,000 - $10,000 (One-time)",
+        "features": ["Done-For-You Build", "Full Pit Crew Support"],
+        "strategy": "High Ticket (Prize Money)."
+      }
+    },
+    "certification_product": {
+      "name": "The Resilience Tech Inspection",
+      "deliverable": "Capital-Ready Packet (Certificate + Lender Letter + Token).",
+      "validity_rule": "Dynamic. Status degrades if verification age > 180 days."
+    }
+  },
+
+  "sales_and_financing_logic": {
+    "triage_matrix": {
+      "early_exploring": "Assign to Paddock (Free).",
+      "hands_on_skeptic": "Assign to Grid (Member) -> Use 'Sponsorship Override' (30-Day Free Trial).",
+      "serious_funded": "Assign to Factory Team (DFY)."
+    },
+    "scout_program_mechanics": {
+      "target_persona": "Business Brokers, VCs, Commercial Real Estate Agents",
+      "payout_structure": {
+        "dfy_close": { "amount": 1000, "currency": "USD", "trigger": "Factory Team Payment Cleared" },
+        "mrr_share": { "percentage": 0.10, "duration": "Trailing 12 Months", "trigger": "Grid Access Subscription" }
+      },
+      "clawback_rule": "If member churns < 90 days, commission is voided."
+    },
+    "dfy_payment_options": {
+      "plan_a": { "name": "The Sprint", "structure": "100% Upfront", "benefit": "Fastest Launch" },
+      "plan_b": { "name": "Factory Direct", "structure": "4 Monthly Installments (Internal Stripe)", "benefit": "Simplicity" },
+      "plan_c": { "name": "Capital Runway", "structure": "BNPL (Afterpay/Klarna)", "benefit": "Payment deferred 30 days." }
+    }
+  },
+
+  "feature_specifications": {
+    "the_paddock_vault": {
+      "requirement": "Zero-Knowledge Architecture.",
+      "link_rot_bot": "Automated monthly ping to verify backup links are active. Downgrade status if 404.",
+      "escrow_lock": "Admin passwords for DFY clients remain locked until final payment."
+    },
+    "the_war_room_simulator": {
+      "type": "Tabletop Exercise Engine",
+      "scenarios": [
+        { "id": "negative_load", "name": "The Siege", "desc": "60-Day Lockout / Revenue Stop." },
+        { "id": "positive_load", "name": "The Viral Tsunami", "desc": "1000% Traffic Spike / Scaling Crisis." }
+      ],
+      "output": "30-60-90 Day Action Plan."
+    }
+  },
+
+  "security_legal_governance": {
+    "liability_shields": [
+      {
+        "clause": "Snapshot Validity",
+        "text": "Certification is valid ONLY at timestamp of issuance. Items imply a 'Decay Rate' of 180 days."
+      },
+      {
+        "clause": "UPL Disclaimer",
+        "text": "Starter Club provides operational audits, not legal or tax advice."
+      }
+    ],
+    "community_policing": {
+      "protocol": "Red Card System",
+      "trigger": "Predatory solicitation or poaching staff.",
+      "consequence": "Immediate ban / Placement Fee for poaching."
+    },
+    "insurance_mandate": {
+      "type": "Errors & Omissions (E&O)",
+      "focus": "Third-Party Verification Liability."
+    }
+  }
+}

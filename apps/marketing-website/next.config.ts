@@ -7,12 +7,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 const nextConfig: NextConfig = {
   output: "standalone",
   experimental: {
-    // optimizePackageImports didn't work, trying modularizeImports
-  },
-  modularizeImports: {
-    "lucide-react": {
-      transform: "lucide-react/dist/esm/icons/{{kebabCase member}}.js",
-    },
+    optimizePackageImports: ["lucide-react"],
   },
   images: {
     unoptimized: true,

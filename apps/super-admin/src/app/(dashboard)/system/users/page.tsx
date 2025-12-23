@@ -14,20 +14,29 @@ export default async function UsersAdminPage() {
     let error = null;
 
     try {
-        console.log("Admin Page: Fetching data...");
-        // Re-import safe factory
-        const adminAuthClient = createAdminClient();
+        const supabase = createAdminClient();
+        
+        // Fetch users
+        const { data: userData, error: userError } = await supabase
+            .from("partner_users")
+            .select(`
+                *,
+                org:partner_orgs(name)
+            `)
+            .order("created_at", { ascending: false });
 
-        // Explicitly check fetching
-        const usersReq = await adminAuthClient.from("partner_users").select("*").order("created_at", { ascending: false });
-        if (usersReq.error) throw new Error(`Users fetch error: ${usersReq.error.message}`);
+        if (userError) throw userError;
+        users = userData as any;
 
-        const orgsReq = await adminAuthClient.from("partner_orgs").select("*").order("name");
-        if (orgsReq.error) throw new Error(`Orgs fetch error: ${orgsReq.error.message}`);
+        // Fetch orgs
+        const { data: orgData, error: orgError } = await supabase
+            .from("partner_orgs")
+            .select("*")
+            .order("name", { ascending: true });
 
-        users = (usersReq.data || []) as PartnerUser[];
-        orgs = (orgsReq.data || []) as PartnerOrg[];
-        console.log("Admin Page: Data fetched successfully.");
+        if (orgError) throw orgError;
+        orgs = orgData as any;
+
     } catch (e: any) {
         console.error("Admin Page Load Error:", e);
         error = e.message || "Unknown error";
