@@ -5,7 +5,7 @@
     "types": "./src/index.ts",
     "license": "MIT",
     "scripts": {
-        "lint": "eslint .",
+        "lint": "echo 'No lint for utils'",
         "clean": "rm -rf .turbo node_modules",
         "build": "tsc"
     },

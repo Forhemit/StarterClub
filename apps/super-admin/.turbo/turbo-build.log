@@ -20,11 +20,11 @@
   · optimizePackageImports
 
 [37m[1m [22m[39m Creating an optimized production build ...
-[32m[1m✓[22m[39m Compiled successfully in 4.8s
+[32m[1m✓[22m[39m Compiled successfully in 4.5s
 [37m[1m [22m[39m Skipping validation of types
-[?25l[37m[1m [22m[39m Collecting page data using 7 workers  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m...[39m[2K[1G[1A[2K[1G[?25h[37m[1m [22m[39m Collecting page data using 7 workers in 531.7ms    [32m[1m✓[22m[39m Collecting page data using 7 workers in 531.7ms 
-[?25l[37m[1m [22m[39m Generating static pages using 7 workers (0/9)  [36m[    ][39m[2K[1G[1A[2K[1G[?25h[32m[1m✓[22m[39m Generating static pages using 7 workers (9/9) in 111.7ms
-[?25l[37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m..[39m[2K[1G[1A[2K[1G[?25h[37m[1m [22m[39m Finalizing page optimization in 326.8ms    [32m[1m✓[22m[39m Finalizing page optimization in 326.8ms 
+[?25l[37m[1m [22m[39m Collecting page data using 7 workers  [36m.[39m[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m..[39m[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m...[39m[2K[1G[?25h[37m[1m [22m[39m Collecting page data using 7 workers in 566.6ms    [32m[1m✓[22m[39m Collecting page data using 7 workers in 566.6ms 
+[?25l[37m[1m [22m[39m Generating static pages using 7 workers (0/9)  [36m[    ][39m[2K[1G[?25h[32m[1m✓[22m[39m Generating static pages using 7 workers (9/9) in 125.2ms
+[?25l[37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m..[39m[2K[1G[?25h[37m[1m [22m[39m Finalizing page optimization in 388.8ms    [32m[1m✓[22m[39m Finalizing page optimization in 388.8ms 
 
 [4mRoute (app)[24m
 ┌ ○ /
