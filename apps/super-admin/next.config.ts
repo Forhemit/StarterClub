@@ -9,6 +9,14 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "o341ovdtm5.ufs.sh",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
