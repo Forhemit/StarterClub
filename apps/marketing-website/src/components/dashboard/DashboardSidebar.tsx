@@ -60,9 +60,16 @@ export function DashboardSidebar({ className, mobile, onLinkClick, role = "partn
             <div className="space-y-4 py-4 h-full flex flex-col">
                 {!mobile && (
                     <div className="px-4 py-2 border-b border-black/5 mx-4 mb-4">
-                        <h2 className="text-xl font-bold tracking-tight text-[var(--accent)] font-bebas">
-                            STARTER CLUB
-                        </h2>
+                        <div className="flex items-center gap-2">
+                            <img
+                                src="https://o341ovdtm5.ufs.sh/f/az1cgdYYLQv4wopWHB0jbDenCfGJgyZm9vhqzIaK6NLTWo8V"
+                                alt="Starter Club Logo"
+                                className="h-8 w-8 object-contain rounded-sm"
+                            />
+                            <h2 className="text-xl font-bold tracking-tight text-[var(--accent)] font-bebas">
+                                STARTER CLUB
+                            </h2>
+                        </div>
                         <p className="text-xs text-muted-foreground capitalize">{role.replace("_", " ")} Portal</p>
                     </div>
                 )}
@@ -119,7 +126,14 @@ export function DashboardMobileNav({ role = "partner" }: { role?: DashboardRole 
             </SheetTrigger>
             <SheetContent side="left" className="p-0 w-72">
                 <SheetHeader className="px-6 py-4 border-b text-left">
-                    <SheetTitle className="text-[var(--accent)] font-bebas text-xl">STARTER CLUB</SheetTitle>
+                    <div className="flex items-center gap-2">
+                        <img
+                            src="https://o341ovdtm5.ufs.sh/f/az1cgdYYLQv4wopWHB0jbDenCfGJgyZm9vhqzIaK6NLTWo8V"
+                            alt="Starter Club Logo"
+                            className="h-8 w-8 object-contain rounded-sm"
+                        />
+                        <SheetTitle className="text-[var(--accent)] font-bebas text-xl">STARTER CLUB</SheetTitle>
+                    </div>
                 </SheetHeader>
                 <DashboardSidebar role={role} mobile onLinkClick={() => setOpen(false)} />
             </SheetContent>

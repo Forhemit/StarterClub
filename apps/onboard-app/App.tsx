@@ -172,7 +172,11 @@ export default function App() {
       {view !== ViewState.KIOSK && (
         <header className="absolute top-0 left-0 right-0 p-6 flex justify-between items-center z-10 bg-slate-50/90 backdrop-blur-sm">
           <div className="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg"></div>
+            <img
+              src="https://o341ovdtm5.ufs.sh/f/az1cgdYYLQv4wopWHB0jbDenCfGJgyZm9vhqzIaK6NLTWo8V"
+              alt="Starter Club Logo"
+              className="w-8 h-8 rounded-sm object-contain"
+            />
             {APP_NAME}
           </div>
 

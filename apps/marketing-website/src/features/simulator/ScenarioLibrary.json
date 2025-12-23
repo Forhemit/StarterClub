@@ -1,0 +1,44 @@
+[
+    {
+        "id": "scenario_siege",
+        "name": "The Siege (Revenue Halt)",
+        "description": "A sudden 60-day lockout of your primary revenue channel (e.g., Stripe ban, Platform de-platforming).",
+        "difficulty": "Hard",
+        "required_assets": [
+            {
+                "key": "emergency_cash_reserves",
+                "label": "3 Months Operating Cash"
+            },
+            {
+                "key": "alternative_payment_processor",
+                "label": "Backup Merchant ID"
+            },
+            {
+                "key": "customer_list_csv",
+                "label": "Off-Platform Customer Backup"
+            }
+        ],
+        "success_threshold": 2
+    },
+    {
+        "id": "scenario_tsunami",
+        "name": "The Viral Tsunami",
+        "description": "Traffic spikes 1000% overnight. Can your infrastructure handle the load without crashing?",
+        "difficulty": "Medium",
+        "required_assets": [
+            {
+                "key": "auto_scaling_config",
+                "label": "Server Auto-Scaling Policy"
+            },
+            {
+                "key": "customer_support_playbook",
+                "label": "Triaging Ticket Surge"
+            },
+            {
+                "key": "inventory_backorder_plan",
+                "label": "Overselling Protocol"
+            }
+        ],
+        "success_threshold": 3
+    }
+]

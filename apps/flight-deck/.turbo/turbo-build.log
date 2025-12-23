@@ -3,6 +3,10 @@
 > @starter-club/flight-deck@0.1.0 build
 > next build
 
+ [33m[1m⚠[22m[39m `eslint` configuration in next.config.ts is no longer supported. See more info here: https://nextjs.org/docs/app/api-reference/cli/next#next-lint-options
+ [33m[1m⚠[22m[39m Invalid next.config.ts options detected: 
+ [33m[1m⚠[22m[39m     Unrecognized key(s) in object: 'eslint'
+ [33m[1m⚠[22m[39m See more info here: https://nextjs.org/docs/messages/invalid-next-config
  [33m[1m⚠[22m[39m Warning: Next.js inferred your workspace root, but it may not be correct.
  We detected multiple lockfiles and selected the directory of /Users/stephenstokes/package-lock.json as the root directory.
  To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
@@ -12,24 +16,25 @@
 
    [1m[38;2;173;127;168m▲ Next.js 16.0.10[39m[22m (Turbopack)
    - Environments: .env.local
+   - Experiments (use with caution):
+     · optimizePackageImports
 
  [33m[1m⚠[22m[39m The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
  [37m[1m [22m[39m Creating an optimized production build ...
- [32m[1m✓[22m[39m Compiled successfully in 4.5s
-[?25l [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[?25h[?25l [37m[1m [22m[39m Finished TypeScript in 5.1s  [36m.[39m[2K[1G[1A[2K[1G[?25h [37m[1m [22m[39m Finished TypeScript in 5.1s     [32m[1m✓[22m[39m Finished TypeScript in 5.1s 
-[?25l [37m[1m [22m[39m Collecting page data using 7 workers  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Collecting page data using 7 workers  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Collecting page data using 7 workers  [36m...[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Collecting page data using 7 workers  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Collecting page data using 7 workers  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Collecting page data using 7 workers  [36m...[39m[2K[1G[1A[2K[1G[?25h [37m[1m [22m[39m Collecting page data using 7 workers in 1021.3ms     [32m[1m✓[22m[39m Collecting page data using 7 workers in 1021.3ms 
-[?25l [37m[1m [22m[39m Generating static pages using 7 workers (0/9)  [36m[    ][39m[2K[1G[1A[2K[1G[1A[2K[1G [37m[1m [22m[39m Generating static pages using 7 workers (0/9)  [36m[=   ][39m[2K[1G[1A[2K[1G[1A[2K[1G [37m[1m [22m[39m Generating static pages using 7 workers (0/9)  [36m[==  ][39m[2K[1G[1A[2K[1G[1A[2K[1G [37m[1m [22m[39m Generating static pages using 7 workers (1/9)  [36m[=== ][39m[2K[1G[1A[2K[1G[1A[2K[1G[?25h [32m[1m✓[22m[39m Generating static pages using 7 workers (9/9) in 664.5ms
-[?25l [37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G[1A[2K[1G[?25h [37m[1m [22m[39m Finalizing page optimization in 16.3ms     [32m[1m✓[22m[39m Finalizing page optimization in 16.3ms 
+ [32m[1m✓[22m[39m Compiled successfully in 12.5s
+ [37m[1m [22m[39m Skipping validation of types
+[?25l [37m[1m [22m[39m Collecting page data using 7 workers  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Collecting page data using 7 workers  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Collecting page data using 7 workers  [36m...[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Collecting page data using 7 workers  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Collecting page data using 7 workers  [36m..[39m[2K[1G[1A[2K[1G[?25h [37m[1m [22m[39m Collecting page data using 7 workers in 860.3ms     [32m[1m✓[22m[39m Collecting page data using 7 workers in 860.3ms 
+[?25l [37m[1m [22m[39m Generating static pages using 7 workers (0/8)  [36m[    ][39m[2K[1G[1A[2K[1G[1A[2K[1G [37m[1m [22m[39m Generating static pages using 7 workers (0/8)  [36m[=   ][39m[2K[1G[1A[2K[1G[1A[2K[1G [37m[1m [22m[39m Generating static pages using 7 workers (0/8)  [36m[==  ][39m[2K[1G[1A[2K[1G[1A[2K[1G [37m[1m [22m[39m Generating static pages using 7 workers (0/8)  [36m[=== ][39m[2K[1G[1A[2K[1G[1A[2K[1G [37m[1m [22m[39m Generating static pages using 7 workers (3/8)  [36m[ ===][39m[2K[1G[1A[2K[1G[1A[2K[1G[?25h [32m[1m✓[22m[39m Generating static pages using 7 workers (8/8) in 856.5ms
+[?25l [37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m...[39m[2K[1G[1A[2K[1G[?25h [37m[1m [22m[39m Finalizing page optimization in 530.0ms     [32m[1m✓[22m[39m Finalizing page optimization in 530.0ms 
 
 [4mRoute (app)[24m
 ┌ ○ /
 ├ ○ /_not-found
-├ ƒ /callback
-├ ○ /dashboard
+├ ƒ /dashboard
 ├ ○ /dashboard/mission-control
-├ ○ /dashboard/my-board
+├ ƒ /dashboard/my-board
 ├ ○ /dashboard/settings
-└ ○ /login
+└ ƒ /onboarding
 
 
 ƒ Proxy (Middleware)

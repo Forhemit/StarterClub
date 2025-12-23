@@ -23,6 +23,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Starter Club SF - Coming Soon",
   description: "San Francisco is Done Waiting. It’s Time to Start. A workshop for founders, creators, and organizers.",
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 

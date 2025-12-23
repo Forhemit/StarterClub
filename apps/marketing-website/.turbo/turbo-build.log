@@ -12,64 +12,42 @@
 
    [1m[38;2;173;127;168m▲ Next.js 16.0.10[39m[22m (Turbopack)
    - Environments: .env.local, .env
+   - Experiments (use with caution):
+     · optimizePackageImports
 
  [33m[1m⚠[22m[39m The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
  [37m[1m [22m[39m Creating an optimized production build ...
- [32m[1m✓[22m[39m Compiled successfully in 13.0s
-[?25l [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[?25h[?25l [37m[1m [22m[39m Finished TypeScript in 4.6s  [36m.[39m[2K[1G[1A[2K[1G[?25h [37m[1m [22m[39m Finished TypeScript in 4.6s     [32m[1m✓[22m[39m Finished TypeScript in 4.6s 
-[?25l [37m[1m [22m[39m Collecting page data using 7 workers  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Collecting page data using 7 workers  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Collecting page data using 7 workers  [36m...[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Collecting page data using 7 workers  [36m.[39m[2K[1G[1A[2K[1G[?25h [37m[1m [22m[39m Collecting page data using 7 workers in 754.4ms     [32m[1m✓[22m[39m Collecting page data using 7 workers in 754.4ms 
-[?25l [37m[1m [22m[39m Generating static pages using 7 workers (0/34)  [36m[    ][39m[2K[1G[1A[2K[1G[1A[2K[1G [37m[1m [22m[39m Generating static pages using 7 workers (0/34)  [36m[=   ][39m[2K[1G[1A[2K[1G[1A[2K[1G [37m[1m [22m[39m Generating static pages using 7 workers (1/34)  [36m[==  ][39m[2K[1G[1A[2K[1G[1A[2K[1G [37m[1m [22m[39m Generating static pages using 7 workers (19/34)  [36m[=== ][39m[2K[1G[1A[2K[1G[1A[2K[1G [37m[1m [22m[39m Generating static pages using 7 workers (25/34)  [36m[ ===][39m[2K[1G[1A[2K[1G[1A[2K[1G[?25h [32m[1m✓[22m[39m Generating static pages using 7 workers (34/34) in 840.9ms
-[?25l [37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m..[39m[2K[1G[1A[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m...[39m[2K[1G[1A[2K[1G[?25h [37m[1m [22m[39m Finalizing page optimization in 567.1ms     [32m[1m✓[22m[39m Finalizing page optimization in 567.1ms 
 
-[4mRoute (app)[24m
-┌ ○ /
-├ ○ /_not-found
-├ ƒ /dashboard
-├ ○ /dashboard/partner
-├ ○ /dashboard/partner-admin
-├ ○ /dashboard/partner-admin/settings
-├ ƒ /dashboard/partner-admin/team
-├ ○ /dashboard/partner/actions
-├ ƒ /dashboard/partner/case-studies
-├ ○ /dashboard/partner/intros
-├ ○ /dashboard/partner/packages
-├ ○ /dashboard/partner/profile
-├ ○ /dashboard/partner/reports
-├ ○ /dashboard/partner/reports/sample
-├ ƒ /dashboard/partner/resources
-├ ƒ /dashboard/partner/roi
-├ ○ /dashboard/partner/story
-├ ○ /dashboard/select-role
-├ ○ /dashboard/super-admin
-├ ƒ /dashboard/super-admin/api-keys
-├ ƒ /dashboard/super-admin/audit-logs
-├ ƒ /dashboard/super-admin/case-studies
-├ ƒ /dashboard/super-admin/debug
-├ ○ /dashboard/super-admin/debug/seed
-├ ○ /dashboard/super-admin/flags
-├ ○ /dashboard/super-admin/logs
-├ ○ /dashboard/super-admin/resources
-├ ƒ /dashboard/super-admin/submissions
-├ ƒ /dashboard/super-admin/users
-├ ƒ /dashboard/super-admin/verify
-├ ○ /debug-env
-├ ○ /employee-portal
-├ ○ /legal/california-privacy-rights
-├ ○ /legal/cookies
-├ ○ /legal/privacy
-├ ○ /legal/terms
-├ ○ /login
-├ ○ /partner-portal
-├ ○ /secret-menu
-├ ƒ /sign-in/[[...sign-in]]
-├ ƒ /sign-up/[[...sign-up]]
-├ ○ /simple-login
-└ ○ /support
+> Build error occurred
+Error: Turbopack build failed with 1 errors:
+./Downloads/Projects/12 December 2025/Starter Club/apps/marketing-website/src/components/cockpit/CockpitSidebar.tsx:2:10
+Ecmascript file had an error
+[0m [90m 1 |[39m [36mimport[39m [33mLink[39m [36mfrom[39m [32m"next/link"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 2 |[39m [36mimport[39m { usePathname } [36mfrom[39m [32m"next/navigation"[39m[33m;[39m
+ [90m   |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 3 |[39m [36mimport[39m { cn } [36mfrom[39m [32m"@/lib/utils"[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m {
+ [90m 5 |[39m     [33mLayoutDashboard[39m[33m,[39m[0m
+
+You're importing a component that needs `usePathname`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
+
+ Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
 
 
-ƒ Proxy (Middleware)
 
-○  (Static)   prerendered as static content
-ƒ  (Dynamic)  server-rendered on demand
+Import trace:
+  Server Component:
+    ./Downloads/Projects/12 December 2025/Starter Club/apps/marketing-website/src/components/cockpit/CockpitSidebar.tsx
+    ./Downloads/Projects/12 December 2025/Starter Club/apps/marketing-website/src/components/cockpit/CockpitLayout.tsx
+    ./Downloads/Projects/12 December 2025/Starter Club/apps/marketing-website/src/app/cockpit/page.tsx
 
-[?25h⠙[1G[0K
+
+    at <unknown> (./Downloads/Projects/12 December 2025/Starter Club/apps/marketing-website/src/components/cockpit/CockpitSidebar.tsx:2:10)
+⠙[1G[0K[1mnpm[22m [31merror[39m Lifecycle script `build` failed with error:
+⠙[1G[0K[1mnpm[22m [31merror[39m [94mcode[39m [33m1[39m
+⠙[1G[0K[1mnpm[22m [31merror[39m [94mpath[39m /Users/stephenstokes/Downloads/Projects/12 December 2025/Starter Club/apps/marketing-website
+⠙[1G[0K[1mnpm[22m [31merror[39m [94mworkspace[39m @starter-club/marketing-website@0.1.0
+⠙[1G[0K[1mnpm[22m [31merror[39m [94mlocation[39m /Users/stephenstokes/Downloads/Projects/12 December 2025/Starter Club/apps/marketing-website
+⠙[1G[0K[1mnpm[22m [31merror[39m command failed
+⠙[1G[0K[1mnpm[22m [31merror[39m [94mcommand[39m sh -c next build
+⠙[1G[0K

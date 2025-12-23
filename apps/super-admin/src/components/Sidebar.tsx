@@ -14,7 +14,12 @@ export function Sidebar({ userRole = "admin" }: { userRole?: UserRole }) {
 
     return (
         <aside className="w-64 bg-gray-900 text-white min-h-screen p-4 flex flex-col">
-            <div className="mb-8 p-4">
+            <div className="mb-8 p-4 flex items-center gap-2">
+                <img
+                    src="https://o341ovdtm5.ufs.sh/f/az1cgdYYLQv4wopWHB0jbDenCfGJgyZm9vhqzIaK6NLTWo8V"
+                    alt="Starter Club Logo"
+                    className="w-8 h-8 rounded-sm object-contain"
+                />
                 <h1 className="text-xl font-bold">Super Admin</h1>
             </div>
 
