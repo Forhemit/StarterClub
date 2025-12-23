@@ -340,6 +340,223 @@ export type Database = {
           },
         ]
       },
+      user_businesses: {
+        Row: {
+          id: string
+          user_id: string
+          business_name: string
+          primary_module_id: string | null
+          legal_structure: string | null
+          ein: string | null
+          start_date: string | null
+          address: string | null
+          contact_info: Json
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          business_name: string
+          primary_module_id?: string | null
+          legal_structure?: string | null
+          ein?: string | null
+          start_date?: string | null
+          address?: string | null
+          contact_info?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          business_name?: string
+          primary_module_id?: string | null
+          legal_structure?: string | null
+          ein?: string | null
+          start_date?: string | null
+          address?: string | null
+          contact_info?: Json
+          created_at?: string
+          updated_at?: string
+        }
+      },
+      modules: {
+        Row: {
+          id: string
+          name: string
+          description: string | null
+          module_type: string
+          parent_id: string | null
+          version: string
+          author_name: string
+          tags: string[]
+          icon: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          description?: string | null
+          module_type?: string
+          parent_id?: string | null
+          version?: string
+          author_name?: string
+          tags?: string[]
+          icon?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          description?: string | null
+          module_type?: string
+          parent_id?: string | null
+          version?: string
+          author_name?: string
+          tags?: string[]
+          icon?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      },
+      module_items: {
+        Row: {
+          id: string
+          module_id: string
+          item_id: string
+          display_order: number
+        }
+        Insert: {
+          id?: string
+          module_id: string
+          item_id: string
+          display_order?: number
+        }
+        Update: {
+          id?: string
+          module_id?: string
+          item_id?: string
+          display_order?: number
+        }
+      },
+      checklist_items: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          category_id: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          category_id?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string | null
+          category_id?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      },
+      user_checklist_status: {
+        Row: {
+          id: string
+          user_business_id: string
+          item_id: string
+          status_id: string | null
+          completed_at: string | null
+          notes: string | null
+        }
+        Insert: {
+          id?: string
+          user_business_id: string
+          item_id: string
+          status_id?: string | null
+          completed_at?: string | null
+          notes?: string | null
+        }
+        Update: {
+          id?: string
+          user_business_id?: string
+          item_id?: string
+          status_id?: string | null
+          completed_at?: string | null
+          notes?: string | null
+        }
+      },
+      statuses: {
+        Row: {
+          id: string
+          name: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          created_at?: string
+        }
+      },
+      categories: {
+        Row: {
+          id: string
+          name: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          created_at?: string
+        }
+      },
+      clients: {
+        Row: {
+          id: string
+          first_name: string
+          last_name: string
+          email: string | null
+          phone: string | null
+          user_business_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          first_name: string
+          last_name: string
+          email?: string | null
+          phone?: string | null
+          user_business_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          first_name?: string
+          last_name?: string
+          email?: string | null
+          phone?: string | null
+          user_business_id?: string
+          created_at?: string
+        }
+      },
       audit_logs: {
         Row: {
           id: string
@@ -552,8 +769,31 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
-    }
+      marketplace_modules: {
+        Row: {
+          id: string
+          name: string
+          description: string | null
+          module_type: string
+          parent_id: string | null
+          parent_name: string | null
+          version: string
+          author_name: string
+          tags: string[]
+          install_count: number
+          is_premium: boolean
+          price_monthly: number | null
+          icon: string | null
+          color: string | null
+          avg_rating: number
+          review_count: number
+          business_count: number
+          dependency_count: number
+          created_at: string
+          updated_at: string
+        }
+      }
+    },
     Functions: {
       current_jwt: { Args: never; Returns: Json }
       requesting_user_id: { Args: never; Returns: string }

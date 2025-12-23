@@ -14,11 +14,13 @@ export default async function DashboardLayout({
 
     // Verify role in Supabase
     const supabase = createAdminClient();
-    const { data: user } = await supabase
+    const { data: userData } = await supabase
         .from("partner_users")
         .select("role")
         .eq("clerk_user_id", userId)
         .single();
+
+    const user = userData as any;
 
     if (!user || user.role !== "admin") {
         // TODO: Better unauthorized page

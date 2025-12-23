@@ -66,10 +66,6 @@ export default function SignUpForm() {
             if (completeSignUp.status !== "complete") {
                 /*  investigate the response, to see if there was an error
                     or if the user needs to complete more steps.*/
-                // Log only status for debugging (no sensitive data)
-                if (process.env.NODE_ENV === 'development') {
-                    console.log('Verification status:', completeSignUp.status);
-                }
                 toast.error("Verification failed. Please try again.");
             }
 
