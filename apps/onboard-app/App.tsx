@@ -19,7 +19,16 @@ enum ViewState {
 }
 
 export default function App() {
-  const [view, setView] = useState<ViewState>(ViewState.HOME);
+  const [view, setView] = useState<ViewState>(() => {
+    // specific check for window existence just in case, though standard for Vite/SPA
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const viewParam = params.get('view');
+      if (viewParam === 'DASHBOARD') return ViewState.DASHBOARD;
+      if (viewParam === 'KIOSK') return ViewState.KIOSK;
+    }
+    return ViewState.HOME;
+  });
   const [showMenu, setShowMenu] = useState(false);
   const [visits, setVisits] = useState<VisitRecord[]>([]);
   const [members, setMembers] = useState<Member[]>([]);

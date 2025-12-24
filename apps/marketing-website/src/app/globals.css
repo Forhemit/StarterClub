@@ -4,51 +4,141 @@
 
 @layer base {
   :root {
-    /* Base Colors - Dark Mode Default */
-    --background: 224 71% 4%; /* #020617 (Slate 950) */
-    --foreground: 210 40% 98%; /* #f8fafc (Slate 50) */
+    /* LUXURY / EXCLUSIVE THEME (Default Dark) */
+    /* Vibe: Silence, Jewelry Store, Deep Void, Gold */
 
-    /* Card / Surface */
-    --card: 222 47% 11%; /* #0f172a (Slate 900) */
-    --card-foreground: 210 40% 98%;
+    --background: 0 0% 2%;
+    /* #050505 Void Black */
+    --foreground: 0 0% 90%;
+    /* Soft Silver White */
 
-    /* Popover */
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
+    --card: 0 0% 4%;
+    /* Subtle separation */
+    --card-foreground: 0 0% 90%;
 
-    /* Primary - Race Track Orange/Red (McLaren/Ferrari vibe) */
-    --primary: 27 96% 61%; /* #FF5F15 (Existing Accent) */
-    --primary-foreground: 210 40% 98%;
+    --popover: 0 0% 2%;
+    --popover-foreground: 0 0% 90%;
 
-    /* Secondary - Carbon Fiber / Metal */
-    --secondary: 217 33% 17%; /* #1e293b (Slate 800) */
-    --secondary-foreground: 210 40% 98%;
+    --primary: 45 30% 60%;
+    /* #C6B386 Muted Champagne Gold */
+    --primary-foreground: 0 0% 0%;
 
-    /* Muted - Subtitles */
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --secondary: 0 0% 12%;
+    /* Dark Metal */
+    --secondary-foreground: 0 0% 90%;
 
-    /* Accent - Neon Telemetry Highlights */
-    --accent: 217 33% 17%;
-    --accent-foreground: 210 40% 98%;
+    --muted: 0 0% 8%;
+    --muted-foreground: 0 0% 40%;
 
-    /* Destructive - Crash/Red Flag */
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --accent: 45 30% 60%;
+    /* Gold Accent */
+    --accent-foreground: 0 0% 0%;
 
-    /* Borders & Inputs */
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 12%;
+    /* Very subtle borders */
+    --input: 0 0% 12%;
+    --ring: 45 30% 60%;
+
+    --radius: 0px;
+    /* Sharp, precise */
+
+    /* Font Override - Luxury uses Clean Sans (Inter) + Syne Headers */
+    --font-inter: var(--font-inter);
+    --font-heading: var(--font-syne);
+  }
+
+  .light {
+    /* LUXURY / EXCLUSIVE THEME (Light) */
+    /* Vibe: High-End Art Gallery, Stark White, Sharp Black */
+
+    --background: 0 0% 100%;
+    /* Pure White */
+    --foreground: 0 0% 0%;
+    /* Pure Black */
+
+    --card: 0 0% 98%;
+    --card-foreground: 0 0% 0%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+
+    --primary: 0 0% 0%;
+    /* Black branding in light mode */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 94%;
+    /* Light Gray */
+    --secondary-foreground: 0 0% 0%;
+
+    --muted: 0 0% 94%;
+    --muted-foreground: 0 0% 40%;
+
+    --accent: 0 0% 0%;
+    /* Black Accents */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 0% 0%;
+
+    --radius: 0px;
+
+    /* Font Override */
+    --font-inter: var(--font-inter);
+    --font-heading: var(--font-syne);
+  }
+
+  .racetrack {
+    /* LOCKED RACE TRACK THEME (Legacy Dark Mode) */
+    /* Hyper High Contrast F1 Telemetry */
+
+    --background: 0 0% 5%;
+    --foreground: 0 0% 95%;
+
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 27 96% 61%;
+    /* Racing Orange */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%;
+
+    --accent: 180 100% 50%;
+    /* Cyan Telemetry */
+    --accent-foreground: 0 0% 0%;
+
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
     --ring: 27 96% 61%;
 
-    /* Radius */
-    --radius: 0.5rem;
+    --radius: 0px;
 
-    /* Status Colors (Neon) */
-    --status-ready: 120 100% 50%; /* Neon Green */
-    --status-wood: 60 100% 50%; /* Neon Yellow */
-    --status-straw: 0 100% 50%; /* Neon Red */
-    --status-info: 180 100% 50%; /* Neon Cyan */
+    /* Status Colors */
+    --status-ready: 120 100% 50%;
+    --status-wood: 60 100% 50%;
+    --status-straw: 0 100% 50%;
+    --status-info: 180 100% 50%;
+
+    /* Font Override - Race Track uses Bebas Neue as Sans base (mostly for headers/impact) */
+    --font-inter: var(--font-bebas-neue);
+    --font-heading: var(--font-bebas-neue);
   }
 }
 
@@ -56,10 +146,20 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-inter), sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading), sans-serif;
   }
 }

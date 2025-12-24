@@ -1,19 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@starter-club/ui";
+import { Button, ModeToggle } from "@starter-club/ui";
+import { SignOutButton } from "@clerk/nextjs";
+import { Home, LogOut } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { getAuthorizedNavigation, UserRole } from "@/lib/modules";
 import "@/lib/plugins/marketing";
 import "@/lib/plugins/flight-deck";
 import "@/lib/plugins/system";
+import "@/lib/plugins/marketplace";
 
 export function Sidebar({ userRole = "admin" }: { userRole?: UserRole }) {
     const pathname = usePathname();
     const navItems = getAuthorizedNavigation([userRole]); // TODO: Get real user role from auth
 
     return (
-        <aside className="w-64 bg-gray-900 text-white min-h-screen p-4 flex flex-col">
+        <aside className="w-64 bg-card border-r border-border min-h-screen p-4 flex flex-col">
             <div className="mb-8 p-4 flex items-center gap-2">
                 <img
                     src="https://o341ovdtm5.ufs.sh/f/az1cgdYYLQv4wopWHB0jbDenCfGJgyZm9vhqzIaK6NLTWo8V"
@@ -33,8 +36,8 @@ export function Sidebar({ userRole = "admin" }: { userRole?: UserRole }) {
                             key={item.href}
                             href={item.href}
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive
-                                ? "bg-blue-600 text-white"
-                                : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                                ? "bg-primary text-primary-foreground"
+                                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                                 }`}
                         >
                             {Icon && <Icon className="w-5 h-5" />}
@@ -44,12 +47,31 @@ export function Sidebar({ userRole = "admin" }: { userRole?: UserRole }) {
                 })}
             </nav>
 
-            <div className="mt-auto pt-4 border-t border-gray-800">
-                <div className="px-4 py-2 text-xs text-gray-500 space-y-1">
-                    <div className="font-mono uppercase tracking-widest opacity-75">
-                        {process.env.NODE_ENV === 'production' ? 'Production' : 'Development'}
+            <div className="mt-auto pt-4 border-t border-border space-y-2">
+                <Link
+                    href="http://localhost:3000"
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                >
+                    <Home className="w-5 h-5" />
+                    <span className="font-medium">Return to Website</span>
+                </Link>
+
+                <div className="px-4 py-2 text-xs text-muted-foreground space-y-2">
+                    <div className="flex items-center justify-between">
+                        <div className="font-mono uppercase tracking-widest opacity-75">
+                            {process.env.NODE_ENV === 'production' ? 'Production' : 'Development'}
+                        </div>
+                        <ModeToggle />
                     </div>
-                    <div>Role: {userRole}</div>
+
+                    <div className="flex items-center justify-between">
+                        <div>Role: Super Admin</div>
+                        <SignOutButton>
+                            <Button variant="ghost" size="icon" className="h-6 w-6">
+                                <LogOut className="h-4 w-4" />
+                            </Button>
+                        </SignOutButton>
+                    </div>
                 </div>
             </div>
         </aside>

@@ -1,13 +1,6 @@
-"use client";
-
-import DevLogin from "@/components/DevLogin";
+import { DeveloperLogin } from "@/components/DeveloperLogin";
 
 export default function EmployeeLoginPage() {
-    return (
-        <DevLogin
-            title="Super Admin Access"
-            description="Redirects to Mission Control (localhost:3003)"
-            targetUrl="http://localhost:3003"
-        />
-    );
+    // Super Admin runs on 3000
+    return <DeveloperLogin redirectUrl="/employee-portal/selection" title="Employee Login" />;
 }

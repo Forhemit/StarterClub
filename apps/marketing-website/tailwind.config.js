@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+	darkMode: ['class', '[class~="dark"]', '[class~="racetrack"]'],
 	content: [
 		'./src/**/*.{js,ts,jsx,tsx,mdx}',
 		'../../packages/ui/src/components/**/*.{ts,tsx}',
@@ -13,6 +14,11 @@ module.exports = {
 			},
 		},
 		extend: {
+			fontFamily: {
+				sans: ["var(--font-inter)", "ui-sans-serif", "system-ui"],
+				mono: ["var(--font-space-mono)", "ui-monospace", "SFMono-Regular"],
+				display: ["var(--font-syne)", "var(--font-inter)", "system-ui"],
+			},
 			colors: {
 				border: "hsl(var(--border))",
 				input: "hsl(var(--input))",
@@ -53,6 +59,20 @@ module.exports = {
 					straw: "hsl(var(--status-straw))",
 					info: "hsl(var(--status-info))",
 				},
+				// RaceTrack Theme Colors
+				"carbon": {
+					DEFAULT: "#0a0a0a",
+					light: "#1a1a1a",
+					border: "#333333",
+				},
+				"signal": {
+					green: "#00ff9d", // Race Ready
+					yellow: "#ffbf00", // Caution/Decay
+					red: "#ff0040",   // Critical
+				},
+				"hud": {
+					cyan: "#00f0ff",
+				},
 			},
 			borderRadius: {
 				lg: "var(--radius)",
@@ -75,5 +95,10 @@ module.exports = {
 			},
 		},
 	},
-	plugins: [],
+	plugins: [
+		require("tailwindcss-animate"),
+		function ({ addVariant }) {
+			addVariant('racetrack', '.racetrack &');
+		},
+	],
 };
