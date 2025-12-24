@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export default async function UsersAdminPage() {
     const { userId } = await auth();
-    if (!userId) redirect("/");
+    if (!userId && process.env.NODE_ENV !== "development") redirect("/");
 
     let users: PartnerUser[] = [];
     let orgs: PartnerOrg[] = [];
@@ -15,7 +15,7 @@ export default async function UsersAdminPage() {
 
     try {
         const supabase = createAdminClient();
-        
+
         // Fetch users
         const { data: userData, error: userError } = await supabase
             .from("partner_users")

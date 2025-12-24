@@ -1,13 +1,6 @@
-"use client";
-
-import DevLogin from "@/components/DevLogin";
+import { DeveloperLogin } from "@/components/DeveloperLogin";
 
 export default function PartnerLoginPage() {
-    return (
-        <DevLogin
-            title="Flight Deck Access"
-            description="Redirects to Partner Dashboard (localhost:3002)"
-            targetUrl="http://localhost:3002"
-        />
-    );
+    // Flight Deck runs on 3002
+    return <DeveloperLogin targetPort={3002} title="Partner Login" />;
 }

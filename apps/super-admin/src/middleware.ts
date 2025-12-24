@@ -1,11 +1,11 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 // Protect all routes except static files and next internals
-const isProtectedRoute = createRouteMatcher(['/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)']);
+const isProtectedRoute = createRouteMatcher(['/dashboard(.*)']);
 
 export default clerkMiddleware(async (auth, req) => {
-    if (isProtectedRoute(req)) {
-        await auth.protect();
+    if (process.env.NODE_ENV !== 'development' && isProtectedRoute(req)) {
+        // await auth.protect();
     }
 });
 

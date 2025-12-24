@@ -8,16 +8,22 @@ export type AuditAction =
     | "ORG_CREATE"
     | "ORG_UPDATE"
     | "ORG_DELETE"
-    | "KIOSK_UNLOCK";
+    | "KIOSK_UNLOCK"
+    | "MODULE_CREATE"
+    | "MODULE_UPDATE"
+    | "MODULE_DELETE"
+    | "ITEM_CREATE"
+    | "MODULE_ADD_ITEM"
+    | "MODULE_REMOVE_ITEM";
 
 export async function logAdminAction(
     actorId: string,
     action: AuditAction,
     targetId: string,
-    targetType: "USER" | "ORG" | "SYSTEM",
+    targetType: "USER" | "ORG" | "SYSTEM" | "MODULE" | "CHECKLIST_ITEM" | "MODULE_ITEM",
     metadata: Record<string, any> = {}
 ) {
-    const supabase = createAdminClient();
+    const supabase = createAdminClient() as any;
 
     try {
         const { error } = await supabase.from("audit_logs").insert({
