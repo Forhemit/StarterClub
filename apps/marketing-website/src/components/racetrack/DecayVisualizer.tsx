@@ -229,7 +229,7 @@ export function DecayVisualizer() {
                             title="Intellectual Property"
                             status="VERIFIED"
                             statusColor="emerald"
-                            image="https://images.unsplash.com/photo-1607799275518-d58665d096b1?w=800&auto=format&fit=crop&q=60"
+                            image="/images/intellectual-property-luxury.png"
                             delay={0.4}
                         />
                         <LuxuryImageCard

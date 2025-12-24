@@ -52,6 +52,7 @@ export function RaceTrackFooter() {
                         <Link href="/member-login" className="text-muted-foreground text-[10px] font-mono uppercase hover:text-foreground">Member Login</Link>
                         <Link href="/partner-login" className="text-muted-foreground text-[10px] font-mono uppercase hover:text-foreground">Partner Login</Link>
                         <Link href="/employee-login" className="text-muted-foreground text-[10px] font-mono uppercase hover:text-foreground">Employee Login</Link>
+                        <Link href="/test-users" className="text-amber-500 text-[10px] font-mono uppercase hover:text-amber-400">Test Users</Link>
                     </div>
                 </div>
             </div>

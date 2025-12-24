@@ -5,9 +5,11 @@ import { motion } from "framer-motion";
 import { ArrowRight, Activity, ShieldCheck, Zap } from "lucide-react";
 
 import { VisualStoryboard } from "@/components/racetrack/VisualStoryboard";
+import { UnicornTestModal } from "@/components/UnicornTestModal";
 
 export function TelemetryHero() {
     const [mounted, setMounted] = useState(false);
+    const [isTestOpen, setIsTestOpen] = useState(false);
 
     useEffect(() => {
         setMounted(true);
@@ -72,7 +74,11 @@ export function TelemetryHero() {
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         className="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-primary/20 bg-primary/5 backdrop-blur-sm"
                     >
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_10px_currentColor]" />
+                        <motion.span
+                            animate={{ opacity: [1, 0.5, 1], scale: [1, 1.2, 1] }}
+                            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                            className="w-1.5 h-1.5 rounded-full bg-signal-green shadow-[0_0_10px_rgba(0,255,157,0.8)]"
+                        />
                         <span className="text-primary font-sans text-xs uppercase tracking-[0.2em]">San Francisco · Private Access</span>
                     </motion.div>
 
@@ -83,8 +89,8 @@ export function TelemetryHero() {
                         transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
                         className="font-heading text-5xl md:text-8xl font-bold text-foreground leading-[1.1] tracking-tight"
                     >
-                        Is your legacy <br />
-                        <span className="text-primary font-light italic">truly secure?</span>
+                        Is your business <br />
+                        <span className="text-primary font-light italic">unicorn ready?</span>
                     </motion.h1>
 
                     {/* Subtext - Clean, wide spacing */}
@@ -94,9 +100,7 @@ export function TelemetryHero() {
                         transition={{ duration: 1, delay: 0.4 }}
                         className="text-muted-foreground text-lg md:text-xl max-w-2xl font-sans font-light leading-relaxed"
                     >
-                        The market is noisy. We provide the silence required to build.
-                        <br className="hidden md:block" />
-                        Exclusive operational infrastructure for the 1%.
+                        Success (especially long term) isn't an accident. It's a design. Is your business built to succeed or will it fail to reach success?
                     </motion.p>
 
                     {/* Actions - Minimalist Buttons */}
@@ -104,12 +108,22 @@ export function TelemetryHero() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.6 }}
-                        className="flex flex-col sm:flex-row items-center gap-6 pt-8"
+                        className="flex flex-col items-center gap-4 pt-8"
                     >
-                        <button className="group relative px-8 py-4 bg-transparent text-foreground border border-primary/30 hover:border-primary transition-all duration-500">
-                            <span className="relative z-10 font-sans text-xs uppercase tracking-[0.25em] group-hover:text-primary transition-colors">Request Audit</span>
-                            <div className="absolute inset-0 bg-primary/5 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
-                        </button>
+                        <div className="flex flex-col sm:flex-row items-center gap-6">
+                            <button
+                                onClick={() => setIsTestOpen(true)}
+                                className="group relative px-8 py-4 bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-500 overflow-hidden"
+                            >
+                                <span className="relative z-10 font-sans text-xs uppercase tracking-[0.25em] font-semibold">Free Unicorn Ready Test</span>
+                                <div className="absolute inset-0 bg-white/10 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+                            </button>
+                            <button className="group relative px-8 py-4 bg-transparent text-foreground border border-primary/30 hover:border-primary transition-all duration-500">
+                                <span className="relative z-10 font-sans text-xs uppercase tracking-[0.25em] group-hover:text-primary transition-colors">Free Day Pass</span>
+                                <div className="absolute inset-0 bg-primary/5 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+                            </button>
+                        </div>
+                        <p className="text-muted-foreground text-sm font-sans">Live in Bay Area? Come visit Starter Club Today</p>
                     </motion.div>
                 </div>
             </div>
@@ -150,12 +164,15 @@ export function TelemetryHero() {
                         <VisualStoryboard />
 
                         <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start pt-4">
-                            <button className="w-full sm:w-auto px-8 py-4 bg-signal-green text-carbon font-bold uppercase tracking-widest hover:bg-signal-green/90 transition-all flex items-center justify-center gap-2 clip-corner-button">
-                                Check My Business
+                            <button
+                                onClick={() => setIsTestOpen(true)}
+                                className="w-full sm:w-auto px-8 py-4 bg-signal-green text-carbon font-bold uppercase tracking-widest hover:bg-signal-green/90 transition-all flex items-center justify-center gap-2 clip-corner-button"
+                            >
+                                Free Unicorn Ready Test
                                 <ArrowRight className="w-4 h-4" />
                             </button>
                             <button className="w-full sm:w-auto px-8 py-4 border border-border text-foreground font-mono uppercase tracking-widest hover:bg-secondary/50 transition-all">
-                                View Membership
+                                Free Day Pass
                             </button>
                         </div>
                     </div>
@@ -231,6 +248,9 @@ export function TelemetryHero() {
                     </div>
                 </div>
             </div>
+
+            {/* Unicorn Test Modal */}
+            <UnicornTestModal isOpen={isTestOpen} onClose={() => setIsTestOpen(false)} />
         </section>
     );
 }
