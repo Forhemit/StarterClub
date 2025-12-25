@@ -5,14 +5,24 @@ import { BackgroundLayer } from "@/components/BackgroundLayer";
 import { Footer } from "@/components/Footer";
 import { RaceTrackNav } from "@/components/racetrack/RaceTrackNav";
 import { BenefitsHero } from "./sections/BenefitsHero";
+import { EcosystemPillars } from "./sections/EcosystemPillars";
 import { MembershipTiers } from "./sections/MembershipTiers";
-import { CertificationBenefits } from "./sections/CertificationBenefits";
-import { FaaSShowcase } from "./sections/FaaSShowcase";
+import { BuilderTrack } from "./sections/BuilderTrack";
+import { BenefitsRooms } from "./sections/BenefitsRooms";
+import { SuperStations } from "./sections/SuperStations";
+import { PartnerCatalyst } from "./sections/PartnerCatalyst";
+import { CallToAlignment } from "./sections/CallToAlignment";
 
 // ============================================================================
 // MEMBER BENEFITS PAGE
-// Dual-themed (Corporate + Racing) page showcasing membership tiers and
-// the Starter Club Business Certification following AIDA psychological flow.
+// Dual-themed (Corporate + Racing) page showcasing the complete member journey
+// Following AIDA psychological flow: Attention → Interest → Desire → Action
+// 
+// Three Core Pillars:
+// 1. The Crew (Membership Tiers) - Your peer circle
+// 2. The Blueprint (6-Month Builder Track) - Your proven path
+// 3. The Spaces (BenefitsRooms) - Your elite HQ
+// 4. The Arsenal (Super Stations) - Your pro tools
 // ============================================================================
 
 export default function MemberBenefitsPage() {
@@ -21,17 +31,37 @@ export default function MemberBenefitsPage() {
             <BackgroundLayer />
             <RaceTrackNav />
 
-            {/* Section 1: Hero / Value Proposition - ATTENTION */}
+            {/* SECTION 1: Hero - ATTENTION */}
+            {/* "Your Foundation, Accelerated" - Present membership as a unified operating system */}
             <BenefitsHero />
 
-            {/* Section 2: Membership Tiers - INTEREST */}
+            {/* SECTION 2: Three Pillars - INTEREST */}
+            {/* Visual introduction to the interconnected ecosystem */}
+            <EcosystemPillars />
+
+            {/* SECTION 3: Your Crew (Membership Tiers) - INTEREST */}
+            {/* Show community as a progression of support, not just features */}
             <MembershipTiers />
 
-            {/* Section 3: Certification Benefits - DESIRE */}
-            <CertificationBenefits />
+            {/* SECTION 4: Your Blueprint (6-Month Track) - DESIRE */}
+            {/* Make the structured journey feel immersive and achievable */}
+            <BuilderTrack />
 
-            {/* Section 4: Foundation-as-a-Service - ACTION */}
-            <FaaSShowcase />
+            {/* SECTION 5: The Spaces (Rooms) - DESIRE */}
+            {/* "Quietly Elite" - Provide physical context for the work */}
+            <BenefitsRooms />
+
+            {/* SECTION 6: Your Arsenal (Super Stations) - DESIRE */}
+            {/* Present hardware as specialized performance instruments */}
+            <SuperStations />
+
+            {/* SECTION 7: Partner Network - DESIRE */}
+            {/* Show partners as force multipliers integrated into the journey */}
+            <PartnerCatalyst />
+
+            {/* SECTION 8: Call to Alignment - ACTION */}
+            {/* Convert interest into commitment - "Where do you start?" */}
+            <CallToAlignment />
 
             <Footer />
         </main>

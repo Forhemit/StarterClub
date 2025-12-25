@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Timer, Flag, Gauge } from "lucide-react";
 
@@ -48,35 +49,6 @@ export function BenefitsHero() {
         const minutes = Math.floor(time);
         const seconds = ((time % 1) * 60).toFixed(3);
         return `${minutes}:${seconds.padStart(6, "0")}`;
-    };
-
-    // Character animation for corporate headline
-    const headlineChars = "BUILD LEGACY".split("");
-    const containerVariants = {
-        hidden: {},
-        visible: {
-            transition: {
-                staggerChildren: shouldReduceMotion ? 0 : 0.05,
-            },
-        },
-    };
-
-    const charVariants = {
-        hidden: {
-            opacity: 0,
-            y: 50,
-            rotateX: -90,
-        },
-        visible: (i: number) => ({
-            opacity: 1,
-            y: 0,
-            rotateX: 0,
-            transition: {
-                duration: shouldReduceMotion ? 0 : 0.6,
-                delay: i * 0.03,
-                ease: [0.43, 0.13, 0.23, 0.96] as [number, number, number, number],
-            },
-        }),
     };
 
     return (
@@ -142,30 +114,26 @@ export function BenefitsHero() {
                         </motion.div>
 
                         {/* Animated Headline */}
-                        <motion.h1
-                            variants={containerVariants}
-                            initial="hidden"
-                            animate="visible"
-                            className="font-display text-6xl md:text-8xl lg:text-9xl font-bold text-foreground leading-[0.9] tracking-tighter"
-                            style={{
-                                perspective: "1000px",
-                            }}
-                        >
-                            {headlineChars.map((char, i) => (
-                                <motion.span
-                                    key={i}
-                                    variants={charVariants}
-                                    custom={i}
-                                    className={`inline-block ${char === " " ? "w-6 lg:w-12" : ""}`}
-                                    style={{
-                                        textShadow:
-                                            "0 4px 30px rgba(0,0,0,0.3)",
-                                    }}
-                                >
-                                    {char === " " ? "\u00A0" : char}
-                                </motion.span>
-                            ))}
-                        </motion.h1>
+                        <div className="font-display font-bold text-foreground leading-[0.9] tracking-tighter">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.8, delay: 0.2 }}
+                                className="text-3xl md:text-4xl lg:text-5xl mb-2"
+                            >
+                                BUILD TO
+                            </motion.div>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.8, delay: 0.4 }}
+                                className="text-3xl md:text-4xl lg:text-5xl text-primary h-[1.1em] flex items-center justify-center lg:justify-start"
+                            >
+                                <TypewriterText
+                                    words={["WIN", "LAST", "SUCCEED", "COMPETE", "SURVIVE", "PROFIT"]}
+                                />
+                            </motion.div>
+                        </div>
 
                         {/* Subtext */}
                         <motion.p
@@ -174,9 +142,8 @@ export function BenefitsHero() {
                             transition={{ duration: 1, delay: 0.8 }}
                             className="text-muted-foreground text-lg md:text-xl max-w-xl font-sans font-light leading-relaxed"
                         >
-                            Investment-grade operational infrastructure for
-                            founders who build to last. Three tiers. Infinite
-                            value.
+                            Transform from idea to launched business with our unified operating system.
+                            Three tiers. Six months. One unstoppable foundation.
                         </motion.p>
 
                         {/* CTA Buttons */}
@@ -208,52 +175,12 @@ export function BenefitsHero() {
                         transition={{ duration: 1, delay: 0.4 }}
                         className="relative hidden lg:flex items-center justify-center"
                     >
-                        {/* Membership Placard Visualization */}
-                        <div className="relative w-80 h-48 transform rotate-3 hover:rotate-0 transition-transform duration-700">
-                            {/* Card Shadow */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 blur-xl translate-y-4 translate-x-2" />
+                        <div className="relative w-full max-w-[600px] aspect-[1.83/1] rounded-2xl overflow-hidden shadow-2xl skew-y-3 hover:skew-y-0 transition-transform duration-700 bg-black">
+                            {/* Slideshow Images */}
+                            <Slideshow />
 
-                            {/* Main Card */}
-                            <div
-                                className="relative w-full h-full bg-gradient-to-br from-[#1a1a1a] via-[#0a0a0a] to-[#050505] border border-primary/30 p-6 flex flex-col justify-between"
-                                style={{
-                                    boxShadow:
-                                        "inset 0 1px 0 rgba(255,255,255,0.1), 0 20px 60px rgba(0,0,0,0.5)",
-                                }}
-                            >
-                                {/* Logo Area */}
-                                <div className="flex items-center justify-between">
-                                    <span className="text-primary font-display text-sm tracking-widest">
-                                        STARTER CLUB
-                                    </span>
-                                    <div className="w-8 h-8 border border-primary/40 flex items-center justify-center">
-                                        <span className="text-primary text-xs font-bold">
-                                            SC
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {/* Member Info */}
-                                <div className="space-y-1">
-                                    <div className="text-muted-foreground text-[10px] uppercase tracking-widest">
-                                        Founder Member Since
-                                    </div>
-                                    <div className="text-foreground font-mono text-sm">
-                                        2024
-                                    </div>
-                                </div>
-
-                                {/* Gold Accent Line */}
-                                <motion.div
-                                    initial={{ scaleX: 0 }}
-                                    animate={{ scaleX: 1 }}
-                                    transition={{ duration: 1.5, delay: 1.2 }}
-                                    className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/50 via-primary to-primary/50 origin-left"
-                                />
-                            </div>
-
-                            {/* Embossed Effect Overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />
+                            {/* Overlay Gradient for integration */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent z-10" />
                         </div>
                     </motion.div>
                 </div>
@@ -331,10 +258,10 @@ export function BenefitsHero() {
                                         : "none",
                                 }}
                             >
-                                TIER UP
+                                START YOUR
                             </span>
                             <span className="block font-sans text-4xl md:text-6xl font-bold uppercase tracking-widest text-signal-green mt-2">
-                                YOUR OPERATION
+                                BUILD
                             </span>
 
                             {/* Glitch Overlay (decorative) */}
@@ -363,8 +290,7 @@ export function BenefitsHero() {
                             transition={{ duration: 0.8, delay: 0.3 }}
                             className="text-center text-muted-foreground font-mono text-lg mt-8 max-w-2xl mx-auto"
                         >
-                            Three performance tiers. Factory-grade support.
-                            Championship-caliber foundations.
+                            Six laps. Three performance classes. One championship run.
                         </motion.p>
 
                         {/* Tier Garage Preview */}
@@ -416,5 +342,87 @@ export function BenefitsHero() {
                 </div>
             </div>
         </section>
+    );
+}
+
+// ============================================================================
+// Internal Components
+// ============================================================================
+
+function TypewriterText({ words }: { words: string[] }) {
+    const [index, setIndex] = useState(0);
+    const [subIndex, setSubIndex] = useState(0);
+    const [reverse, setReverse] = useState(false);
+    const [blink, setBlink] = useState(true);
+
+    // Blinking cursor
+    useEffect(() => {
+        const timeout2 = setTimeout(() => {
+            setBlink((prev) => !prev);
+        }, 500);
+        return () => clearTimeout(timeout2);
+    }, [blink]);
+
+    useEffect(() => {
+        if (subIndex === words[index].length + 1 && !reverse) {
+            setReverse(true);
+            return;
+        }
+
+        if (subIndex === 0 && reverse) {
+            setReverse(false);
+            setIndex((prev) => (prev + 1) % words.length);
+            return;
+        }
+
+        const timeout = setTimeout(() => {
+            setSubIndex((prev) => prev + (reverse ? -1 : 1));
+        }, Math.max(reverse ? 75 : subIndex === words[index].length ? 2000 : 150, parseInt(Math.random() * 350 + ""))); // Random typing speed
+
+        return () => clearTimeout(timeout);
+    }, [subIndex, index, reverse, words]);
+
+    return (
+        <span>
+            {words[index].substring(0, subIndex)}
+            <span className={`inline-block w-[3px] md:w-[6px] h-[0.8em] bg-primary ml-1 align-baseline ${blink ? "opacity-100" : "opacity-0"}`} />
+        </span>
+    );
+}
+
+function Slideshow() {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const slides = [
+        { src: "https://o341ovdtm5.ufs.sh/f/az1cgdYYLQv4ki2EjCWbOgcSuJ5Z9p21rUG3HYWhqTDRzvlC", alt: "Business professional 1" },
+        { src: "https://o341ovdtm5.ufs.sh/f/az1cgdYYLQv4NknjaPuGcrS0HqFfTLKtNj2ypYVDb9QXM3Ju", alt: "Business professional 2" },
+        { src: "https://o341ovdtm5.ufs.sh/f/az1cgdYYLQv4jpxW4BSuLn7R6SXmidGNPpD1lraOJtCjbuf2", alt: "Business professional 3" },
+        { src: "https://o341ovdtm5.ufs.sh/f/az1cgdYYLQv4ahGnvrkYYLQv4U3qzFZNVTMbfuBArWH1y8i2", alt: "Business professional 4" },
+        { src: "https://o341ovdtm5.ufs.sh/f/az1cgdYYLQv4WPTZtWGnc3TYRPZMDStjFyaVNxUKpzemGAv9", alt: "Business professional 5" },
+    ];
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentIndex((prev) => (prev + 1) % slides.length);
+        }, 5000);
+        return () => clearInterval(timer);
+    }, []);
+
+    return (
+        <>
+            {slides.map((slide, index) => (
+                <div
+                    key={index}
+                    className={`absolute inset-0 transition-opacity duration-1000 ${index === currentIndex ? "opacity-100" : "opacity-0"}`}
+                >
+                    <Image
+                        src={slide.src}
+                        alt={slide.alt}
+                        fill
+                        className="object-cover"
+                        priority={index === 0}
+                    />
+                </div>
+            ))}
+        </>
     );
 }
