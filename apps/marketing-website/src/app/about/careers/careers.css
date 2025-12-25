@@ -1,0 +1,344 @@
+/* Careers Page - Specialized CSS */
+/* Variables and keyframes for dual-theme Careers sections */
+
+/* ============================================================================
+   CAREERS-SPECIFIC DESIGN TOKENS
+   ============================================================================ */
+:root {
+    /* Corporate Theme Section Colors */
+    --careers-charcoal: #0a0a0f;
+    --careers-signal-blue: #00f0ff;
+    --careers-paper: #f5f1e8;
+    --careers-sepia: #3d2c1a;
+    --careers-concrete: #7d7d7d;
+    --careers-steel: #434343;
+    --careers-safety-orange: #ff6600;
+    --careers-frost: rgba(255, 255, 255, 0.08);
+
+    /* Racing Theme Section Colors */
+    --careers-crt-green: #00ff9d;
+    --careers-crt-bg: #001a00;
+    --careers-gold: #ffd700;
+    --careers-silver: #c0c0c0;
+    --careers-burnout: #333333;
+    --careers-asphalt: #1a1a1a;
+
+    /* Motion Physics (for Framer Motion springs) */
+    --corporate-spring-stiffness: 100;
+    --corporate-spring-damping: 15;
+    --racing-spring-stiffness: 400;
+    --racing-spring-damping: 10;
+}
+
+/* ============================================================================
+   TYPOGRAPHY UTILITIES
+   ============================================================================ */
+.font-chakra {
+    font-family: var(--font-chakra-petch), system-ui, sans-serif;
+}
+
+.font-orbitron {
+    font-family: var(--font-orbitron), system-ui, sans-serif;
+}
+
+.font-dm-serif {
+    font-family: var(--font-dm-serif), Georgia, serif;
+}
+
+.font-jetbrains {
+    font-family: var(--font-jetbrains), monospace;
+}
+
+.font-fira {
+    font-family: var(--font-fira-code), monospace;
+}
+
+/* ============================================================================
+   HERO SECTION EFFECTS
+   ============================================================================ */
+
+/* Geometric Mesh Background */
+.careers-mesh-bg {
+    background-image:
+        linear-gradient(30deg, var(--careers-signal-blue) 12%, transparent 12.5%, transparent 87%, var(--careers-signal-blue) 87.5%, var(--careers-signal-blue)),
+        linear-gradient(150deg, var(--careers-signal-blue) 12%, transparent 12.5%, transparent 87%, var(--careers-signal-blue) 87.5%, var(--careers-signal-blue)),
+        linear-gradient(30deg, var(--careers-signal-blue) 12%, transparent 12.5%, transparent 87%, var(--careers-signal-blue) 87.5%, var(--careers-signal-blue)),
+        linear-gradient(150deg, var(--careers-signal-blue) 12%, transparent 12.5%, transparent 87%, var(--careers-signal-blue) 87.5%, var(--careers-signal-blue)),
+        linear-gradient(60deg, rgba(0, 240, 255, 0.15) 25%, transparent 25.5%, transparent 75%, rgba(0, 240, 255, 0.15) 75%, rgba(0, 240, 255, 0.15)),
+        linear-gradient(60deg, rgba(0, 240, 255, 0.15) 25%, transparent 25.5%, transparent 75%, rgba(0, 240, 255, 0.15) 75%, rgba(0, 240, 255, 0.15));
+    background-size: 80px 140px;
+    background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+    opacity: 0.08;
+}
+
+/* Speed Blur Lines for Racing Hero */
+.racing-speed-lines {
+    background: repeating-linear-gradient(90deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 255, 157, 0.1) 2px,
+            rgba(0, 255, 157, 0.1) 4px);
+    animation: speed-blur 0.3s linear infinite;
+}
+
+@keyframes speed-blur {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-4px);
+    }
+}
+
+/* Pit Lane Lights Animation */
+.pit-lane-lights {
+    display: flex;
+    gap: 8px;
+}
+
+.pit-light {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #333;
+    border: 1px solid #555;
+    transition: all 0.2s ease;
+}
+
+.pit-light.active {
+    background: var(--careers-crt-green);
+    box-shadow: 0 0 15px var(--careers-crt-green);
+}
+
+/* ============================================================================
+   ORIGIN STORY SECTION EFFECTS
+   ============================================================================ */
+
+/* Paper Texture for Editorial Theme */
+.paper-texture {
+    background-color: var(--careers-paper);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    background-blend-mode: multiply;
+}
+
+/* CRT Scanlines Effect */
+.crt-scanlines {
+    background: repeating-linear-gradient(0deg,
+            rgba(0, 0, 0, 0.3),
+            rgba(0, 0, 0, 0.3) 1px,
+            transparent 1px,
+            transparent 2px);
+    pointer-events: none;
+}
+
+.crt-glow {
+    text-shadow:
+        0 0 5px var(--careers-crt-green),
+        0 0 10px var(--careers-crt-green),
+        0 0 20px var(--careers-crt-green);
+}
+
+/* ============================================================================
+   JOURNEY SECTION EFFECTS
+   ============================================================================ */
+
+/* Glassmorphism Cards */
+.glass-card {
+    background: var(--careers-frost);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-card-deep {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Concentric Circles Animation */
+@keyframes orbit {
+    from {
+        transform: rotate(0deg) translateX(100px) rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg) translateX(100px) rotate(-360deg);
+    }
+}
+
+.orbit-item {
+    animation: orbit 20s linear infinite;
+}
+
+/* Racing Grid Pattern */
+.racing-grid {
+    background-image:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+/* Tire Smoke Effect */
+.tire-smoke {
+    background: radial-gradient(ellipse at center, rgba(51, 51, 51, 0.8) 0%, transparent 70%);
+}
+
+/* ============================================================================
+   MISSION/VISION SECTION EFFECTS
+   ============================================================================ */
+
+/* Laser Etched Text Effect */
+.laser-etch {
+    background: linear-gradient(180deg,
+            rgba(255, 255, 255, 0.9) 0%,
+            rgba(255, 255, 255, 1) 50%,
+            rgba(255, 255, 255, 0.8) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    text-shadow:
+        0 1px 0 rgba(0, 0, 0, 0.1),
+        0 2px 0 rgba(0, 0, 0, 0.08),
+        0 3px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* Checkered Flag Pattern */
+.checkered-flag {
+    background-image:
+        linear-gradient(45deg, #000 25%, transparent 25%),
+        linear-gradient(-45deg, #000 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #000 75%),
+        linear-gradient(-45deg, transparent 75%, #000 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+}
+
+/* Champagne Particles */
+@keyframes champagne-rise {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-100px) scale(0.5);
+        opacity: 0;
+    }
+}
+
+.champagne-particle {
+    animation: champagne-rise 2s ease-out forwards;
+}
+
+/* ============================================================================
+   CTA SECTION EFFECTS
+   ============================================================================ */
+
+/* Concrete Texture */
+.concrete-texture {
+    background-color: var(--careers-concrete);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    background-blend-mode: overlay;
+}
+
+/* Rebar Lines */
+.rebar-line {
+    background: linear-gradient(90deg,
+            transparent 0%,
+            var(--careers-safety-orange) 45%,
+            var(--careers-steel) 55%,
+            transparent 100%);
+    height: 4px;
+}
+
+/* Christmas Tree Lights (Drag Race) */
+.christmas-tree {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+}
+
+.tree-light {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #222;
+    border: 2px solid #444;
+    transition: all 0.15s ease;
+}
+
+.tree-light.staging {
+    background: #ffbf00;
+    box-shadow: 0 0 20px #ffbf00;
+}
+
+.tree-light.go {
+    background: #00ff00;
+    box-shadow: 0 0 30px #00ff00;
+}
+
+/* Timing Beam */
+.timing-beam {
+    height: 2px;
+    background: linear-gradient(90deg,
+            transparent,
+            #ff0000,
+            transparent);
+    animation: beam-pulse 1s ease-in-out infinite;
+}
+
+@keyframes beam-pulse {
+
+    0%,
+    100% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* ============================================================================
+   ACCESSIBILITY: REDUCED MOTION
+   ============================================================================ */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .racing-speed-lines,
+    .orbit-item,
+    .champagne-particle,
+    .timing-beam {
+        animation: none !important;
+    }
+}
+
+/* ============================================================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================================================ */
+@media (max-width: 768px) {
+    .careers-mesh-bg {
+        background-size: 40px 70px;
+    }
+
+    .pit-light {
+        width: 8px;
+        height: 8px;
+    }
+
+    .tree-light {
+        width: 30px;
+        height: 30px;
+    }
+}

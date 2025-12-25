@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useTransition } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, ArrowLeft, Sparkles, Trophy, AlertTriangle, Target, Zap, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -22,22 +22,22 @@ const PILLARS = [
 // The 12 Questions
 const QUESTIONS = [
     // Pillar 1: Structural Integrity (3 questions)
-    { pillar: "structural", text: "Are your core operations (sales, delivery, support) documented so clearly that a new hire could follow them?" },
-    { pillar: "structural", text: "Is it crystal clear who is responsible for what, and who has the final say on key decisions?" },
-    { pillar: "structural", text: "If your most crucial person vanished for a month, would the business stumble or collapse?" },
+    { pillar: "structural", text: "Are your core operations (sales, delivery, support) documented so clearly that a new hire could follow them?", reason: "This relates to having detailed Standard Operating Procedures (SOPs), systems, and processes documented." },
+    { pillar: "structural", text: "Is it crystal clear who is responsible for what, and who has the final say on key decisions?", reason: "Clear role definitions and decision-making authority prevent bottlenecks and confusion during critical moments." },
+    { pillar: "structural", text: "If your most crucial person vanished for a year or more, would the business stumble or collapse?", reason: "Key person dependency is a major risk factor that affects business valuation and operational stability." },
     // Pillar 2: Operational Continuity (2 questions)
-    { pillar: "operational", text: "How prepared are you to handle two major problems at once? (e.g., a cash crunch and a key employee leaving)" },
-    { pillar: "operational", text: "A celebrity just unexpectedly endorsed your core product. Orders are flooding in at 4x your normal rate and are still climbing! Do you have systems and processes in place to easily handle the sudden spike in sales and inquires?" },
+    { pillar: "operational", text: "How prepared are you to handle two major problems at once? (e.g., a frozen bank account and losing your chief financial officer)", reason: "This measures having strong Operational Continuity plans in place and ready to deploy." },
+    { pillar: "operational", text: "A celebrity just unexpectedly endorsed your core product. Orders are flooding in at 4x your normal rate and are still climbing! Do you have systems and processes in place to easily handle the sudden spike in sales and inquires?", reason: "Scalability under pressure reveals whether your infrastructure can handle rapid growth opportunities." },
     // Pillar 3: Financial & Records Health (3 questions)
-    { pillar: "financial", text: "How accurate, up-to-date, and trustworthy are your profit/loss, cash flow, and balance sheet reports?" },
-    { pillar: "financial", text: "How quickly could you find any client contract, major invoice, or tax filing from two years ago?" },
-    { pillar: "financial", text: "If a serious investor asked to see everything tomorrow, how much scrambling would be required?" },
+    { pillar: "financial", text: "How accurate, up-to-date, and trustworthy are your profit/loss, cash flow, and balance sheet reports?", reason: "To make clear decisions based on accurate and up-to-date information." },
+    { pillar: "financial", text: "How quickly could you find any client contract, major invoice, or tax filing from two years ago?", reason: "Document organization reflects operational maturity, audit and due diligence readiness." },
+    { pillar: "financial", text: "If a serious investor asked to see everything tomorrow, how much scrambling would be required?", reason: "Investor and bank readiness indicates how well your business is structured for growth." },
     // Pillar 4: Transferability & Independence (2 questions)
-    { pillar: "transferability", text: "How much does the business rely on you personally to function day-to-day? (Are you the chief 'answer-getter'?)" },
-    { pillar: "transferability", text: "How easy would it be to train a new owner or operator to run the business without you?" },
+    { pillar: "transferability", text: "How much does the business rely on you personally to function day-to-day? (Are you the chief 'answer-getter'?)", reason: "Owner dependency directly impacts business valuation and limits exit options." },
+    { pillar: "transferability", text: "How easy would it be for a new owner or operator to run the business with no help from you?", reason: "Transferability determines whether your business is a sellable asset or just a job you own." },
     // Pillar 5: Strategic Resilience (2 questions)
-    { pillar: "strategic", text: "How well could your business weather a sustained 6-month economic downturn or a 30% drop in revenue?" },
-    { pillar: "strategic", text: "When market conditions shift, do you have a clear, actionable plan to pivot, or are you stuck reacting?" },
+    { pillar: "strategic", text: "How well could your business weather a sustained 12-month economic downturn or a 50% drop in revenue for 12 months?", reason: "Financial runway and contingency planning determine survival during extended market stress." },
+    { pillar: "strategic", text: "When market conditions for your product or service shift, do you have a clear, actionable plan to pivot, or will you or your team have to think of something when it happens?", reason: "Strategic adaptability separates thriving businesses from those caught off-guard by market changes." },
 ];
 
 const RATING_LABELS = [
@@ -70,6 +70,7 @@ export function UnicornTestModal({ isOpen, onClose }: UnicornTestModalProps) {
     const [stage, setStage] = useState<Stage>("intro");
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [answers, setAnswers] = useState<number[]>(Array(12).fill(0));
+    const [isPending, startTransition] = useTransition();
 
     // Calculate which pillar we're on
     const currentPillar = useMemo(() => {
@@ -118,7 +119,11 @@ export function UnicornTestModal({ isOpen, onClose }: UnicornTestModalProps) {
         setAnswers(newAnswers);
 
         if (currentQuestion < 11) {
-            setTimeout(() => setCurrentQuestion(currentQuestion + 1), 300);
+            setTimeout(() => {
+                startTransition(() => {
+                    setCurrentQuestion(currentQuestion + 1);
+                });
+            }, 300);
         } else {
             setStage("calculating");
             setTimeout(() => setStage("results"), 2000);
@@ -127,7 +132,9 @@ export function UnicornTestModal({ isOpen, onClose }: UnicornTestModalProps) {
 
     const handleBack = () => {
         if (currentQuestion > 0) {
-            setCurrentQuestion(currentQuestion - 1);
+            startTransition(() => {
+                setCurrentQuestion(currentQuestion - 1);
+            });
         }
     };
 
@@ -290,6 +297,14 @@ export function UnicornTestModal({ isOpen, onClose }: UnicornTestModalProps) {
                                             </motion.button>
                                         ))}
                                     </div>
+
+                                    {/* Why We Ask This */}
+                                    <div className="mt-4 pt-4 border-t border-border/30">
+                                        <p className="text-sm text-foreground/90">
+                                            <span className="font-semibold text-primary">Why we ask: </span>
+                                            {QUESTIONS[currentQuestion].reason}
+                                        </p>
+                                    </div>
                                 </motion.div>
                             </AnimatePresence>
 
@@ -297,7 +312,8 @@ export function UnicornTestModal({ isOpen, onClose }: UnicornTestModalProps) {
                             {currentQuestion > 0 && (
                                 <button
                                     onClick={handleBack}
-                                    className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm"
+                                    disabled={isPending}
+                                    className={`flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm ${isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                                 >
                                     <ArrowLeft className="w-4 h-4" />
                                     Previous Question

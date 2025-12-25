@@ -1,0 +1,913 @@
+/* Contact Page - Specialized CSS */
+/* Variables and keyframes for dual-theme Contact sections */
+
+/* ============================================================================
+   CONTACT-SPECIFIC DESIGN TOKENS
+   ============================================================================ */
+:root {
+    /* Corporate Theme Colors */
+    --contact-charcoal: #0a0a0f;
+    --contact-signal-blue: #00f0ff;
+    --contact-blueprint-bg: #0a1a2a;
+    --contact-paper: #f5f1e8;
+    --contact-sepia: #3d2c1a;
+    --contact-manila: #f4e4bc;
+    --contact-brass: #b5a642;
+    --contact-safety-yellow: #ffd000;
+    --contact-industrial-gray: #7d7d7d;
+    --contact-frost: rgba(255, 255, 255, 0.08);
+    --contact-glass-deep: rgba(255, 255, 255, 0.04);
+
+    /* Racing Theme Colors */
+    --contact-crt-green: #00ff9d;
+    --contact-crt-bg: #001a00;
+    --contact-carbon: #0a0a0a;
+    --contact-notepad: #fffacd;
+    --contact-grease: rgba(51, 51, 51, 0.3);
+    --contact-toolbox-red: #c41e3a;
+    --contact-asphalt: #1a1a1a;
+
+    /* Motion Physics */
+    --contact-spring-stiff: 300;
+    --contact-spring-bouncy: 400;
+    --contact-spring-gentle: 100;
+    --contact-damping-stiff: 20;
+    --contact-damping-bouncy: 10;
+    --contact-damping-gentle: 15;
+}
+
+/* ============================================================================
+   TYPOGRAPHY UTILITIES
+   ============================================================================ */
+.font-clash {
+    font-family: 'Clash Display', var(--font-chakra-petch), system-ui, sans-serif;
+}
+
+.font-orbitron {
+    font-family: var(--font-orbitron), system-ui, sans-serif;
+}
+
+.font-space-grotesk {
+    font-family: 'Space Grotesk', var(--font-inter), system-ui, sans-serif;
+}
+
+.font-space-mono {
+    font-family: var(--font-space-mono), monospace;
+}
+
+.font-jetbrains {
+    font-family: var(--font-jetbrains), monospace;
+}
+
+.font-share-tech {
+    font-family: 'Share Tech Mono', var(--font-jetbrains), monospace;
+}
+
+.font-bebas {
+    font-family: var(--font-bebas-neue), system-ui, sans-serif;
+}
+
+.font-syne {
+    font-family: var(--font-syne), system-ui, sans-serif;
+}
+
+/* ============================================================================
+   HERO SECTION EFFECTS
+   ============================================================================ */
+
+/* Fractured Glass Effect - Corporate */
+.fractured-glass {
+    background: var(--contact-frost);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+.fractured-glass::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(135deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%),
+        linear-gradient(45deg, transparent 40%, rgba(0, 240, 255, 0.03) 50%, transparent 60%);
+    pointer-events: none;
+}
+
+/* Glass Crack Lines */
+.glass-crack {
+    position: absolute;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    height: 1px;
+    transform-origin: left center;
+}
+
+/* Floating Card Shadow */
+.float-shadow {
+    box-shadow:
+        0 50px 100px -20px rgba(0, 0, 0, 0.5),
+        0 30px 60px -10px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* Helmet HUD Effect - Racing */
+.helmet-hud {
+    background: linear-gradient(180deg,
+            rgba(0, 0, 0, 0.9) 0%,
+            rgba(0, 0, 0, 0.7) 50%,
+            rgba(0, 0, 0, 0.9) 100%);
+    border: 2px solid var(--contact-crt-green);
+    position: relative;
+    overflow: hidden;
+}
+
+.helmet-hud::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+            rgba(0, 255, 157, 0.1) 0%,
+            transparent 30%,
+            transparent 70%,
+            rgba(0, 255, 157, 0.05) 100%);
+    pointer-events: none;
+}
+
+/* Visor Reflection */
+.visor-reflection {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(180deg,
+            rgba(255, 255, 255, 0.1) 0%,
+            transparent 100%);
+    pointer-events: none;
+}
+
+/* Neon Pulse Animation */
+@keyframes neon-pulse {
+
+    0%,
+    100% {
+        box-shadow:
+            0 0 5px var(--contact-crt-green),
+            0 0 10px var(--contact-crt-green),
+            0 0 20px var(--contact-crt-green);
+    }
+
+    50% {
+        box-shadow:
+            0 0 10px var(--contact-crt-green),
+            0 0 20px var(--contact-crt-green),
+            0 0 40px var(--contact-crt-green);
+    }
+}
+
+.neon-pulse {
+    animation: neon-pulse 2s ease-in-out infinite;
+}
+
+/* Rotary Dial */
+.rotary-dial {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #222, #111);
+    border: 4px solid #333;
+    box-shadow:
+        inset 0 5px 15px rgba(0, 0, 0, 0.5),
+        0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.rotary-dial::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30%;
+    height: 30%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: #111;
+    border: 2px solid #444;
+}
+
+.dial-hole {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #000;
+    border: 2px solid #444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    color: #888;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.dial-hole:hover {
+    background: var(--contact-signal-blue);
+    color: #000;
+    border-color: var(--contact-signal-blue);
+}
+
+/* GPS Signal Indicator */
+.gps-signal {
+    display: flex;
+    gap: 2px;
+    align-items: flex-end;
+}
+
+.signal-bar {
+    width: 4px;
+    background: var(--contact-crt-green);
+    transition: height 0.3s, opacity 0.3s;
+}
+
+@keyframes signal-pulse {
+
+    0%,
+    100% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+.signal-bar.active {
+    animation: signal-pulse 1.5s ease-in-out infinite;
+}
+
+/* ============================================================================
+   FORM SECTION EFFECTS
+   ============================================================================ */
+
+/* Blueprint Grid - Corporate */
+.blueprint-grid {
+    background-color: var(--contact-blueprint-bg);
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+.blueprint-input {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    font-family: 'Space Mono', monospace;
+}
+
+.blueprint-input:focus {
+    border-color: var(--contact-signal-blue);
+    box-shadow: 0 0 0 1px var(--contact-signal-blue);
+}
+
+/* Construction Grid Animation */
+@keyframes construction-scan {
+    0% {
+        transform: translateY(-100%);
+    }
+
+    100% {
+        transform: translateY(100%);
+    }
+}
+
+.construction-scan {
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--contact-signal-blue), transparent);
+    animation: construction-scan 2s linear infinite;
+}
+
+/* Notepad Texture - Racing */
+.notepad-texture {
+    background-color: var(--contact-notepad);
+    background-image:
+        repeating-linear-gradient(transparent,
+            transparent 27px,
+            #91d1d3 28px);
+    position: relative;
+}
+
+.notepad-texture::before {
+    content: '';
+    position: absolute;
+    left: 40px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #f88;
+}
+
+/* Grease Stain Effect */
+.grease-stain {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(51, 51, 51, 0.15), transparent 70%);
+    pointer-events: none;
+}
+
+/* Toggle Switch Style Input */
+.toggle-switch-input {
+    position: relative;
+    appearance: none;
+    width: 60px;
+    height: 30px;
+    background: #333;
+    border-radius: 4px;
+    border: 2px solid #555;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.toggle-switch-input::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    background: #888;
+    border-radius: 2px;
+    transition: all 0.3s;
+}
+
+.toggle-switch-input:checked {
+    background: var(--contact-crt-green);
+    border-color: var(--contact-crt-green);
+}
+
+.toggle-switch-input:checked::after {
+    left: calc(100% - 23px);
+    background: #000;
+}
+
+/* Pit Lane Light Focus Ring */
+@keyframes pit-focus-sequence {
+    0% {
+        box-shadow: -30px 0 0 #333, -15px 0 0 #333, 0 0 0 #333, 15px 0 0 #333, 30px 0 0 #333;
+    }
+
+    20% {
+        box-shadow: -30px 0 0 #ff0, -15px 0 0 #333, 0 0 0 #333, 15px 0 0 #333, 30px 0 0 #333;
+    }
+
+    40% {
+        box-shadow: -30px 0 0 #ff0, -15px 0 0 #ff0, 0 0 0 #333, 15px 0 0 #333, 30px 0 0 #333;
+    }
+
+    60% {
+        box-shadow: -30px 0 0 #ff0, -15px 0 0 #ff0, 0 0 0 #ff0, 15px 0 0 #333, 30px 0 0 #333;
+    }
+
+    80% {
+        box-shadow: -30px 0 0 #ff0, -15px 0 0 #ff0, 0 0 0 #ff0, 15px 0 0 #ff0, 30px 0 0 #333;
+    }
+
+    100% {
+        box-shadow: -30px 0 0 #0f0, -15px 0 0 #0f0, 0 0 0 #0f0, 15px 0 0 #0f0, 30px 0 0 #0f0;
+    }
+}
+
+/* Push to Talk Button */
+.push-to-talk {
+    position: relative;
+    background: linear-gradient(180deg, #444, #222);
+    border: 3px solid #555;
+    border-radius: 8px;
+    padding: 20px 40px;
+    cursor: pointer;
+    transition: all 0.1s;
+    box-shadow:
+        0 6px 0 #111,
+        0 8px 10px rgba(0, 0, 0, 0.4);
+}
+
+.push-to-talk:active {
+    transform: translateY(4px);
+    box-shadow:
+        0 2px 0 #111,
+        0 3px 5px rgba(0, 0, 0, 0.3);
+}
+
+.push-to-talk::before {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    height: 30%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent);
+    border-radius: 4px;
+}
+
+/* Document Stamp Animation */
+@keyframes stamp-down {
+    0% {
+        transform: translateY(-100px) rotate(-15deg);
+        opacity: 0;
+    }
+
+    70% {
+        transform: translateY(5px) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+.stamp-animation {
+    animation: stamp-down 0.4s ease-out forwards;
+}
+
+/* ============================================================================
+   CONTACT METHODS EFFECTS
+   ============================================================================ */
+
+/* Filing Cabinet Tab */
+.filing-tab {
+    position: relative;
+    background: var(--contact-manila);
+    border: 1px solid #d4c4a0;
+    padding: 12px 24px;
+    clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.filing-tab::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 3px;
+    background: var(--contact-brass);
+    border-radius: 2px;
+}
+
+.filing-tab.active {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+}
+
+/* Garage Door */
+.garage-door {
+    position: relative;
+    background: linear-gradient(180deg,
+            #333 0px,
+            #222 5px,
+            #333 10px,
+            #222 15px,
+            #333 20px);
+    background-size: 100% 20px;
+    border: 3px solid #444;
+    overflow: hidden;
+}
+
+.garage-door::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 10px;
+    background: #555;
+}
+
+/* Wrench Icon Rotation */
+@keyframes wrench-turn {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(-45deg);
+    }
+}
+
+.wrench-icon-open {
+    animation: wrench-turn 0.3s ease-out forwards;
+}
+
+/* Tool Wall Grid */
+.tool-wall {
+    background:
+        linear-gradient(90deg, #1a1a1a 1px, transparent 1px),
+        linear-gradient(#1a1a1a 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-color: #252525;
+}
+
+/* Pneumatic Hiss Visualization */
+@keyframes pneumatic-hiss {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1.5);
+    }
+}
+
+.pneumatic-burst {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent);
+    border-radius: 50%;
+    animation: pneumatic-hiss 0.5s ease-out forwards;
+}
+
+/* Radio Handset */
+.radio-handset {
+    background: linear-gradient(135deg, #333, #1a1a1a);
+    border-radius: 8px;
+    padding: 10px;
+    border: 2px solid #444;
+    position: relative;
+}
+
+.transmit-light {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #333;
+    border: 1px solid #555;
+    transition: all 0.2s;
+}
+
+.transmit-light.active {
+    background: #ff0000;
+    box-shadow: 0 0 10px #ff0000;
+}
+
+/* ============================================================================
+   MAP SECTION EFFECTS
+   ============================================================================ */
+
+/* Isometric Grid */
+.isometric-grid {
+    background-image:
+        linear-gradient(30deg, rgba(0, 240, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(150deg, rgba(0, 240, 255, 0.1) 1px, transparent 1px);
+    background-size: 30px 17.32px;
+}
+
+/* Building Extrusion */
+.building-3d {
+    position: relative;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+}
+
+.building-face {
+    background: linear-gradient(180deg, #334, #223);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+}
+
+/* Cable Car Route */
+@keyframes cable-car-route {
+    0% {
+        stroke-dashoffset: 1000;
+    }
+
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+.cable-route {
+    stroke-dasharray: 1000;
+    animation: cable-car-route 3s ease-out forwards;
+}
+
+/* Race Circuit */
+.race-circuit {
+    stroke: var(--contact-crt-green);
+    stroke-width: 4;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Pit Lane Marker */
+.pit-lane-marker {
+    background: var(--contact-crt-green);
+    border: 2px dashed rgba(0, 0, 0, 0.3);
+    padding: 8px 16px;
+    font-weight: bold;
+}
+
+/* Ghost Car Animation */
+@keyframes ghost-car-drive {
+    0% {
+        offset-distance: 0%;
+    }
+
+    100% {
+        offset-distance: 100%;
+    }
+}
+
+.ghost-car {
+    offset-rotate: auto;
+    animation: ghost-car-drive 5s linear infinite;
+}
+
+/* ============================================================================
+   AVAILABILITY SECTION EFFECTS
+   ============================================================================ */
+
+/* Factory Control Panel */
+.control-panel {
+    background: linear-gradient(180deg, #4a4a4a, #3a3a3a);
+    border: 4px solid #555;
+    border-radius: 4px;
+    box-shadow:
+        inset 0 2px 5px rgba(0, 0, 0, 0.3),
+        0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Status Bulb */
+.status-bulb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #222;
+    border: 2px solid #555;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.status-bulb::before {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.status-bulb.green {
+    background: #0f0;
+    box-shadow: 0 0 10px #0f0, inset 0 -3px 5px rgba(0, 0, 0, 0.3);
+}
+
+.status-bulb.yellow {
+    background: #ff0;
+    box-shadow: 0 0 10px #ff0, inset 0 -3px 5px rgba(0, 0, 0, 0.3);
+}
+
+.status-bulb.red {
+    background: #f00;
+    box-shadow: 0 0 10px #f00, inset 0 -3px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Relay Click Animation */
+@keyframes relay-click {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(2px);
+    }
+}
+
+.relay-click {
+    animation: relay-click 0.1s ease-out;
+}
+
+/* Analog Gauge */
+.analog-gauge {
+    position: relative;
+    width: 80px;
+    height: 40px;
+    background: #111;
+    border: 2px solid #444;
+    border-radius: 40px 40px 0 0;
+    overflow: hidden;
+}
+
+.gauge-needle {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    height: 35px;
+    background: #f00;
+    transform-origin: bottom center;
+    transition: transform 0.5s ease-out;
+}
+
+.gauge-center {
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 10px;
+    background: #333;
+    border-radius: 50%;
+    border: 2px solid #555;
+}
+
+/* Employee Badge */
+.employee-badge {
+    background: linear-gradient(180deg, #fff, #f0f0f0);
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    perspective: 1000px;
+}
+
+.badge-flip {
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.badge-flip:hover {
+    transform: rotateY(180deg);
+}
+
+/* Key Switch */
+.key-switch {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, #444, #222);
+    border-radius: 50%;
+    border: 3px solid #555;
+    cursor: pointer;
+}
+
+.key-switch::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 8px;
+    background: #111;
+    border: 1px solid #333;
+}
+
+.key-switch::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 4px;
+    height: 16px;
+    background: #666;
+    transition: transform 0.3s;
+}
+
+.key-switch.activated::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+}
+
+/* Telemetry Screen */
+.telemetry-screen {
+    background: rgba(0, 20, 0, 0.9);
+    border: 2px solid var(--contact-crt-green);
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--contact-crt-green);
+    position: relative;
+}
+
+.telemetry-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg,
+            rgba(0, 0, 0, 0.2),
+            rgba(0, 0, 0, 0.2) 1px,
+            transparent 1px,
+            transparent 2px);
+    pointer-events: none;
+}
+
+/* RPM Gauge Telemetry */
+.rpm-telemetry {
+    height: 8px;
+    background: linear-gradient(90deg,
+            #0f0 0%,
+            #0f0 60%,
+            #ff0 60%,
+            #ff0 80%,
+            #f00 80%,
+            #f00 100%);
+    border-radius: 4px;
+    position: relative;
+}
+
+.rpm-indicator {
+    position: absolute;
+    top: -4px;
+    width: 4px;
+    height: 16px;
+    background: #fff;
+    border-radius: 2px;
+    transition: left 0.3s;
+}
+
+/* Tyre Wear Indicator */
+.tyre-wear {
+    display: flex;
+    gap: 2px;
+}
+
+.tyre-wear-segment {
+    width: 8px;
+    height: 20px;
+    background: #333;
+    border-radius: 2px;
+    transition: background 0.3s;
+}
+
+.tyre-wear-segment.good {
+    background: #0f0;
+}
+
+.tyre-wear-segment.medium {
+    background: #ff0;
+}
+
+.tyre-wear-segment.worn {
+    background: #f00;
+}
+
+/* ============================================================================
+   ACCESSIBILITY: REDUCED MOTION
+   ============================================================================ */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .neon-pulse,
+    .construction-scan,
+    .ghost-car,
+    .cable-route {
+        animation: none !important;
+    }
+}
+
+/* ============================================================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================================================ */
+@media (max-width: 768px) {
+    .rotary-dial {
+        width: 150px;
+        height: 150px;
+    }
+
+    .dial-hole {
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+    }
+
+    .analog-gauge {
+        width: 60px;
+        height: 30px;
+    }
+
+    .key-switch {
+        width: 50px;
+        height: 50px;
+    }
+}
