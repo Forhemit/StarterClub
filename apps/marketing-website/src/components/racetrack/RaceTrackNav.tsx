@@ -53,7 +53,7 @@ export function RaceTrackNav() {
 
                         {/* Login - Hidden on mobile */}
                         <Link
-                            href="/auth/login"
+                            href="/sign-in"
                             className="hidden lg:inline text-muted-foreground text-sm font-mono uppercase tracking-wider hover:text-foreground transition-colors"
                         >
                             Login

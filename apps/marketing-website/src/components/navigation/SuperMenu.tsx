@@ -345,7 +345,7 @@ export function SuperMenu({ isOpen, onClose }: SuperMenuProps) {
                                     </div>
                                     <div className="flex items-center gap-4">
                                         <Link
-                                            href="/auth/login"
+                                            href="/sign-in"
                                             onClick={() => trackMenuEvent("cta_click", { cta: "member_sign_in" })}
                                             className="text-sm font-mono text-muted-foreground hover:text-foreground transition-colors"
                                         >
@@ -491,7 +491,7 @@ export function SuperMenu({ isOpen, onClose }: SuperMenuProps) {
                                         Join / Apply
                                     </Link>
                                     <Link
-                                        href="/auth/login"
+                                        href="/sign-in"
                                         onClick={() => trackMenuEvent("cta_click", { cta: "sign_in", isMobile: true })}
                                         className="block w-full py-3 text-center text-sm font-mono text-muted-foreground hover:text-foreground
                                border border-border rounded-lg transition-colors"

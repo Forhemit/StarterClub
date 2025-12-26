@@ -21,7 +21,15 @@ import { PartnersSection } from "@/components/PartnersSection";
 import { PreLaunchInvitation } from "@/components/PreLaunchInvitation";
 import { TeaserCards } from "@/components/TeaserCards";
 import { FoundingMemberCTA } from "@/components/FoundingMemberCTA";
+
 import { ActionSection } from "./sections/ActionSection";
+
+// Content Injection Components
+import { ProblemAgitation } from "@/components/content-injection/ProblemAgitation";
+import { SolutionStack } from "@/components/content-injection/SolutionStack";
+import { PBCTrust } from "@/components/content-injection/PBCTrust";
+import { FreeOffer } from "@/components/content-injection/FreeOffer";
+import { SocialProof } from "@/components/content-injection/SocialProof";
 
 
 export interface SectionConfig {
@@ -53,6 +61,46 @@ export const homeSections: SectionConfig[] = [
         order: 20,
         containerType: "contained",
         // Hero has bottom margin inside component
+    },
+    {
+        id: "problem-agitation",
+        component: ProblemAgitation,
+        name: "Problem Agitation",
+        enabled: true,
+        order: 21,
+        containerType: "contained",
+    },
+    {
+        id: "solution-stack",
+        component: SolutionStack,
+        name: "Solution Stack",
+        enabled: true,
+        order: 22,
+        containerType: "contained",
+    },
+    {
+        id: "pbc-trust",
+        component: PBCTrust,
+        name: "PBC Trust",
+        enabled: true,
+        order: 23,
+        containerType: "contained",
+    },
+    {
+        id: "free-offer",
+        component: FreeOffer,
+        name: "Free Offer",
+        enabled: true,
+        order: 24,
+        containerType: "contained",
+    },
+    {
+        id: "social-proof",
+        component: SocialProof,
+        name: "Social Proof",
+        enabled: true,
+        order: 25,
+        containerType: "contained",
     },
     {
         id: "identity",

@@ -767,6 +767,152 @@ export type Database = {
         }
         Relationships: []
       }
+      roles: {
+        Row: {
+          id: string
+          name: string
+          slug: string
+          description: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          slug: string
+          description?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          slug?: string
+          description?: string | null
+          created_at?: string | null
+        }
+        Relationships: []
+      },
+      permissions: {
+        Row: {
+          id: string
+          slug: string
+          description: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          slug: string
+          description?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          slug?: string
+          description?: string | null
+          created_at?: string | null
+        }
+        Relationships: []
+      },
+      role_permissions: {
+        Row: {
+          role_id: string
+          permission_id: string
+        }
+        Insert: {
+          role_id: string
+          permission_id: string
+        }
+        Update: {
+          role_id?: string
+          permission_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "role_permissions_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "role_permissions_permission_id_fkey"
+            columns: ["permission_id"]
+            isOneToOne: false
+            referencedRelation: "permissions"
+            referencedColumns: ["id"]
+          }
+        ]
+      },
+      user_roles: {
+        Row: {
+          user_id: string
+          role_id: string
+          created_at: string | null
+        }
+        Insert: {
+          user_id: string
+          role_id: string
+          created_at?: string | null
+        }
+        Update: {
+          user_id?: string
+          role_id?: string
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_roles_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          }
+        ]
+      },
+      role_requests: {
+        Row: {
+          id: string
+          user_id: string | null
+          role_slug: string
+          status: string | null
+          notes: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id?: string | null
+          role_slug: string
+          status?: string | null
+          notes?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string | null
+          role_slug?: string
+          status?: string | null
+          notes?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "role_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      },
     }
     Views: {
       marketplace_modules: {

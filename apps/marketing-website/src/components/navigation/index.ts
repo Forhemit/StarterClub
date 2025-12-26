@@ -18,3 +18,4 @@ export {
     exportMenuAnalytics
 } from "./analytics";
 export type { MenuEvent, MenuEventType } from "./analytics";
+export { JourneyLauncher } from "./JourneyLauncher";

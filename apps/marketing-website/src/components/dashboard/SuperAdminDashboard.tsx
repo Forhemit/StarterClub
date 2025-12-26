@@ -128,7 +128,7 @@ export const SuperAdminDashboard = () => {
                         value="$485k"
                         trend="Q2 Est"
                         icon="💸"
-                        color="emerald"
+                        color="green"
                         detail="42 Eligible Partners"
                     />
                     <AlertCard
