@@ -58,6 +58,17 @@ starter-club/
 - **Function**: Consolidated admin dashboard for marketplace, members, and system management
 - **Features**: Marketplace management, member oversight, audit logs
 
+### 5. Unified Identity System
+- **RBAC**: Granular permission system based on roles (Member, Partner, Sponsor, Employee).
+- **Multi-Role Support**: Users can hold multiple roles simultaneously.
+- **Frontend Integration**: `useUserRoles` hook and `PermissionGuard` component for dynamic UI.
+
+### 6. Dashboard Modernization
+- **Theme Support**: Integrated Light, Dark, and "Race Track" modes.
+- **Race Track View**: Specialized high-contrast, data-dense "F1 Telemetry" dashboard for advanced users.
+- **Sidebar**: Dynamic navigation based on roles with direct Home/Logout controls.
+
+
 ---
 
 ## 📦 Shared Packages
@@ -193,6 +204,10 @@ npm run check-safety
 
 ### Core Tables
 - **`profiles`** - User profiles synced with Clerk
+- **`roles`** - System roles (e.g. member, sponsor)
+- **`permissions`** - Granular access capabilities
+- **`user_roles`** - User-to-Role assignments
+- **`role_permissions`** - Role-to-Permission definitions
 - **`activity_log`** - System activity tracking
 - **`member_progress`** - Member onboarding progress
 
