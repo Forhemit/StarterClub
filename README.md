@@ -37,6 +37,7 @@ starter-club/
   - `/dashboard` - Member dashboard
   - `/employee-portal` - Protected staff access
   - `/partner-portal` - Partner access
+  - `/events` - Event Management System (Host, Success Stories, Summit)
   - `/test-users` - Development-only test user login
 
 ### 2. Onboard App (`@starter-club/onboard-app`)
@@ -56,12 +57,15 @@ starter-club/
 - **Port**: `3001`
 - **Tech**: Next.js 16, Shadcn UI, Shared Packages
 - **Function**: Consolidated admin dashboard for marketplace, members, and system management
-- **Features**: Marketplace management, member oversight, audit logs
+- **Features**: 
+  - Marketplace management, member oversight, audit logs
+  - **"View As" Role Simulation**: Simulate dashboard experiences for Members, Partners, Sponsors, and Employees.
 
 ### 5. Unified Identity System
 - **RBAC**: Granular permission system based on roles (Member, Partner, Sponsor, Employee).
 - **Multi-Role Support**: Users can hold multiple roles simultaneously.
 - **Frontend Integration**: `useUserRoles` hook and `PermissionGuard` component for dynamic UI.
+- **Security**: Hardened RLS policies using Clerk JWT 'sub' claim and text-based User IDs for maximum compatibility.
 
 ### 6. Dashboard Modernization
 - **Theme Support**: Integrated Light, Dark, and "Race Track" modes.

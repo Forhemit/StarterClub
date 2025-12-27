@@ -46,22 +46,29 @@ create table if not exists role_requests (
 -- RLS Policies
 
 -- Roles: Public read (for now, or authenticated read)
-alter table roles enable row level security;
-create policy "Roles are viewable by everyone" on roles for select using (true);
+ALTER TABLE IF EXISTS roles ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Roles are viewable by everyone" ON roles;
+CREATE POLICY "Roles are viewable by everyone" ON roles FOR SELECT USING (true);
 
 -- Permissions: Public read
-alter table permissions enable row level security;
-create policy "Permissions are viewable by everyone" on permissions for select using (true);
+ALTER TABLE IF EXISTS permissions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Permissions are viewable by everyone" ON permissions;
+CREATE POLICY "Permissions are viewable by everyone" ON permissions FOR SELECT USING (true);
 
 -- Role Permissions: Public read
-alter table role_permissions enable row level security;
-create policy "Role permissions are viewable by everyone" on role_permissions for select using (true);
+ALTER TABLE IF EXISTS role_permissions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Role permissions are viewable by everyone" ON role_permissions;
+CREATE POLICY "Role permissions are viewable by everyone" ON role_permissions FOR SELECT USING (true);
 
 -- User Roles: Users can see their own roles
-alter table user_roles enable row level security;
-create policy "Users can view own roles" on user_roles for select using (user_id = requesting_user_id());
+ALTER TABLE IF EXISTS user_roles ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can view own roles" ON user_roles;
+CREATE POLICY "Users can view own roles" ON user_roles FOR SELECT USING (user_id = requesting_user_id());
 
 -- Role Requests: Users can see/create their own requests
-alter table role_requests enable row level security;
-create policy "Users can view own requests" on role_requests for select using (user_id = requesting_user_id());
-create policy "Users can create requests" on role_requests for insert with check (user_id = requesting_user_id());
+ALTER TABLE IF EXISTS role_requests ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can view own requests" ON role_requests;
+CREATE POLICY "Users can view own requests" ON role_requests FOR SELECT USING (user_id = requesting_user_id());
+
+DROP POLICY IF EXISTS "Users can create requests" ON role_requests;
+CREATE POLICY "Users can create requests" ON role_requests FOR INSERT WITH CHECK (user_id = requesting_user_id());

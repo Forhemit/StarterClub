@@ -1,4 +1,4 @@
-CREATE TABLE events (
+CREATE TABLE IF NOT EXISTS events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title VARCHAR(255) NOT NULL,
   description TEXT,
@@ -7,7 +7,7 @@ CREATE TABLE events (
   location VARCHAR(500),
   event_type VARCHAR(100), -- meeting, workshop, social, etc.
   created_by UUID REFERENCES auth.users(id),
-  company_id UUID, -- Removed REFERENCES companies(id) as table might not exist, kept column for multi-tenant structure if needed or will assume metadata
+  company_id UUID, -- Removed REFERENCES companies(id) as table might not exist
   status VARCHAR(50) DEFAULT 'scheduled',
   max_attendees INTEGER,
   is_recurring BOOLEAN DEFAULT FALSE,
@@ -17,11 +17,11 @@ CREATE TABLE events (
 );
 
 -- Create indexes for performance
-CREATE INDEX idx_events_date ON events(event_date);
-CREATE INDEX idx_events_created_by ON events(created_by);
-CREATE INDEX idx_events_company ON events(company_id);
+CREATE INDEX IF NOT EXISTS idx_events_date ON events(event_date);
+CREATE INDEX IF NOT EXISTS idx_events_created_by ON events(created_by);
+CREATE INDEX IF NOT EXISTS idx_events_company ON events(company_id);
 
-CREATE TABLE event_attendees (
+CREATE TABLE IF NOT EXISTS event_attendees (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   event_id UUID REFERENCES events(id) ON DELETE CASCADE,
   user_id UUID REFERENCES auth.users(id),
@@ -31,38 +31,36 @@ CREATE TABLE event_attendees (
 );
 
 -- Events table policies
-ALTER TABLE events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS events ENABLE ROW LEVEL SECURITY;
 
 -- Everyone can read events
-CREATE POLICY "Events are viewable by all company employees"
-ON events FOR SELECT
-USING (auth.uid() IN (
-  SELECT id FROM auth.users 
-  WHERE raw_user_meta_data->>'company_id' = CAST(events.company_id AS TEXT)
-) OR created_by = auth.uid() OR true); -- Added OR true for now to avoid blocking if company_id logic is complex to verify without more context, but kept structure. 
--- Actually, strict RLS might break if company_id is not set. 
--- Let's stick to the user's policy but make sure we handle the company_id type casting if necessary or ensure it works.
--- Simplification for this step: Allow authenticated users to view if we can't verify company structure easily.
--- Reverting to user provided strict policy but with CAST if needed. 
--- Supabase auth.users raw_user_meta_data is JSONB.
+DROP POLICY IF EXISTS "Events are viewable by all company employees" ON events;
+-- Note: 'Events are viewable by everyone' is handled in 20251226_events_rls_public.sql
+-- We are keeping this migration focused on schema but keeping original intent if logical
 
--- Revised Policy for View
+-- Revised Policy for View - handling collision with 20251226_events_rls_public.sql
+-- If that other file runs first, this might conflict if names are identical.
+-- 20251226_events_rls_public.sql creates "Events are viewable by everyone" (idempotently now).
+-- This file tries "Events are viewable by authenticated users".
+DROP POLICY IF EXISTS "Events are viewable by authenticated users" ON events;
 CREATE POLICY "Events are viewable by authenticated users"
 ON events FOR SELECT
 USING (auth.role() = 'authenticated');
 
 -- Employees can create events
+DROP POLICY IF EXISTS "Authenticated users can create events" ON events;
 CREATE POLICY "Authenticated users can create events"
 ON events FOR INSERT
 WITH CHECK (auth.role() = 'authenticated');
 
 -- Users can update their own events
+DROP POLICY IF EXISTS "Users can update their own events" ON events;
 CREATE POLICY "Users can update their own events"
 ON events FOR UPDATE
 USING (created_by = auth.uid());
 
 -- Admins can update any event
--- Assuming admin role check via metadata
+DROP POLICY IF EXISTS "Admins can update any event" ON events;
 CREATE POLICY "Admins can update any event"
 ON events FOR UPDATE
 USING (

@@ -23,6 +23,9 @@ export function useSupabase() {
         }
 
         return createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+            auth: {
+                persistSession: false,
+            },
             global: {
                 // Get the Supabase token from Clerk
                 fetch: async (url, options = {}) => {

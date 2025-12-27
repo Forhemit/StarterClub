@@ -13,6 +13,9 @@ export function useSupabase() {
             supabaseUrl,
             supabaseAnonKey,
             {
+                auth: {
+                    persistSession: false,
+                },
                 global: {
                     fetch: async (url, options = {}) => {
                         const clerkToken = await getToken({ template: 'supabase' });
