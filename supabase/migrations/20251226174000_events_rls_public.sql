@@ -2,6 +2,7 @@
 DROP POLICY IF EXISTS "Events are viewable by authenticated users" ON events;
 DROP POLICY IF EXISTS "Events are viewable by all company employees" ON events;
 
+DROP POLICY IF EXISTS "Events are viewable by everyone" ON events;
 CREATE POLICY "Events are viewable by everyone"
 ON events FOR SELECT
 USING (true);
