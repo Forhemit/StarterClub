@@ -42,11 +42,14 @@
     "react-big-calendar": "^1.19.4",
     "react-dom": "19.2.1",
     "react-hook-form": "^7.68.0",
+    "stripe": "^20.1.0",
+    "svix": "^1.82.0",
     "tailwind-merge": "^3.4.0",
     "uploadthing": "^7.7.4",
     "zod": "^4.2.1"
   },
   "devDependencies": {
+    "@clerk/backend": "^2.29.0",
     "@faker-js/faker": "^10.1.0",
     "@next/bundle-analyzer": "^16.0.10",
     "@types/dotenv": "^6.1.1",

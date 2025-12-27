@@ -121,7 +121,7 @@ export function MemberDashboard() {
                 </p>
                 <div className="flex gap-4">
                     <Button asChild>
-                        <Link href="/onboarding">Start Business Registration</Link>
+                        <Link href="/grid-access">Start Business Registration</Link>
                     </Button>
                     <Button variant="outline" asChild>
                         <Link href="/">Exploring for now</Link>
@@ -156,20 +156,44 @@ export function MemberDashboard() {
         })
         .slice(0, 5);
 
+    // Context Intelligence
+    const memberContext = user?.publicMetadata?.memberContext as { stage: 'new' | 'existing', primaryGoal: string } | undefined;
+
+    const getTrackLabel = () => {
+        if (!memberContext) return "Flight Deck Overview";
+        if (memberContext.stage === 'new') return "🌱 Foundation Track";
+        if (memberContext.stage === 'existing') return "🚀 Optimization Track";
+        return "Flight Deck Overview";
+    };
+
     return (
         <div className="space-y-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-foreground">
-                        {business.business_name}
-                    </h1>
+                    <div className="flex items-center gap-2 mb-1">
+                        <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                            {business.business_name}
+                        </h1>
+                        {memberContext && (
+                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium border ${memberContext.stage === 'new' ? 'bg-green-500/10 text-green-500 border-green-500/20' : 'bg-blue-500/10 text-blue-500 border-blue-500/20'}`}>
+                                {memberContext.stage === 'new' ? 'Startup' : 'Scaling'}
+                            </span>
+                        )}
+                    </div>
                     <p className="text-muted-foreground">
-                        Flight Deck Overview
+                        {getTrackLabel()}
                     </p>
                 </div>
-                <Button variant="outline" onClick={() => window.location.reload()}>
-                    Refresh Data
-                </Button>
+                <div className="flex items-center gap-2">
+                    <Button variant="outline" asChild size="sm">
+                        <Link href="/member-onboarding">
+                            Update Context
+                        </Link>
+                    </Button>
+                    <Button variant="outline" onClick={() => window.location.reload()} size="sm">
+                        Refresh Data
+                    </Button>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

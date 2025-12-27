@@ -18,8 +18,8 @@ import { PartnerDashboard } from "@/components/dashboard/PartnerDashboard";
 import { EmployeeDashboard } from "@/components/dashboard/EmployeeDashboard";
 
 export default function DashboardPage() {
-    const { user } = useUser();
-    const { roles, isLoading, hasRole } = useUserRoles();
+    const { user, isLoaded } = useUser();
+    const { roles, isLoading: rolesLoading, hasRole } = useUserRoles();
     const { theme } = useTheme();
     const [mounted, setMounted] = React.useState(false);
 
@@ -28,7 +28,7 @@ export default function DashboardPage() {
         setMounted(true);
     }, []);
 
-    if (isLoading || !mounted) {
+    if (!isLoaded || rolesLoading || !mounted) {
         return <div className="p-8 text-center text-muted-foreground">Loading dashboard...</div>;
     }
 
@@ -37,23 +37,35 @@ export default function DashboardPage() {
         return <RaceTrackDashboard />;
     }
 
-    // 2. Role-Based Views
+    // 2. Intent-Based Routing (The "Brain")
+    const userTrack = user?.publicMetadata?.userTrack as string | undefined;
 
-    // Employee / Admin View (Higher Priority)
-    if (hasRole('super_admin') || hasRole('employee') || hasRole('admin')) {
-        return <EmployeeDashboard />;
-    }
-
-    // Partner View
-    if (hasRole('partner') || hasRole('partner_admin')) {
+    if (userTrack === 'support_builders') {
         return <PartnerDashboard />;
     }
 
-    // Sponsor View
-    if (hasRole('sponsor')) {
+    if (userTrack === 'amplify_brand') {
         return <SponsorDashboard />;
     }
 
-    // Default: Member View
+    if (userTrack === 'work_with_us') {
+        return <EmployeeDashboard />;
+    }
+
+    // 3. Legacy Role-Based Fallbacks (if no track selected or specific role override needed)
+    // This ensures existing users without tracks still get routed correctly
+    if (!userTrack) {
+        if (hasRole('super_admin') || hasRole('employee') || hasRole('admin')) {
+            return <EmployeeDashboard />;
+        }
+        if (hasRole('partner') || hasRole('partner_admin')) {
+            return <PartnerDashboard />;
+        }
+        if (hasRole('sponsor')) {
+            return <SponsorDashboard />;
+        }
+    }
+
+    // 4. Default / Build Something / Explore
     return <MemberDashboard />;
 }

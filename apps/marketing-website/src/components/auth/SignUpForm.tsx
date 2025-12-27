@@ -11,7 +11,21 @@ import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/context/ToastContext";
 
-export default function SignUpForm() {
+interface SignUpFormProps {
+    title?: string;
+    subtitle?: string;
+    plan?: string;
+    intent?: string;
+    track?: string;
+}
+
+export default function SignUpForm({
+    title = "JOIN THE CLUB",
+    subtitle = "Partner Access Application",
+    plan,
+    intent,
+    track
+}: SignUpFormProps) {
     const { isLoaded, signUp, setActive } = useSignUp();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -37,6 +51,9 @@ export default function SignUpForm() {
                 password,
                 unsafeMetadata: {
                     company: company,
+                    plan,
+                    userIntent: intent,
+                    userTrack: track
                 },
             });
 
@@ -71,8 +88,18 @@ export default function SignUpForm() {
 
             if (completeSignUp.status === "complete") {
                 await setActive({ session: completeSignUp.createdSessionId });
-                router.push("/dashboard/partner");
-                toast.success("Welcome to the Partner Portal!");
+
+                // customized redirect logic
+                const params = new URLSearchParams(window.location.search);
+                const redirectUrl = params.get("redirect_url");
+
+                if (redirectUrl) {
+                    router.push(redirectUrl);
+                } else {
+                    router.push("/dashboard");
+                }
+
+                toast.success("Welcome to Starter Club!");
             }
         } catch (err: any) {
             console.error('Auth verification error:', err.errors?.[0]?.code || 'unknown_error');
@@ -85,8 +112,8 @@ export default function SignUpForm() {
     return (
         <div className="w-full max-w-sm mx-auto p-4 space-y-6">
             <div className="text-center">
-                <h1 className="text-2xl font-bebas text-[var(--accent)] text-4xl mb-2">JOIN THE CLUB</h1>
-                <p className="text-muted-foreground text-sm">Partner Access Application</p>
+                <h1 className="text-2xl font-bebas text-[var(--accent)] text-4xl mb-2">{title}</h1>
+                <p className="text-muted-foreground text-sm">{subtitle}</p>
             </div>
 
             {!pendingVerification ? (
