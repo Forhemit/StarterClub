@@ -8,7 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
     LayoutDashboard, BookOpen, Users, Calculator, Library, FileText, Package, Send, BarChart, ShieldCheck, Menu, CheckSquare, Settings, Hammer, Sparkles, Building2,
-    Home, LogOut
+    Home, LogOut, Compass
 } from "lucide-react";
 import { UserButton, useUser, SignOutButton } from "@clerk/nextjs";
 import { useState, useMemo } from "react";
@@ -111,6 +111,12 @@ export function DashboardSidebar({ className, mobile, onLinkClick }: SidebarProp
                     <DashboardThemeToggle />
 
                     <div className="grid grid-cols-2 gap-2">
+                        <Link href="/grid-access" title="Update Focus">
+                            <Button variant="outline" size="sm" className="w-full justify-start gap-2 border-border bg-card text-card-foreground hover:bg-muted px-2">
+                                <Compass className="h-4 w-4 shrink-0" />
+                                <span className="truncate">Update Focus</span>
+                            </Button>
+                        </Link>
                         <Link href="/" title="Go to Website">
                             <Button variant="outline" size="sm" className="w-full justify-start gap-2 border-border bg-card text-card-foreground hover:bg-muted px-2">
                                 <Home className="h-4 w-4 shrink-0" />
