@@ -7,6 +7,13 @@ export type MemberContext = {
     stage: 'new' | 'existing';
     model: 'online' | 'physical' | 'hybrid';
     primaryGoal: string;
+    organizationInfo?: {
+        name: string;
+        firstName: string;
+        lastName: string;
+        phone: string;
+        contactEmail: string;
+    };
     completedAt: string; // ISO string
 };
 

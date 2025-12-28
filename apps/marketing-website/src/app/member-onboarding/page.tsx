@@ -7,6 +7,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
     Sprout,
     Building2,
@@ -28,7 +30,7 @@ import { cn } from "@/lib/utils";
 import { updateMemberContext, type MemberContext } from "./_actions";
 
 
-type Step = "stage" | "model" | "goal";
+type Step = "stage" | "model" | "info" | "goal";
 
 export default function MemberOnboardingPage() {
     const { user, isLoaded } = useUser();
@@ -93,6 +95,11 @@ export default function MemberOnboardingPage() {
 
     const handleModelSelect = (model: MemberContext['model']) => {
         setData(prev => ({ ...prev, model }));
+        setStep("info");
+    };
+
+    const handleInfoCapture = (info: NonNullable<MemberContext['organizationInfo']>) => {
+        setData(prev => ({ ...prev, organizationInfo: info }));
         setStep("goal");
     };
 
@@ -109,6 +116,12 @@ export default function MemberOnboardingPage() {
             params.set('stage', finalData.stage);
             params.set('model', finalData.model);
             params.set('goal', finalData.primaryGoal);
+            if (finalData.organizationInfo) {
+                params.set('orgName', finalData.organizationInfo.name);
+                params.set('orgFirst', finalData.organizationInfo.firstName);
+                params.set('orgLast', finalData.organizationInfo.lastName);
+                params.set('orgPhone', finalData.organizationInfo.phone);
+            }
             params.set('save', 'true');
 
             const returnUrl = `${currentPath}?${params.toString()}`;
@@ -122,7 +135,8 @@ export default function MemberOnboardingPage() {
             const res = await updateMemberContext({
                 stage: finalData.stage,
                 model: finalData.model,
-                primaryGoal: finalData.primaryGoal
+                primaryGoal: finalData.primaryGoal,
+                organizationInfo: finalData.organizationInfo
             });
 
             if (res.success) {
@@ -151,7 +165,8 @@ export default function MemberOnboardingPage() {
         );
     }
 
-    const currentStepIndex = step === "stage" ? 1 : step === "model" ? 2 : 3;
+    const currentStepIndex = step === "stage" ? 1 : step === "model" ? 2 : step === "info" ? 3 : 4;
+    const totalSteps = 4;
 
     return (
         <div className={cn(
@@ -200,18 +215,18 @@ export default function MemberOnboardingPage() {
                         "flex justify-between text-xs font-semibold uppercase tracking-wider",
                         isRacetrack ? "text-signal-green/80" : "text-muted-foreground"
                     )}>
-                        <span>Step {currentStepIndex} of 3</span>
+                        <span>Step {currentStepIndex} of {totalSteps}</span>
                         {isRacetrack ? (
-                            <span>SYS.READY: {Math.round(currentStepIndex / 3 * 100)}%</span>
+                            <span>SYS.READY: {Math.round(currentStepIndex / totalSteps * 100)}%</span>
                         ) : (
-                            <span>{Math.round(currentStepIndex / 3 * 100)}% Complete</span>
+                            <span>{Math.round(currentStepIndex / totalSteps * 100)}% Complete</span>
                         )}
                     </div>
 
                     {isRacetrack ? (
                         /* Sector/Lap Style Progress Bar */
                         <div className="flex gap-1 h-2 w-full">
-                            {[1, 2, 3].map((s) => (
+                            {[1, 2, 3, 4].map((s) => (
                                 <motion.div
                                     key={s}
                                     className={cn(
@@ -233,8 +248,8 @@ export default function MemberOnboardingPage() {
                         <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
                             <motion.div
                                 className="h-full bg-primary"
-                                initial={{ width: "33%" }}
-                                animate={{ width: step === "stage" ? "33%" : step === "model" ? "66%" : "100%" }}
+                                initial={{ width: "25%" }}
+                                animate={{ width: `${(currentStepIndex / totalSteps) * 100}%` }}
                                 transition={{ duration: 0.5, ease: "easeInOut" }}
                             />
                         </div>
@@ -247,6 +262,9 @@ export default function MemberOnboardingPage() {
                     )}
                     {step === "model" && (
                         <StepModel key="model" onSelect={handleModelSelect} isRacetrack={isRacetrack} />
+                    )}
+                    {step === "info" && (
+                        <StepInfoCapture key="info" initialData={data.organizationInfo} onSubmit={handleInfoCapture} isRacetrack={isRacetrack} />
                     )}
                     {step === "goal" && data.stage && (
                         <StepGoal
@@ -467,7 +485,139 @@ function StepModel({ onSelect, isRacetrack }: { onSelect: (val: 'online' | 'phys
 }
 
 // ----------------------------------------------------------------------
-// Step 3: Primary Goal
+// Step 3: Info Capture
+// ----------------------------------------------------------------------
+
+function StepInfoCapture({ initialData, onSubmit, isRacetrack }: { initialData: MemberContext['organizationInfo'] | undefined, onSubmit: (val: any) => void, isRacetrack: boolean }) {
+    const [info, setInfo] = useState(initialData || { name: "", firstName: "", lastName: "", phone: "", contactEmail: "" });
+    const { user } = useUser();
+
+    // Prefill name/email if available
+    useEffect(() => {
+        if (user) {
+            setInfo(prev => ({
+                ...prev,
+                contactEmail: prev.contactEmail || user.primaryEmailAddress?.emailAddress || "",
+                firstName: prev.firstName || user.firstName || "",
+                lastName: prev.lastName || user.lastName || ""
+            }));
+        }
+    }, [user]);
+
+    const handleChange = (field: string, val: string) => {
+        setInfo(prev => ({ ...prev, [field]: val }));
+    };
+
+    const isValid = info.name && info.firstName && info.lastName && info.phone && info.contactEmail;
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="space-y-8 max-w-xl mx-auto"
+        >
+            <div className="text-center space-y-4">
+                <h1 className={cn(
+                    "text-3xl md:text-5xl font-bold tracking-tight",
+                    isRacetrack ? "font-heading uppercase tracking-tighter" : ""
+                )}>
+                    {isRacetrack ? "ENTITY REGISTRATION" : "Tell us about your organization"}
+                </h1>
+                <p className={cn("text-xl", isRacetrack ? "text-muted-foreground font-mono" : "text-muted-foreground")}>
+                    {isRacetrack ? "Logs required for fleet alignment." : "This helps us evaluate alignment and recommend opportunities."}
+                </p>
+            </div>
+
+            <Card className={cn(
+                "border",
+                isRacetrack ? "bg-black/80 border-white/20 rounded-none" : "bg-card"
+            )}>
+                <CardContent className="p-8 space-y-6">
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="company" className={isRacetrack ? "font-mono uppercase text-xs" : ""}>Company Name</Label>
+                            <Input
+                                id="company"
+                                value={info.name}
+                                onChange={(e) => handleChange("name", e.target.value)}
+                                className={isRacetrack ? "bg-white/5 border-white/10 rounded-none focus:border-signal-green" : ""}
+                                placeholder="Acme Corp"
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="firstName" className={isRacetrack ? "font-mono uppercase text-xs" : ""}>First Name</Label>
+                                <Input
+                                    id="firstName"
+                                    value={info.firstName}
+                                    onChange={(e) => handleChange("firstName", e.target.value)}
+                                    className={isRacetrack ? "bg-white/5 border-white/10 rounded-none focus:border-signal-green" : ""}
+                                    placeholder="Jane"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="lastName" className={isRacetrack ? "font-mono uppercase text-xs" : ""}>Last Name</Label>
+                                <Input
+                                    id="lastName"
+                                    value={info.lastName}
+                                    onChange={(e) => handleChange("lastName", e.target.value)}
+                                    className={isRacetrack ? "bg-white/5 border-white/10 rounded-none focus:border-signal-green" : ""}
+                                    placeholder="Doe"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="phone" className={isRacetrack ? "font-mono uppercase text-xs" : ""}>Phone Number</Label>
+                                <Input
+                                    id="phone"
+                                    value={info.phone}
+                                    onChange={(e) => handleChange("phone", e.target.value)}
+                                    className={isRacetrack ? "bg-white/5 border-white/10 rounded-none focus:border-signal-green" : ""}
+                                    placeholder="+1 (555) 000-0000"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="email" className={isRacetrack ? "font-mono uppercase text-xs" : ""}>Primary Contact Email</Label>
+                                <Input
+                                    id="email"
+                                    value={info.contactEmail}
+                                    onChange={(e) => handleChange("contactEmail", e.target.value)}
+                                    className={isRacetrack ? "bg-white/5 border-white/10 rounded-none focus:border-signal-green" : ""}
+                                    placeholder="you@company.com"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <div className="flex justify-center">
+                <Button
+                    size="lg"
+                    className={cn(
+                        "min-w-[200px] h-14 text-lg",
+                        isRacetrack
+                            ? "bg-signal-green text-black hover:bg-signal-green/90 font-mono tracking-wider rounded-none"
+                            : "rounded-full"
+                    )}
+                    disabled={!isValid}
+                    onClick={() => onSubmit(info)}
+                >
+                    {isRacetrack ? "SUBMIT MANIFEST" : "Next"}
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+            </div>
+        </motion.div>
+    );
+}
+
+// ----------------------------------------------------------------------
+// Step 4: Primary Goal
 // ----------------------------------------------------------------------
 
 function StepGoal({ stage, onSelect, isSubmitting, isRacetrack }: { stage: 'new' | 'existing', onSelect: (val: string) => void, isSubmitting: boolean, isRacetrack: boolean }) {

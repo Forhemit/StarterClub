@@ -3,10 +3,12 @@ import { NextResponse } from "next/server";
 
 const isDashboardRoute = createRouteMatcher(["/dashboard(.*)"]);
 const isAdminRoute = createRouteMatcher(["/dashboard/super-admin(.*)"]);
-const isOnboardingRoute = createRouteMatcher(["/grid-access(.*)"]);
+const isOnboardingRoute = createRouteMatcher(["/grid-access(.*)", "/onboarding(.*)"]);
 const isMemberOnboardingRoute = createRouteMatcher(["/member-onboarding(.*)"]);
+const isPartnerOnboardingRoute = createRouteMatcher(["/partner-onboarding(.*)"]);
 const isPublicAPI = createRouteMatcher(["/api(.*)"]);
 
+import { createClient } from "@supabase/supabase-js";
 
 export default clerkMiddleware(async (auth, req) => {
 
@@ -19,22 +21,64 @@ export default clerkMiddleware(async (auth, req) => {
             }
         }
 
-        const { userId, sessionClaims } = await auth();
+        const { userId, getToken } = await auth();
+        const url = new URL(req.url); // Use standard URL
+        const pathname = url.pathname;
 
-        // Onboarding Check
-        // Redirect to /grid-access if user is logged in but hasn't completed onboarding
-        // and is not already on the onboarding page or hitting an API
+        // Onboarding & Role Check
         if (userId && !isPublicAPI(req)) {
-            const metadata = sessionClaims?.publicMetadata as { onboardingComplete?: boolean; userTrack?: string; memberContextComplete?: boolean };
+            // Create authenticated Supabase client for middleware
+            const token = await getToken({ template: 'supabase' });
 
-            // 1. Basic Onboarding (Track Selection)
-            if (!metadata?.onboardingComplete && !isOnboardingRoute(req)) {
-                const onboardingUrl = new URL("/grid-access", req.url);
-                return NextResponse.redirect(onboardingUrl);
+            const supabase = createClient(
+                process.env.NEXT_PUBLIC_SUPABASE_URL!,
+                process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+                {
+                    global: {
+                        headers: { Authorization: `Bearer ${token}` }
+                    }
+                }
+            );
+
+            // Check Supabase profile for role and onboarding status
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('active_roles, primary_role, onboarding_completed_at')
+                .eq('id', userId)
+                .maybeSingle();
+
+            const hasRoles = profile?.active_roles && profile.active_roles.length > 0;
+            const onboardingCompleted = !!profile?.onboarding_completed_at;
+
+            // 1. Redirect to Onboarding if not completed and NO role assigned
+            if (!onboardingCompleted && !hasRoles && !isOnboardingRoute(req) && !isMemberOnboardingRoute(req) && !isPartnerOnboardingRoute(req)) {
+                return NextResponse.redirect(new URL("/onboarding", req.url));
             }
 
-            // 2. Member Context Onboarding (Only for Members)
-            // If they picked 'build_something' but haven't finished the context questions
+            // 2. If has roles, allow dashboard access even if onboarding not complete
+            // (Users can complete onboarding later from dashboard)
+            if (hasRoles && !onboardingCompleted) {
+                const allowedWithoutOnboarding = [
+                    '/onboarding',
+                    '/dashboard',
+                    '/profile',
+                    '/api',
+                    '/complete-profile'
+                ];
+                const isAllowed = allowedWithoutOnboarding.some(route => pathname.startsWith(route));
+
+                if (!isAllowed) {
+                    return NextResponse.redirect(new URL("/dashboard", req.url));
+                }
+            }
+
+            // 3. Fallback to existing metadata checks if DB check fails or is skipped?
+            // Existing metadata logic works for context onboarding, can keep it as secondary
+            // Or remove it if database is source of truth.
+            // Let's keep it for now as it handles specific "Context" steps which might be separate from "Role" setup.
+            const { sessionClaims } = await auth();
+            const metadata = sessionClaims?.publicMetadata as { onboardingComplete?: boolean; userTrack?: string; memberContextComplete?: boolean; partnerContextComplete?: boolean };
+
             if (metadata?.onboardingComplete &&
                 metadata?.userTrack === 'build_something' &&
                 !metadata?.memberContextComplete &&
@@ -43,6 +87,15 @@ export default clerkMiddleware(async (auth, req) => {
                 const contextUrl = new URL("/member-onboarding", req.url);
                 return NextResponse.redirect(contextUrl);
             }
+
+            if (metadata?.onboardingComplete &&
+                metadata?.userTrack === 'support_builders' &&
+                !metadata?.partnerContextComplete &&
+                !isPartnerOnboardingRoute(req)) {
+
+                const partnerContextUrl = new URL("/partner-onboarding", req.url);
+                return NextResponse.redirect(partnerContextUrl);
+            }
         }
 
         // Protect all dashboard routes
@@ -50,8 +103,6 @@ export default clerkMiddleware(async (auth, req) => {
             await auth.protect();
         }
 
-        // Removed legacy legacy checks for super-admin routes from marketing middleware
-        // Super Admin app should handle its own auth via its own middleware.
     } catch (error) {
         console.error("Middleware Error:", error);
         // Allow public routes to proceed even if auth fails

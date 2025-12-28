@@ -82,14 +82,14 @@ export const SuperAdminDashboard = () => {
                                 />
                             </Row>
 
-                            <Row>
+                            <GridRow>
                                 <ChartCard title="Performance vs Target" width="twoThirds">
                                     <SimpleChart type="bar" data={{ metrics: ['Revenue', 'Margin', 'Growth', 'Sat', 'Uptime'] }} />
                                 </ChartCard>
                                 <ChartCard title="Risk Radar" width="third">
                                     <SimpleChart type="radar" data={{ categories: ['Financial', 'Ops', 'Legal', 'Reputation', 'Tech'] }} />
                                 </ChartCard>
-                            </Row>
+                            </GridRow>
                         </Section>
 
                         {/* Section 2: Department Command Center */}
@@ -132,23 +132,45 @@ export const SuperAdminDashboard = () => {
 
                         {/* Section 3: Financial & Controls */}
                         <Section title="Financial & System Controls" width="full">
-                            <Row>
-                                <MetricCard
-                                    title="Cash Balance"
-                                    value="$1.25M"
-                                    trend="-1.2%"
-                                    icon="🏦"
-                                    color="blue"
-                                    detail="Runway: 14.7 months"
-                                />
-                                <MetricCard
-                                    title="Profit Share Pool"
-                                    value="$485k"
-                                    trend="Q2 Est"
-                                    icon="💸"
-                                    color="green"
-                                    detail="42 Eligible Partners"
-                                />
+                            <GridRow>
+                                <ColWrapper width="third">
+                                    <div className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 h-full flex flex-col justify-between">
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Cash Balance</p>
+                                                <div className="mt-1 flex items-baseline gap-2 flex-wrap">
+                                                    <span className="text-2xl font-bold text-zinc-900 dark:text-white">$1.25M</span>
+                                                    <span className="inline-flex items-baseline rounded-md px-1.5 py-0.5 text-[10px] font-semibold bg-rose-100 text-rose-800 dark:bg-rose-500/20 dark:text-rose-400">
+                                                        -1.2%
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="rounded-lg p-2 ring-1 ring-inset shrink-0 text-blue-600 bg-blue-50 ring-blue-600/20 dark:text-blue-400 dark:bg-blue-950/30">
+                                                <span className="text-lg">🏦</span>
+                                            </div>
+                                        </div>
+                                        <p className="mt-2 text-[10px] text-zinc-500 dark:text-zinc-400">Runway: 14.7 months</p>
+                                    </div>
+                                </ColWrapper>
+                                <ColWrapper width="third">
+                                    <div className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 h-full flex flex-col justify-between">
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Profit Share Pool</p>
+                                                <div className="mt-1 flex items-baseline gap-2 flex-wrap">
+                                                    <span className="text-2xl font-bold text-zinc-900 dark:text-white">$485k</span>
+                                                    <span className="inline-flex items-baseline rounded-md px-1.5 py-0.5 text-[10px] font-semibold bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300">
+                                                        Q2 Est
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="rounded-lg p-2 ring-1 ring-inset shrink-0 text-emerald-600 bg-emerald-50 ring-emerald-600/20 dark:text-emerald-400 dark:bg-emerald-950/30">
+                                                <span className="text-lg">💸</span>
+                                            </div>
+                                        </div>
+                                        <p className="mt-2 text-[10px] text-zinc-500 dark:text-zinc-400">42 Eligible Partners</p>
+                                    </div>
+                                </ColWrapper>
                                 <AlertCard
                                     title="Financial Override Queue"
                                     level="low"
@@ -156,7 +178,7 @@ export const SuperAdminDashboard = () => {
                                     trigger="Pending Approval"
                                     action="Approve/Deny"
                                 />
-                            </Row>
+                            </GridRow>
                         </Section>
 
                         {/* Section 4: System & Security */}
@@ -203,49 +225,47 @@ export const SuperAdminDashboard = () => {
 
                         {/* Section 5: Crisis & Controls */}
                         <Section title="Crisis Management & Controls" width="full">
-                            <Row>
-                                <div className="w-full px-2 mb-4">
-                                    <div className={`p-6 rounded-2xl border-2 ${emergencyMode ? 'border-red-500 bg-red-50 dark:bg-red-900/10' : 'border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900'}`}>
-                                        <div className="flex items-center justify-between mb-4">
-                                            <h3 className="text-xl font-bold flex items-center gap-2">
-                                                🚨 Emergency Control Panel
-                                                {emergencyMode && <span className="text-xs bg-red-500 text-white px-2 py-1 rounded animate-pulse">ACTIVE</span>}
-                                            </h3>
-                                            <button
-                                                onClick={() => setEmergencyMode(!emergencyMode)}
-                                                className={`px-4 py-2 rounded font-bold transition-colors ${emergencyMode ? 'bg-zinc-200 text-zinc-800' : 'bg-red-600 text-white hover:bg-red-700'}`}
-                                            >
-                                                {emergencyMode ? 'DEACTIVATE PROTOCOLS' : 'ACTIVATE EMERGENCY PROTOCOLS'}
-                                            </button>
-                                        </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                            <button className="p-3 border border-red-200 dark:border-red-900 rounded bg-white dark:bg-black text-left hover:bg-red-50 dark:hover:bg-red-900/20">
-                                                <span className="block font-bold text-red-600">Freeze Financials</span>
-                                                <span className="text-xs text-zinc-500">Stop all outgoing payments</span>
-                                            </button>
-                                            <button className="p-3 border border-red-200 dark:border-red-900 rounded bg-white dark:bg-black text-left hover:bg-red-50 dark:hover:bg-red-900/20">
-                                                <span className="block font-bold text-red-600">System Lockdown</span>
-                                                <span className="text-xs text-zinc-500">Restrict access to admins only</span>
-                                            </button>
-                                            <button className="p-3 border border-red-200 dark:border-red-900 rounded bg-white dark:bg-black text-left hover:bg-red-50 dark:hover:bg-red-900/20">
-                                                <span className="block font-bold text-red-600">Data Preservation</span>
-                                                <span className="text-xs text-zinc-500">Snapshot & off-site backup</span>
-                                            </button>
-                                        </div>
+                            {/* Emergency Control Panel - Full Width, not inside Row */}
+                            <div className="w-full mb-6">
+                                <div className={`p-6 rounded-2xl border-2 ${emergencyMode ? 'border-red-500 bg-red-50 dark:bg-red-900/10' : 'border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900'}`}>
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h3 className="text-xl font-bold flex items-center gap-2">
+                                            🚨 Emergency Control Panel
+                                            {emergencyMode && <span className="text-xs bg-red-500 text-white px-2 py-1 rounded animate-pulse">ACTIVE</span>}
+                                        </h3>
+                                        <button
+                                            onClick={() => setEmergencyMode(!emergencyMode)}
+                                            className={`px-4 py-2 rounded font-bold transition-colors ${emergencyMode ? 'bg-zinc-200 text-zinc-800' : 'bg-red-600 text-white hover:bg-red-700'}`}
+                                        >
+                                            {emergencyMode ? 'DEACTIVATE PROTOCOLS' : 'ACTIVATE EMERGENCY PROTOCOLS'}
+                                        </button>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <button className="p-3 border border-red-200 dark:border-red-900 rounded-lg bg-white dark:bg-black text-left hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                            <span className="block font-bold text-red-600">Freeze Financials</span>
+                                            <span className="text-xs text-zinc-500">Stop all outgoing payments</span>
+                                        </button>
+                                        <button className="p-3 border border-red-200 dark:border-red-900 rounded-lg bg-white dark:bg-black text-left hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                            <span className="block font-bold text-red-600">System Lockdown</span>
+                                            <span className="text-xs text-zinc-500">Restrict access to admins only</span>
+                                        </button>
+                                        <button className="p-3 border border-red-200 dark:border-red-900 rounded-lg bg-white dark:bg-black text-left hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                            <span className="block font-bold text-red-600">Data Preservation</span>
+                                            <span className="text-xs text-zinc-500">Snapshot & off-site backup</span>
+                                        </button>
                                     </div>
                                 </div>
-                            </Row>
+                            </div>
 
-                            <Row>
-                                <QuickActionPanel
-                                    actions={[
-                                        { label: 'Generate Exec Report', icon: '📊', path: '/superadmin/reports' },
-                                        { label: 'Audit System', icon: '🔍', path: '/superadmin/audit' },
-                                        { label: 'Manage Permissions', icon: '🔐', path: '/superadmin/permissions' },
-                                        { label: 'Deploy Update', icon: '🚀', path: '/superadmin/deploy' }
-                                    ]}
-                                />
-                            </Row>
+                            {/* Quick Actions Grid */}
+                            <QuickActionPanel
+                                actions={[
+                                    { label: 'Generate Exec Report', icon: '📊', path: '/superadmin/reports' },
+                                    { label: 'Audit System', icon: '🔍', path: '/superadmin/audit' },
+                                    { label: 'Manage Permissions', icon: '🔐', path: '/superadmin/permissions' },
+                                    { label: 'Deploy Update', icon: '🚀', path: '/superadmin/deploy' }
+                                ]}
+                            />
                         </Section>
                     </Dashboard>
                 </div>

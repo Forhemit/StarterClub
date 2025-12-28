@@ -55,7 +55,7 @@ export const Section = ({ title, width = 'full', children }: SectionProps) => {
 };
 
 export const Row = ({ children }: { children: React.ReactNode }) => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+    <div className="grid grid-cols-12 gap-4 w-full">
         {children}
     </div>
 );
@@ -133,10 +133,6 @@ interface MetricCardProps {
 }
 
 export const MetricCard = ({ title, value, trend, icon, color = 'blue', detail }: MetricCardProps) => {
-    // Dynamic Icon
-    // In a real app we'd map string names to icons. For now, we'll just render the emoji or text passed in,
-    // or try to find a Lucide icon if it matches a name.
-
     const colorStyles = {
         green: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 ring-emerald-600/20",
         red: "text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 ring-rose-600/20",
@@ -148,40 +144,38 @@ export const MetricCard = ({ title, value, trend, icon, color = 'blue', detail }
     const isNegative = trend?.startsWith('-');
 
     return (
-        <ColWrapper width="third"> {/* Defaulting to roughly 1/4 or 1/3 depending on context */}
-            <div className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 h-full flex flex-col justify-between">
-                <div className="flex items-start justify-between">
-                    <div>
-                        <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">{title}</p>
-                        <div className="mt-2 flex items-baseline gap-2">
-                            <span className="text-3xl font-bold text-zinc-900 dark:text-white">{value}</span>
+        <div className="col-span-12 sm:col-span-6 lg:col-span-3">
+            <div className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 h-full flex flex-col justify-between">
+                <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 truncate">{title}</p>
+                        <div className="mt-1 flex items-baseline gap-2 flex-wrap">
+                            <span className="text-2xl font-bold text-zinc-900 dark:text-white">{value}</span>
                             {trend && (
                                 <span className={cn(
-                                    "inline-flex items-baseline rounded-md px-2 py-0.5 text-xs font-semibold md:mt-2 lg:mt-0",
+                                    "inline-flex items-baseline rounded-md px-1.5 py-0.5 text-[10px] font-semibold",
                                     isPositive ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-400" :
                                         isNegative ? "bg-rose-100 text-rose-800 dark:bg-rose-500/20 dark:text-rose-400" :
                                             "bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300"
                                 )}>
-                                    {isPositive && <ArrowUp className="mr-1 h-3 w-3 self-center shrink-0" />}
-                                    {isNegative && <ArrowDown className="mr-1 h-3 w-3 self-center shrink-0" />}
+                                    {isPositive && <ArrowUp className="mr-0.5 h-2.5 w-2.5 self-center shrink-0" />}
+                                    {isNegative && <ArrowDown className="mr-0.5 h-2.5 w-2.5 self-center shrink-0" />}
                                     {trend}
                                 </span>
                             )}
                         </div>
                     </div>
-                    <div className={cn("rounded-lg p-3 ring-1 ring-inset", colorStyles[color])}>
-                        <span className="text-xl">{icon || "📊"}</span>
+                    <div className={cn("rounded-lg p-2 ring-1 ring-inset shrink-0", colorStyles[color])}>
+                        <span className="text-lg">{icon || "📊"}</span>
                     </div>
                 </div>
                 {detail && (
-                    <div className="mt-4 flex items-center gap-2">
-                        <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                            {detail}
-                        </p>
-                    </div>
+                    <p className="mt-2 text-[10px] text-zinc-500 dark:text-zinc-400 truncate">
+                        {detail}
+                    </p>
                 )}
             </div>
-        </ColWrapper>
+        </div>
     );
 };
 

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Building2, Users, Handshake, Calendar } from "lucide-react";
+import { Building2, Users, Handshake, Calendar, ArrowRight } from "lucide-react";
 import { MetricCard, ChartCard, SimpleChart, TableCard } from './shared/DashboardComponents';
 
 export function PartnerDashboard() {
@@ -56,6 +56,21 @@ export function PartnerDashboard() {
                     <ChartCard title="Category Impact" width="full">
                         <SimpleChart type="pie" data={{ labels: ['Networking', 'Education', 'Social'], values: [50, 30, 20] }} />
                     </ChartCard>
+                </div>
+            </div>
+
+            {/* Sponsor Peek */}
+            <div className="rounded-xl border border-zinc-200 bg-gradient-to-r from-zinc-50 to-white p-6 dark:border-zinc-800 dark:from-zinc-900 dark:to-zinc-950">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Extend Your Reach</h3>
+                        <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+                            Some partners choose to sponsor experiences to amplify their impact.
+                        </p>
+                    </div>
+                    <Button variant="outline" className="gap-2">
+                        Explore Sponsor Track <ArrowRight className="w-4 h-4" />
+                    </Button>
                 </div>
             </div>
         </div>

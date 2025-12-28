@@ -71,7 +71,27 @@ starter-club/
 - **Theme Support**: Integrated Light, Dark, and "Race Track" modes.
 - **Race Track View**: Specialized high-contrast, data-dense "F1 Telemetry" dashboard for advanced users.
 - **Sidebar**: Dynamic navigation based on roles with direct Home/Logout controls.
+- **Profile Settings Modal**: Tabbed settings interface with role-specific content (Account, Profile, Notifications, Subscription tabs).
 
+### 7. Multi-Flow Onboarding System
+- **Member Onboarding** (`/member-onboarding`) - Course member signup with subscription selection
+- **Partner Onboarding** (`/partner-onboarding`) - Partner registration with expertise/capacity selection
+- **Sponsor Onboarding** (`/sponsor-onboarding`) - Sponsor intake with organization details
+- **Theme-Aware UI**: Race Track theme integration with "Lap Counter" progress indicators
+- **Department Assignment**: Users can associate with departments during onboarding
+
+### 8. Employee Tracking & Payroll System
+- **Employee Management**: Full employee lifecycle tracking with departments and managers
+- **Payroll Processing**: Payroll runs, entries, deductions, and contributions
+- **Cost Allocation**: Department and project-based cost tracking
+- **Employee Timeline**: Historical view of employee changes (position, salary, department)
+- **Finance Dashboard**: Admin interface for expense and payroll management
+
+### 9. Accounting & Financial Integration
+- **Double-Entry Accounting**: Chart of accounts, journal entries, and account balances
+- **Stripe Integration**: Automated income tracking via webhooks
+- **Expense Management**: Vendor bills, expense approvals, and reimbursements
+- **Reporting**: Real-time views for account balances and transactions
 
 ---
 
@@ -182,11 +202,18 @@ Located in `scripts/`:
 | `verify.sh` | Full verification suite (structure, env, lint, build, Supabase) |
 | `check-env-safety.sh` | Validates environment variable security |
 | `setup-vercel.sh` | Automates Vercel project setup |
+| `db-backup.sh` | Database backup utility |
 | `create-test-users.ts` | Creates test user accounts in Supabase |
 | `seed-flight-deck-test-data.ts` | Seeds Flight Deck with test data |
 | `verify-checklist.ts` | Validates checklist data integrity |
 | `verify-flight-deck-data.ts` | Validates Flight Deck data |
 | `verify-marketplace-v3.ts` | Validates marketplace module data |
+| `verify_rbac_full.ts` | Full RBAC system verification |
+| `verify_employee_system.ts` | Employee tracking system validation |
+| `check-rls-policies.ts` | Validates RLS policy configuration |
+| `test-onboarding-flow.ts` | Tests onboarding flow end-to-end |
+| `diagnose-auth-flow.ts` | Diagnoses authentication issues |
+
 
 **Quick Commands:**
 ```bash
@@ -204,7 +231,7 @@ npm run check-safety
 
 ## 🗄️ Database (Supabase)
 
-**30 migrations** in `supabase/migrations/` managing the complete schema.
+**50+ migrations** in `supabase/migrations/` managing the complete schema.
 
 ### Core Tables
 - **`profiles`** - User profiles synced with Clerk
@@ -212,6 +239,7 @@ npm run check-safety
 - **`permissions`** - Granular access capabilities
 - **`user_roles`** - User-to-Role assignments
 - **`role_permissions`** - Role-to-Permission definitions
+- **`user_departments`** - User department assignments
 - **`activity_log`** - System activity tracking
 - **`member_progress`** - Member onboarding progress
 
@@ -224,6 +252,21 @@ npm run check-safety
 ### Marketplace
 - **`marketplace_modules`** - Published module templates
 - **`marketplace_module_items`** - Template items
+
+### Employee Tracking & Payroll
+- **`employees`** - Core employee records with manager hierarchy
+- **`departments`** - Organizational departments
+- **`employee_positions`**, **`employee_compensation`** - Position and salary history
+- **`payroll_runs`**, **`payroll_entries`** - Payroll processing
+- **`payroll_deductions`**, **`payroll_contributions`** - Benefits tracking
+- **`cost_allocations`** - Department/project cost distribution
+
+### Accounting & Finance
+- **`accounts`** - Chart of accounts (assets, liabilities, income, expenses)
+- **`journal_entries`**, **`journal_entry_lines`** - Double-entry transactions
+- **`vendors`**, **`vendor_bills`** - Accounts payable
+- **`expense_reports`**, **`expense_items`** - Employee expense tracking
+- **`stripe_transactions`** - Stripe webhook event log
 
 ### Audit & Security
 - **`audit_logs`** - System audit trail

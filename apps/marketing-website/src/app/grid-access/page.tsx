@@ -2,7 +2,7 @@
 
 import { useUser, useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Rocket, Handshake, Megaphone, Briefcase, Compass, ArrowRight, CheckCircle2 } from "lucide-react";
@@ -70,26 +70,32 @@ export default function OnboardingPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Auto-submission handler for returning users
-    const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    const [hasAutoSubmitted, setHasAutoSubmitted] = useState(false);
 
-    // We need to use an effect to handle the auto-submission once the user is loaded
-    // This handles the case where a user is redirected back from sign-up with a ?track= param
-    if (typeof window !== 'undefined') {
-        const trackParam = searchParams?.get('track');
-        if (trackParam && user && !processingAutoSubmit && !isSubmitting && !selectedTrack) {
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+
+        const searchParams = new URLSearchParams(window.location.search);
+        const trackParam = searchParams.get('track');
+
+        if (trackParam && user && !processingAutoSubmit && !hasAutoSubmitted && !selectedTrack) {
             // Verify track is valid
             const validTrack = tracks.find(t => t.id === trackParam);
             if (validTrack) {
                 console.log("Auto-submitting track from URL:", trackParam);
                 setProcessingAutoSubmit(true);
+                setHasAutoSubmitted(true);
                 setSelectedTrack(trackParam);
-                // Small timeout to allow state to settle
-                setTimeout(() => {
+
+                // Use a small delay to ensure UI updates before submission starts
+                const timer = setTimeout(() => {
                     handleSubmit(trackParam);
                 }, 100);
+
+                return () => clearTimeout(timer);
             }
         }
-    }
+    }, [user, processingAutoSubmit, hasAutoSubmitted, selectedTrack]);
 
     const handleTrackSelect = (trackId: string) => {
         setSelectedTrack(trackId);
@@ -106,6 +112,16 @@ export default function OnboardingPage() {
             if (trackId === 'build_something') {
                 console.log("Redirecting unauth member to /member-onboarding");
                 window.location.href = `/member-onboarding?track=${trackId}`;
+                return;
+            }
+            if (trackId === 'support_builders') {
+                console.log("Redirecting unauth partner to /partner-onboarding");
+                window.location.href = `/partner-onboarding?track=${trackId}`;
+                return;
+            }
+            if (trackId === 'amplify_brand') {
+                console.log("Redirecting unauth sponsor to /sponsor-onboarding");
+                window.location.href = `/sponsor-onboarding?track=${trackId}`;
                 return;
             }
 
@@ -144,6 +160,12 @@ export default function OnboardingPage() {
                 if (trackId === 'build_something') {
                     console.log("Redirecting to /member-onboarding");
                     window.location.href = "/member-onboarding";
+                } else if (trackId === 'support_builders') {
+                    console.log("Redirecting to /partner-onboarding");
+                    window.location.href = "/partner-onboarding";
+                } else if (trackId === 'amplify_brand') {
+                    console.log("Redirecting to /sponsor-onboarding");
+                    window.location.href = "/sponsor-onboarding";
                 } else {
                     console.log("Redirecting to /dashboard");
                     window.location.href = "/dashboard";

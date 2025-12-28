@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { useSupabase } from './useSupabase';
 import { Database } from '@/lib/database.types';
+import { PermissionDef, hasPermission as checkPermission } from '@starter-club/utils';
 
 type Role = Database['public']['Tables']['roles']['Row'];
 
@@ -9,7 +10,7 @@ export function useUserRoles() {
     const { user, isLoaded: isUserLoaded } = useUser();
     const supabase = useSupabase();
     const [roles, setRoles] = useState<Role[]>([]);
-    const [permissions, setPermissions] = useState<string[]>([]);
+    const [permissions, setPermissions] = useState<PermissionDef[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -24,9 +25,7 @@ export function useUserRoles() {
             }
 
             try {
-                // Fetch user roles and their associated permissions
-                // Note: The type assertion (any) is used because the deep nesting of related tables 
-                // can sometimes be tricky with Supabase's auto-generated types in joined queries.
+                // Query uses clerk_user_id and joins through roles -> role_permissions -> permissions
                 const { data, error } = await supabase
                     .from('user_roles')
                     .select(`
@@ -38,12 +37,15 @@ export function useUserRoles() {
                             created_at,
                             role_permissions (
                                 permission:permissions (
-                                    slug
+                                    category,
+                                    resource,
+                                    action
                                 )
                             )
                         )
                     `)
-                    .eq('user_id', user.id);
+                    .eq('clerk_user_id', user.id)
+                    .eq('is_active', true);
 
                 if (error) {
                     console.error('Error fetching roles:', error);
@@ -51,11 +53,12 @@ export function useUserRoles() {
                 }
 
                 const fetchedRoles: Role[] = [];
-                const fetchedPermissions = new Set<string>();
+                const fetchedPermissions: PermissionDef[] = [];
+                const permissionSet = new Set<string>(); // To deduplicate
 
                 if (data) {
                     for (const item of data) {
-                        const roleData = item.role as any; // Cast to bypass strict type check on Join
+                        const roleData = item.role as any;
                         if (roleData) {
                             fetchedRoles.push({
                                 id: roleData.id,
@@ -67,8 +70,17 @@ export function useUserRoles() {
 
                             if (Array.isArray(roleData.role_permissions)) {
                                 roleData.role_permissions.forEach((rp: any) => {
-                                    if (rp.permission?.slug) {
-                                        fetchedPermissions.add(rp.permission.slug);
+                                    if (rp.permission) {
+                                        const p = rp.permission;
+                                        const key = `${p.category}:${p.resource}:${p.action}`;
+                                        if (!permissionSet.has(key)) {
+                                            permissionSet.add(key);
+                                            fetchedPermissions.push({
+                                                category: p.category,
+                                                resource: p.resource,
+                                                action: p.action
+                                            });
+                                        }
                                     }
                                 });
                             }
@@ -77,7 +89,7 @@ export function useUserRoles() {
                 }
 
                 setRoles(fetchedRoles);
-                setPermissions(Array.from(fetchedPermissions));
+                setPermissions(fetchedPermissions);
             } catch (err) {
                 console.error('Unexpected error in useUserRoles:', err);
             } finally {
@@ -89,7 +101,10 @@ export function useUserRoles() {
     }, [user?.id, isUserLoaded, supabase]);
 
     const hasRole = (slug: string) => roles.some(r => r.slug === slug);
-    const hasPermission = (slug: string) => permissions.includes(slug);
+
+    const hasPermission = (required: PermissionDef) => {
+        return checkPermission(permissions, required);
+    };
 
     return {
         roles,

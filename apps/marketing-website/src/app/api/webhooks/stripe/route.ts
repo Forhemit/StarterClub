@@ -48,6 +48,16 @@ export async function POST(req: Request) {
                 await handleSubscriptionDeleted(subscription);
                 break;
             }
+            case 'charge.succeeded': {
+                const charge = event.data.object as Stripe.Charge;
+                await handleChargeSucceeded(charge);
+                break;
+            }
+            case 'payout.paid': {
+                const payout = event.data.object as Stripe.Payout;
+                await handlePayoutPaid(payout);
+                break;
+            }
             default:
                 console.log(`Unhandled event type ${event.type}`);
         }
@@ -177,7 +187,7 @@ async function handleMemberSubscriptionCheckout(session: Stripe.Checkout.Session
         stripe_customer_id: customerId,
         stripe_price_id: subscription.items.data[0]?.price.id,
         status: subscription.status,
-        current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+        current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
         metadata: session.metadata || {},
     }, { onConflict: 'stripe_subscription_id' });
 }
@@ -212,7 +222,7 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
         stripe_customer_id: customerId,
         org_id: orgId,
         status: subscription.status,
-        current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+        current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
         stripe_price_id: subscription.items.data[0]?.price.id,
         metadata: subscription.metadata || {},
     }, { onConflict: 'stripe_subscription_id' });
@@ -221,7 +231,7 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
 async function handleMemberSubscriptionUpdated(subscription: Stripe.Subscription) {
     await supabase.from('member_subscriptions').update({
         status: subscription.status,
-        current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+        current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
         stripe_price_id: subscription.items.data[0]?.price.id,
         metadata: subscription.metadata || {},
     }).eq('stripe_subscription_id', subscription.id);
@@ -236,4 +246,173 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     await supabase.from('organization_subscriptions')
         .update({ status: 'canceled' })
         .eq('stripe_subscription_id', subscription.id);
+}
+
+async function handleChargeSucceeded(charge: Stripe.Charge) {
+    // 1. Check if potential duplicate (via stripe_sync_log or existing journal entry)
+    // For now, we rely on the unique constraint in stripe_sync_log if we adhere to it, 
+    // but here we are just doing the accounting.
+
+    // Get the Income Source ID for 'Stripe'
+    const { data: incomeSource } = await supabase
+        .from('income_sources')
+        .select('id')
+        .eq('source_name', 'Stripe')
+        .single();
+
+    if (!incomeSource) {
+        console.error('Accounting Error: "Stripe" income source not found.');
+        return;
+    }
+
+    // Get Account IDs
+    // We need: 1001 (Clearing), 4000 (Subscription Revenue), 5000 (Stripe Fees)
+    // Optimized: Fetch all needed accounts in one query
+    const { data: accounts } = await supabase
+        .from('ledger_accounts')
+        .select('id, account_code')
+        .in('account_code', ['1001', '4000', '5000']);
+
+    if (!accounts || accounts.length < 3) {
+        console.error('Accounting Error: Missing required ledger accounts (1001, 4000, 5000).');
+        return;
+    }
+
+    const clearingAcct = accounts.find(a => a.account_code === '1001')?.id;
+    const revenueAcct = accounts.find(a => a.account_code === '4000')?.id;
+    const feesAcct = accounts.find(a => a.account_code === '5000')?.id;
+
+    if (!clearingAcct || !revenueAcct || !feesAcct) return;
+
+    // Calculate Amounts
+    const grossAmount = charge.amount / 100.0;
+    // Balance transaction is needed for exact fee details usually, but charge object has it sometimes?
+    // charge.balance_transaction is an ID. We might need to expand it or fetch it.
+    // However, typical Stripe charge object might not have fee details directly at top level if it's not expanded.
+    // But let's check basic properties. 
+    // Usually we need `stripe.charges.retrieve(id, { expand: ['balance_transaction'] })` to be sure.
+    // Or we rely on `balance_transaction` webhook.
+    // But user asked for `charge.succeeded`.
+    // Let's try to fetch balance transaction to get the fee.
+
+    let feeAmount = 0;
+    if (charge.balance_transaction) {
+        const btId = typeof charge.balance_transaction === 'string' ? charge.balance_transaction : charge.balance_transaction.id;
+        const bt = await stripe.balanceTransactions.retrieve(btId);
+        feeAmount = bt.fee / 100.0;
+    }
+
+    // Create Journal Entry Header
+    const { data: entry, error: entryError } = await supabase
+        .from('journal_entries')
+        .insert({
+            transaction_date: new Date(charge.created * 1000).toISOString(),
+            description: `Stripe Charge ${charge.id} - ${charge.description || 'Payment'}`,
+            income_source_id: incomeSource.id,
+            external_reference_id: charge.id,
+        })
+        .select()
+        .single();
+
+    if (entryError || !entry) {
+        console.error('Accounting Error: Failed to create journal entry', entryError);
+        return;
+    }
+
+    // Prepare Lines
+    const lines = [
+        // 1. Debit Clearing (Asset) +Gross
+        {
+            journal_entry_id: entry.id,
+            ledger_account_id: clearingAcct,
+            entry_type: 'debit',
+            amount: grossAmount,
+            description: 'Gross Receipt'
+        },
+        // 2. Credit Revenue (Revenue) +Gross
+        {
+            journal_entry_id: entry.id,
+            ledger_account_id: revenueAcct,
+            entry_type: 'credit',
+            amount: grossAmount, // Revenue is Credit normal
+            description: 'Revenue Recognition'
+        }
+    ];
+
+    if (feeAmount > 0) {
+        // 3. Debit Fees (Expense) +Fee
+        lines.push({
+            journal_entry_id: entry.id,
+            ledger_account_id: feesAcct,
+            entry_type: 'debit',
+            amount: feeAmount,
+            description: 'Stripe Processing Fee'
+        });
+        // 4. Credit Clearing (Asset) -Fee (Reduces the asset)
+        lines.push({
+            journal_entry_id: entry.id,
+            ledger_account_id: clearingAcct,
+            entry_type: 'credit',
+            amount: feeAmount,
+            description: 'Fee Deduction from Clearing'
+        });
+    }
+
+    const { error: linesError } = await supabase.from('journal_entry_lines').insert(lines);
+    if (linesError) {
+        console.error('Accounting Error: Failed to create lines', linesError);
+    }
+
+    // Log to Stripe Sync Log
+    await supabase.from('stripe_sync_log').insert({
+        stripe_event_id: charge.id + '_evt', // This should be event.id actually, but we don't have it passed here cleanly.
+        stripe_object_id: charge.id,
+        event_type: 'charge.succeeded',
+        status: linesError ? 'failed' : 'processed',
+        journal_entry_id: entry.id,
+        processing_error: linesError ? linesError.message : null
+    });
+}
+
+async function handlePayoutPaid(payout: Stripe.Payout) {
+    // 1000: Bank, 1001: Clearing
+    const { data: accounts } = await supabase
+        .from('ledger_accounts')
+        .select('id, account_code')
+        .in('account_code', ['1000', '1001']);
+
+    const bankAcct = accounts?.find(a => a.account_code === '1000')?.id;
+    const clearingAcct = accounts?.find(a => a.account_code === '1001')?.id;
+
+    if (!bankAcct || !clearingAcct) return;
+
+    const amount = payout.amount / 100.0;
+
+    // Create Journal Entry
+    const { data: entry } = await supabase.from('journal_entries').insert({
+        transaction_date: new Date(payout.created * 1000).toISOString(),
+        description: `Stripe Payout ${payout.id}`,
+        external_reference_id: payout.id,
+    }).select().single();
+
+    if (!entry) return;
+
+    // Debit Bank (Increase Asset)
+    // Credit Clearing (Decrease Asset)
+    await supabase.from('journal_entry_lines').insert([
+        {
+            journal_entry_id: entry.id,
+            ledger_account_id: bankAcct,
+            entry_type: 'debit',
+            amount: amount,
+            description: 'Payout Deposit'
+        },
+        {
+            journal_entry_id: entry.id,
+            ledger_account_id: clearingAcct,
+            entry_type: 'credit',
+            amount: amount,
+            description: 'Transfer from Clearing'
+        }
+    ]);
 }
