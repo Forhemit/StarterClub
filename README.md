@@ -93,6 +93,13 @@ starter-club/
 - **Expense Management**: Vendor bills, expense approvals, and reimbursements
 - **Reporting**: Real-time views for account balances and transactions
 
+### 10. People & Culture (HR)
+- **Active Employee Management**: Full lifecycle tracking (Active, Inactive, On Leave)
+- **Gamified Onboarding**: "Add Employee" wizard with celebration effects and confetti
+- **Performance & Tenure**: Engagement scores, tenure badges (e.g., "5 Year Legend"), and timeline tracking
+- **Advanced Filtering**: Filter employees by status, department, and tenure range
+- **Employee Profiles**: Detailed profile views with historical timeline events
+
 ---
 
 ## 📦 Shared Packages

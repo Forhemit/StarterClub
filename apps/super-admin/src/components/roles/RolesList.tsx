@@ -3,9 +3,7 @@
 import React, { useState } from 'react';
 import { Database } from '@starter-club/shared-types';
 import { useSupabase } from '@/hooks/useSupabase';
-import { Button } from '@starter-club/ui/components/ui/button';
-// You might need to adjust imports for UI components relative to super-admin structure or if they are from shared-ui
-// Attempting to use shared-ui components if configured
+import { Button } from '@starter-club/ui';
 
 type Role = Database['public']['Tables']['roles']['Row'];
 
@@ -14,7 +12,7 @@ export function RolesList({ initialRoles }: { initialRoles: Role[] }) {
     const supabase = useSupabase();
 
     const refreshRoles = async () => {
-        const { data } = await supabase.from('roles').select('*').order('permission_level', { ascending: false });
+        const { data } = await supabase.from('roles').select('*').order('name');
         if (data) setRoles(data);
     };
 
@@ -35,9 +33,6 @@ export function RolesList({ initialRoles }: { initialRoles: Role[] }) {
                                 <h3 className="font-bold text-lg">{role.name}</h3>
                                 <p className="text-sm text-gray-500 font-mono">{role.slug}</p>
                             </div>
-                            <span className="text-xs bg-gray-100 px-2 py-1 rounded">
-                                Level {role.permission_level ?? 0}
-                            </span>
                         </div>
                         <p className="mt-2 text-sm text-gray-600 line-clamp-2">
                             {role.description || 'No description provided.'}
