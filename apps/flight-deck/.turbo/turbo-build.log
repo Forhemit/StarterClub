@@ -16,14 +16,14 @@
 
  ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
    Creating an optimized production build ...
- ✓ Compiled successfully in 20.6s
+ ✓ Compiled successfully in 14.4s
    Skipping validation of types
    Collecting page data using 7 workers ...
    Generating static pages using 7 workers (0/8) ...
    Generating static pages using 7 workers (2/8) 
    Generating static pages using 7 workers (4/8) 
    Generating static pages using 7 workers (6/8) 
- ✓ Generating static pages using 7 workers (8/8) in 1050.4ms
+ ✓ Generating static pages using 7 workers (8/8) in 2.2s
    Finalizing page optimization ...
 
 Route (app)

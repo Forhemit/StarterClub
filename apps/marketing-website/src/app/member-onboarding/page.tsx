@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useUser, useClerk } from "@clerk/nextjs";
 import { motion, AnimatePresence } from "framer-motion";
@@ -32,7 +32,26 @@ import { updateMemberContext, type MemberContext } from "./_actions";
 
 type Step = "stage" | "model" | "info" | "goal";
 
+// Loading fallback component
+function OnboardingLoadingFallback() {
+    return (
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background">
+            <Loader2 className="w-12 h-12 animate-spin text-primary" />
+            <p className="mt-4 text-muted-foreground">Loading onboarding...</p>
+        </div>
+    );
+}
+
+// Main page component wrapped in Suspense
 export default function MemberOnboardingPage() {
+    return (
+        <Suspense fallback={<OnboardingLoadingFallback />}>
+            <MemberOnboardingContent />
+        </Suspense>
+    );
+}
+
+function MemberOnboardingContent() {
     const { user, isLoaded } = useUser();
     const router = useRouter();
     const searchParams = useSearchParams();

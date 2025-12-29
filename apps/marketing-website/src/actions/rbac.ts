@@ -98,8 +98,10 @@ export async function getUserNavItems(userId?: string): Promise<NavItem[]> {
             navItems.push({ label: "Financial Reports", href: "/dashboard/finance", iconName: "FileText", section: "Finance" });
         }
 
-        if (departments.includes("people_culture") || roles.includes("super_admin")) {
-            navItems.push({ label: "People & Culture", href: "/dashboard/hr", iconName: "Users", section: "HR" });
+        if (departments.includes("people_culture") || roles.includes("super_admin") || roles.includes("hr")) {
+            navItems.push({ label: "People & Culture", href: "/dashboard/hr/people-culture", iconName: "Users", section: "HR" });
+            navItems.push({ label: "Interview Pipeline", href: "/dashboard/hr/interview-history", iconName: "FileText", section: "HR" });
+            navItems.push({ label: "Wait Pool", href: "/dashboard/hr/wait-pool", iconName: "Users", section: "HR" });
         }
     }
 

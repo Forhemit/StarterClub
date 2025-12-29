@@ -122,7 +122,16 @@ export async function POST(req: Request) {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     if (eventType === 'user.created') {
-        const { id, email_addresses, first_name, last_name } = eventData;
+        // Type guard: ensure we have user data with expected properties
+        if (!('id' in eventData) || !('email_addresses' in eventData)) {
+            return new Response('Invalid user data', { status: 400 });
+        }
+        const { id, email_addresses, first_name, last_name } = eventData as {
+            id: string;
+            email_addresses: Array<{ email_address: string }>;
+            first_name: string | null;
+            last_name: string | null;
+        };
         const email = email_addresses?.[0]?.email_address;
 
         if (!email) return new Response('No email found', { status: 400 });
