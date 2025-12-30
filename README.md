@@ -96,9 +96,24 @@ starter-club/
 ### 10. People & Culture (HR)
 - **Active Employee Management**: Full lifecycle tracking (Active, Inactive, On Leave)
 - **Gamified Onboarding**: "Add Employee" wizard with celebration effects and confetti
-- **Performance & Tenure**: Engagement scores, tenure badges (e.g., "5 Year Legend"), and timeline tracking
-- **Advanced Filtering**: Filter employees by status, department, and tenure range
+- **Talent Acquisition**: Interview pipeline, candidate history, and hire/no-hire decision logic
+- **Performance Management**: Reviews, goals, and feedback cycles
+- **Time & Attendance**: Leave requests, time tracking, and approval workflows
+- **Benefits Administration**: Enrollment and usage tracking
+- **HR Analytics**: Headcount, retention, and diversity metrics
 - **Employee Profiles**: Detailed profile views with historical timeline events
+
+### 11. Legal Vault
+- **Entity Management**: Manage multiple legal entities (LLC, C-Corp, Nonprofit)
+- **Document Storage**: Secure storage for formation docs, agreements, and compliance files
+- **Contact Management**: Unified directory for legal contacts (Attorneys, Registered Agents)
+- **Address Book**: Manage registered, mailing, and physical addresses for entities
+- **Formation Tracking**: Track status of entity formation (Pending, Active)
+
+### 12. Vault Builder
+- **Custom Module Creation**: Visual builder for creating new checklist-based modules
+- **Template Management**: Create and distribute templates via the marketplace
+
 
 ---
 

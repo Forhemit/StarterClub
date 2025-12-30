@@ -21,7 +21,7 @@ const roles = [
     },
     {
         value: "member",
-        label: "Member",
+        label: "Member (Test View)",
     },
     {
         value: "partner",
@@ -65,7 +65,7 @@ export function RoleSwitcher({ selectedRoles, onRolesChange }: RoleSwitcherProps
                             {selectedRoles.length > 0 ? (
                                 selectedRoles.map((role) => (
                                     <Badge key={role} variant="secondary" className="px-1 py-0 text-[10px]">
-                                        {roles.find((r) => r.value === role)?.label}
+                                        {roles.find((r) => r.value === role)?.label || role}
                                     </Badge>
                                 ))
                             ) : (
@@ -79,6 +79,7 @@ export function RoleSwitcher({ selectedRoles, onRolesChange }: RoleSwitcherProps
             <DropdownMenuContent className="w-56">
                 <DropdownMenuLabel>Select Views</DropdownMenuLabel>
                 <DropdownMenuSeparator />
+
                 {roles.map((role) => (
                     <DropdownMenuCheckboxItem
                         key={role.value}

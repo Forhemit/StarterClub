@@ -7,6 +7,9 @@ DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
 DROP POLICY IF EXISTS "Service role can do anything" ON public.profiles;
 DROP POLICY IF EXISTS "Authenticated users can read profiles" ON public.profiles;
 DROP POLICY IF EXISTS "Users can read own profiles" ON public.profiles;
+DROP POLICY IF EXISTS "authenticated_select_profiles" ON public.profiles;
+DROP POLICY IF EXISTS "users_update_own_profile" ON public.profiles;
+DROP POLICY IF EXISTS "service_role_all_profiles" ON public.profiles;
 
 -- Helper function to extract user ID from JWT user_metadata
 CREATE OR REPLACE FUNCTION public.get_jwt_user_id() RETURNS text
@@ -44,6 +47,7 @@ WITH CHECK (true);
 
 -- Also update user_roles policies for consistency
 DROP POLICY IF EXISTS "Users can read own roles" ON public.user_roles;
+DROP POLICY IF EXISTS "users_read_own_roles" ON public.user_roles;
 CREATE POLICY "users_read_own_roles"
 ON public.user_roles
 FOR SELECT
@@ -52,6 +56,7 @@ USING (clerk_user_id = public.get_jwt_user_id());
 
 -- Update user_departments policies
 DROP POLICY IF EXISTS "Users can view own departments" ON public.user_departments;
+DROP POLICY IF EXISTS "users_view_own_departments" ON public.user_departments;
 CREATE POLICY "users_view_own_departments"
 ON public.user_departments
 FOR SELECT

@@ -15,6 +15,7 @@ ALTER TABLE public.user_departments ENABLE ROW LEVEL SECURITY;
 
 -- Policies
 -- View: Users can view their own department associations
+DROP POLICY IF EXISTS "Users can view own departments" ON public.user_departments;
 CREATE POLICY "Users can view own departments" ON public.user_departments
   FOR SELECT
   USING (user_id = auth.uid()::text OR auth.role() = 'service_role');
@@ -22,6 +23,7 @@ CREATE POLICY "Users can view own departments" ON public.user_departments
 -- View: Service Role can view all
   
 -- Insert/Update/Delete: Service Role only (managed via Server Actions)
+DROP POLICY IF EXISTS "Service Role full access on user_departments" ON public.user_departments;
 CREATE POLICY "Service Role full access on user_departments" ON public.user_departments
   FOR ALL
   USING (auth.role() = 'service_role')

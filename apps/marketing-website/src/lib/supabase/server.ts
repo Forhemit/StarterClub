@@ -39,3 +39,13 @@ export async function createSupabaseServerClient() {
         },
     });
 }
+
+export async function createSupabaseAdminClient() {
+    return createClient(SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+        auth: {
+            persistSession: false,
+            autoRefreshToken: false,
+            detectSessionInUrl: false,
+        },
+    });
+}

@@ -108,6 +108,7 @@ BEGIN
     EXECUTE format('DROP POLICY IF EXISTS "HR/Admins can do everything on %I" ON public.%I', tbl, tbl);
     
     -- 2. Create Write-only policy for HR/Admins (Insert, Update, Delete)
+    EXECUTE format('DROP POLICY IF EXISTS "HR/Admins can manage %I" ON public.%I', tbl, tbl);
     EXECUTE format('
       CREATE POLICY "HR/Admins can manage %I" ON public.%I
       FOR ALL USING ( public.is_hr_admin() )
@@ -118,6 +119,7 @@ BEGIN
     -- This combines HR access AND Employee access into a single SELECT policy
     IF tbl = 'employees' THEN
         -- Employees table logic
+        EXECUTE format('DROP POLICY IF EXISTS "Unified view access on %I" ON public.%I', tbl, tbl);
         EXECUTE format('
              DROP POLICY IF EXISTS "Employees can view own record on %I" ON public.%I;
              CREATE POLICY "Unified view access on %I" ON public.%I
@@ -128,6 +130,7 @@ BEGIN
         ', tbl, tbl, tbl, tbl);
     ELSIF tbl IN ('departments', 'benefits_packages', 'benefits_plans', 'company_assets', 'projects', 'review_cycles') THEN
         -- Reference tables logic (Public to authenticated)
+        EXECUTE format('DROP POLICY IF EXISTS "Unified view access on %I" ON public.%I', tbl, tbl);
         EXECUTE format('
              DROP POLICY IF EXISTS "Employees can view reference data on %I" ON public.%I;
              CREATE POLICY "Unified view access on %I" ON public.%I
@@ -136,11 +139,8 @@ BEGIN
              );
         ', tbl, tbl, tbl, tbl);
     ELSIF tbl = 'employee_audit_log' THEN
-        -- Audit log logic (Admin only or own record if applicable, but audit log usually has employee_id, let's treat as history)
-        -- However, previous error said clerk_user_id missing. 
-        -- Checking schema: employee_audit_log has employee_id.
-        -- So it should fall into the ELSE block actually? 
-        -- Ah, wait, if I put it in ELSE, it joins on employee_id. 
+        -- Audit log logic
+        EXECUTE format('DROP POLICY IF EXISTS "Unified view access on %I" ON public.%I', tbl, tbl);
         EXECUTE format('
              DROP POLICY IF EXISTS "Employees can view own history on %I" ON public.%I;
              CREATE POLICY "Unified view access on %I" ON public.%I
@@ -154,6 +154,7 @@ BEGIN
         ', tbl, tbl, tbl, tbl);
     ELSE
         -- Other history tables logic
+        EXECUTE format('DROP POLICY IF EXISTS "Unified view access on %I" ON public.%I', tbl, tbl);
         EXECUTE format('
              DROP POLICY IF EXISTS "Employees can view own history on %I" ON public.%I;
              CREATE POLICY "Unified view access on %I" ON public.%I

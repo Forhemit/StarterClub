@@ -1,5 +1,26 @@
+-- Create employees table
+CREATE TABLE IF NOT EXISTS employees (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  first_name TEXT NOT NULL,
+  last_name TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  department TEXT,
+  role TEXT,
+  start_date DATE,
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'on_leave', 'terminated')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enable RLS for employees
+ALTER TABLE employees ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Enable all for authenticated users" ON employees
+    FOR ALL
+    TO authenticated
+    USING (true)
+    WITH CHECK (true);
+
 -- Add columns to employees table
-ALTER TABLE employees ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'on_leave', 'terminated'));
 ALTER TABLE employees ADD COLUMN IF NOT EXISTS engagement_score INTEGER DEFAULT 0;
 ALTER TABLE employees ADD COLUMN IF NOT EXISTS tenure_days INTEGER DEFAULT 0;
 ALTER TABLE employees ADD COLUMN IF NOT EXISTS last_review_date DATE;
