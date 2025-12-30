@@ -272,6 +272,18 @@ export function DashboardSidebar({ className, mobile, onLinkClick }: SidebarProp
 // Mobile Navigation Sheet
 export function DashboardMobileNav() {
     const [open, setOpen] = useState(false);
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+    if (!isMounted) return (
+        <Button variant="ghost" size="icon" className="md:hidden">
+            <Menu className="h-5 w-5" />
+            <span className="sr-only">Toggle Menu</span>
+        </Button>
+    );
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>

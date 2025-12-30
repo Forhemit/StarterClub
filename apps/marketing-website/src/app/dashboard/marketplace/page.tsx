@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MARKETPLACE_MODULES } from "@/lib/marketplace/types"; // This import might be wrong if I didn't export it from types.ts. I exported it from data.ts
+
 import { MARKETPLACE_MODULES as MODULES } from "@/lib/marketplace/data";
 import { ModuleCategory } from "@/lib/marketplace/types";
 import { CategoryFilter } from "@/components/marketplace/CategoryFilter";

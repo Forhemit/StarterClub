@@ -16,14 +16,14 @@
 
  ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
    Creating an optimized production build ...
- ✓ Compiled successfully in 27.9s
+ ✓ Compiled successfully in 15.8s
    Running TypeScript ...
    Collecting page data using 7 workers ...
-   Generating static pages using 7 workers (0/51) ...
-   Generating static pages using 7 workers (12/51) 
-   Generating static pages using 7 workers (25/51) 
-   Generating static pages using 7 workers (38/51) 
- ✓ Generating static pages using 7 workers (51/51) in 1437.6ms
+   Generating static pages using 7 workers (0/65) ...
+   Generating static pages using 7 workers (16/65) 
+   Generating static pages using 7 workers (32/65) 
+   Generating static pages using 7 workers (48/65) 
+ ✓ Generating static pages using 7 workers (65/65) in 964.9ms
    Finalizing page optimization ...
 
 Route (app)
@@ -43,14 +43,31 @@ Route (app)
 ├ ○ /cockpit
 ├ ○ /contact
 ├ ƒ /dashboard
+├ ƒ /dashboard/admin/test-member
 ├ ƒ /dashboard/finance
+├ ƒ /dashboard/hr
+├ ƒ /dashboard/hr/analytics
+├ ƒ /dashboard/hr/benefits
 ├ ƒ /dashboard/hr/interview-history
 ├ ƒ /dashboard/hr/interview-history/[id]
+├ ƒ /dashboard/hr/onboarding
+├ ƒ /dashboard/hr/people-culture
+├ ƒ /dashboard/hr/people-culture/add-employee
+├ ƒ /dashboard/hr/people-culture/employee/[id]
+├ ƒ /dashboard/hr/performance
+├ ƒ /dashboard/hr/talent
+├ ƒ /dashboard/hr/time
 ├ ƒ /dashboard/hr/wait-pool
+├ ƒ /dashboard/marketplace
+├ ƒ /dashboard/marketplace/[moduleId]
+├ ƒ /dashboard/marketplace/financial-controls
+├ ƒ /dashboard/marketplace/hr-onboarding
+├ ƒ /dashboard/marketplace/legal-vault
 ├ ƒ /dashboard/partner/clients
 ├ ƒ /dashboard/partner/foundation
 ├ ƒ /dashboard/partner/marketplace
 ├ ƒ /dashboard/partner/resources
+├ ƒ /dashboard/vault-builder
 ├ ○ /employee-login
 ├ ○ /employee-portal
 ├ ƒ /employee-portal/dashboard/[role]

@@ -103,6 +103,22 @@ export const MARKETPLACE_MODULES: MarketplaceModule[] = [
 
     // --- Growth Modules ---
     {
+        id: "jobs-careers",
+        title: "Jobs & Careers",
+        description: "Post jobs and manage your careers page.",
+        category: "Growth",
+        iconName: "BriefcaseBusiness",
+        version: "1.0.0",
+        author: "Starter Club",
+        price: "Free",
+        features: [
+            "Public careers page",
+            "Job posting management",
+            "Application notifications"
+        ],
+        longDescription: "Attract the best talent with a professional careers page. The Jobs & Careers module lets you post open positions, manage applications, and showcase your company culture to the world."
+    },
+    {
         id: "investor-reporting",
         title: "Investor Reporting Suite",
         description: "Generate professional updates for your stakeholders.",

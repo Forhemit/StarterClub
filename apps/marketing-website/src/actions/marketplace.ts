@@ -45,7 +45,7 @@ export async function getInstalledModules(businessId?: string) {
     return { data: data || [] };
 }
 
-export async function installModule(moduleId: string, businessId?: string) {
+export async function installModule(moduleIdentifier: string, businessId?: string) {
     const supabase = await createSupabaseServerClient();
     const { userId } = await auth();
 
@@ -69,12 +69,37 @@ export async function installModule(moduleId: string, businessId?: string) {
         }
     }
 
+    // Resolve Module ID if it's a slug
+    let targetModuleId = moduleIdentifier;
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(moduleIdentifier);
+
+    if (!isUuid) {
+        const { data: moduleData } = await supabase
+            .from("modules")
+            .select("id")
+            .eq("slug", moduleIdentifier) // Query by slug first
+            .single();
+
+        if (!moduleData) {
+            // Fallback to name check if slug fails (legacy)
+            const { data: moduleByName } = await supabase
+                .from("modules")
+                .select("id")
+                .eq("name", moduleIdentifier) // Or name?
+                .single();
+            if (moduleByName) targetModuleId = moduleByName.id;
+            else return { error: `Module not found: ${moduleIdentifier}` };
+        } else {
+            targetModuleId = moduleData.id;
+        }
+    }
+
     // Check if already installed
     const { data: existing } = await supabase
         .from("user_installed_modules")
         .select("id")
         .eq("user_business_id", targetBusinessId)
-        .eq("module_id", moduleId)
+        .eq("module_id", targetModuleId)
         .single();
 
     if (existing) {
@@ -91,7 +116,7 @@ export async function installModule(moduleId: string, businessId?: string) {
             .from("user_installed_modules")
             .insert({
                 user_business_id: targetBusinessId,
-                module_id: moduleId,
+                module_id: targetModuleId,
                 installed_by: userId,
                 status: 'active'
             });
@@ -101,12 +126,12 @@ export async function installModule(moduleId: string, businessId?: string) {
 
     revalidatePath("/dashboard");
     revalidatePath("/dashboard/marketplace");
-    revalidatePath(`/dashboard/marketplace/${moduleId}`);
+    revalidatePath(`/dashboard/marketplace/${moduleIdentifier}`);
 
     return { success: true };
 }
 
-export async function uninstallModule(moduleId: string, businessId?: string) {
+export async function uninstallModule(moduleIdentifier: string, businessId?: string) {
     const supabase = await createSupabaseServerClient();
     const { userId } = await auth();
 
@@ -126,11 +151,36 @@ export async function uninstallModule(moduleId: string, businessId?: string) {
 
     if (!targetBusinessId) return { error: "No business found" };
 
+    // Resolve Module ID if it's a slug
+    let targetModuleId = moduleIdentifier;
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(moduleIdentifier);
+
+    if (!isUuid) {
+        const { data: moduleData } = await supabase
+            .from("modules")
+            .select("id")
+            .eq("slug", moduleIdentifier)
+            .single();
+
+        if (moduleData) {
+            targetModuleId = moduleData.id;
+        } else {
+            // Try name as backup
+            const { data: moduleByName } = await supabase
+                .from("modules")
+                .select("id")
+                .eq("name", moduleIdentifier)
+                .single();
+            if (moduleByName) targetModuleId = moduleByName.id;
+            else return { error: `Module not found: ${moduleIdentifier}` };
+        }
+    }
+
     const { error } = await supabase
         .from("user_installed_modules")
         .update({ status: 'disabled' })
         .eq("user_business_id", targetBusinessId)
-        .eq("module_id", moduleId);
+        .eq("module_id", targetModuleId);
 
     if (error) return { error: error.message };
 
@@ -138,4 +188,44 @@ export async function uninstallModule(moduleId: string, businessId?: string) {
     revalidatePath("/dashboard/marketplace");
 
     return { success: true };
+}
+// ... existing code ...
+
+export async function isModuleInstalled(moduleIdentifier: string, byName: boolean = false) {
+    const supabase = await createSupabaseServerClient();
+    const { userId } = await auth();
+
+    if (!userId) return false;
+
+    // Get user business
+    const { data: userBusiness } = await supabase
+        .from("user_businesses")
+        .select("id")
+        .eq("user_id", userId)
+        .single();
+
+    if (!userBusiness) return false;
+
+    let targetModuleId = moduleIdentifier;
+
+    if (byName) {
+        const { data: moduleData } = await supabase
+            .from("modules")
+            .select("id")
+            .eq("name", moduleIdentifier)
+            .single();
+
+        if (!moduleData) return false;
+        targetModuleId = moduleData.id;
+    }
+
+    const { data } = await supabase
+        .from("user_installed_modules")
+        .select("id")
+        .eq("user_business_id", userBusiness.id)
+        .eq("module_id", targetModuleId)
+        .eq("status", "active")
+        .single();
+
+    return !!data;
 }
