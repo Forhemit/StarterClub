@@ -97,6 +97,7 @@ starter-club/
 - **Active Employee Management**: Full lifecycle tracking (Active, Inactive, On Leave)
 - **Gamified Onboarding**: "Add Employee" wizard with celebration effects and confetti
 - **Talent Acquisition**: Interview pipeline, candidate history, and hire/no-hire decision logic
+- **Wait Pool Management**: Track and manage candidates in the waiting pool for future openings
 - **Performance Management**: Reviews, goals, and feedback cycles
 - **Time & Attendance**: Leave requests, time tracking, and approval workflows
 - **Benefits Administration**: Enrollment and usage tracking
@@ -110,7 +111,14 @@ starter-club/
 - **Address Book**: Manage registered, mailing, and physical addresses for entities
 - **Formation Tracking**: Track status of entity formation (Pending, Active)
 
-### 12. Vault Builder
+### 12. Jobs & Careers
+- **Job Postings**: Create and manage job listings with detailed descriptions and requirements
+- **Candidate Pipeline**: Visual Kanban board for tracking applicants through stages
+- **Application Logic**: Customizable application forms and screening questions
+- **Compensation Management**: Salary bands, equity packages, and benefits
+- **Interview Scheduling**: Integrated calendar for scheduling interviews
+
+### 13. Vault Builder
 - **Custom Module Creation**: Visual builder for creating new checklist-based modules
 - **Template Management**: Create and distribute templates via the marketplace
 

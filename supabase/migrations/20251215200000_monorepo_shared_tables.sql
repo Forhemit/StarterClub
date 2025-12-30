@@ -49,37 +49,35 @@ alter table member_progress enable row level security;
 
 -- POLICIES
 
--- Profiles
-create policy "Authenticated users can read profiles" on profiles
-  for select
-  using ( requesting_user_id() is not null );
+DO $$ BEGIN
+    -- PROFILES POLICIES
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'profiles' AND policyname = 'Authenticated users can read profiles') THEN
+        create policy "Authenticated users can read profiles" on profiles for select using ( requesting_user_id() is not null );
+    END IF;
 
-create policy "Users can update own profile" on profiles
-  for update
-  using ( id = requesting_user_id() );
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'profiles' AND policyname = 'Users can update own profile') THEN
+        create policy "Users can update own profile" on profiles for update using ( id = requesting_user_id() );
+    END IF;
 
--- Activity Log
-create policy "Users read own activity" on activity_log
-  for select
-  using ( member_id = requesting_user_id() );
+    -- ACTIVITY LOG POLICIES
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'activity_log' AND policyname = 'Users read own activity') THEN
+        create policy "Users read own activity" on activity_log for select using ( member_id = requesting_user_id() );
+    END IF;
 
-create policy "Admins read all activity" on activity_log
-  for select
-  using ( 
-    exists (select 1 from profiles where id = requesting_user_id() and role = 'admin')
-  );
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'activity_log' AND policyname = 'Admins read all activity') THEN
+        create policy "Admins read all activity" on activity_log for select using ( exists (select 1 from profiles where id = requesting_user_id() and role = 'admin') );
+    END IF;
 
-create policy "Users insert own activity" on activity_log
-  for insert
-  with check ( member_id = requesting_user_id() );
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'activity_log' AND policyname = 'Users insert own activity') THEN
+        create policy "Users insert own activity" on activity_log for insert with check ( member_id = requesting_user_id() );
+    END IF;
 
--- Member Progress
-create policy "Users read own progress" on member_progress
-  for select
-  using ( member_id = requesting_user_id() );
+    -- MEMBER PROGRESS POLICIES
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'member_progress' AND policyname = 'Users read own progress') THEN
+        create policy "Users read own progress" on member_progress for select using ( member_id = requesting_user_id() );
+    END IF;
 
-create policy "Admins read all progress" on member_progress
-  for select
-  using ( 
-     exists (select 1 from profiles where id = requesting_user_id() and role = 'admin')
-  );
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'member_progress' AND policyname = 'Admins read all progress') THEN
+        create policy "Admins read all progress" on member_progress for select using ( exists (select 1 from profiles where id = requesting_user_id() and role = 'admin') );
+    END IF;
+END $$;

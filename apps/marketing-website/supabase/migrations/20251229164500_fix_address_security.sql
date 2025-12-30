@@ -1,4 +1,19 @@
 
+-- 0. Ensure table exists (Missing from previous migration)
+CREATE TABLE IF NOT EXISTS entity_addresses (
+    id uuid primary key default gen_random_uuid(),
+    entity_id uuid references legal_entities(id) on delete cascade,
+    address_type text,
+    line1 text,
+    line2 text,
+    city text,
+    state text,
+    zip text,
+    country text default 'US',
+    created_at timestamptz default now(),
+    updated_at timestamptz default now()
+);
+
 -- 1. Secure entity_addresses table
 -- Add user_id column (Text) to match Clerk ID pattern
 ALTER TABLE entity_addresses 
