@@ -65,7 +65,8 @@ export async function getUserNavItems(userId?: string): Promise<NavItem[]> {
     navItems.push(
         { label: "Home Base", href: "/dashboard", iconName: "LayoutDashboard" },
         { label: "Builder Rooms", href: "/builder", iconName: "Hammer" },
-        { label: "Playbooks", href: "/resources", iconName: "BookOpen" }
+        { label: "Playbooks", href: "/resources", iconName: "BookOpen" },
+        { label: "Marketplace", href: "/dashboard/marketplace", iconName: "Package" }
     );
 
     // --- 2. PARTNER ---
@@ -91,6 +92,7 @@ export async function getUserNavItems(userId?: string): Promise<NavItem[]> {
         // Admin / Super Admin
         if (roles.includes("super_admin") || roles.includes("admin")) {
             navItems.push({ label: "Admin Console", href: "/dashboard/super-admin", iconName: "ShieldCheck", section: "Admin" });
+            navItems.push({ label: "Vault Builder", href: "/dashboard/vault-builder", iconName: "Hammer", section: "Admin" });
         }
 
         // Department Specifics

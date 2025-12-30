@@ -121,6 +121,7 @@ ALTER TABLE public.payroll_deductions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.cost_allocations ENABLE ROW LEVEL SECURITY;
 
 -- Admins and HR can view all
+DROP POLICY IF EXISTS "Admins and HR can view payroll runs" ON public.payroll_runs;
 CREATE POLICY "Admins and HR can view payroll runs" ON public.payroll_runs
   FOR SELECT
   USING (
@@ -132,6 +133,7 @@ CREATE POLICY "Admins and HR can view payroll runs" ON public.payroll_runs
   );
 
 -- Employees can view their own payroll entries
+DROP POLICY IF EXISTS "Employees can view own payroll entries" ON public.payroll_entries;
 CREATE POLICY "Employees can view own payroll entries" ON public.payroll_entries
   FOR SELECT
   USING (
@@ -142,6 +144,7 @@ CREATE POLICY "Employees can view own payroll entries" ON public.payroll_entries
   );
   
 -- Admins/HR can view all payroll entries
+DROP POLICY IF EXISTS "Admins and HR can view all payroll entries" ON public.payroll_entries;
 CREATE POLICY "Admins and HR can view all payroll entries" ON public.payroll_entries
   FOR SELECT
   USING (

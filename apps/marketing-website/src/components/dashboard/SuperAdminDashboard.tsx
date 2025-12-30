@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Dashboard, Section, Row, GridRow, ColWrapper, MetricCard, ChartCard, TableCard, QuickActionPanel, SimpleChart, AlertCard, ActionList } from './shared/DashboardComponents';
 import { RoleSwitcher } from './RoleSwitcher';
 import { MemberDashboardView } from './MemberDashboardView';
+import { TestMemberDashboard } from './TestMemberDashboard';
 import { PeopleCultureDashboard } from './PeopleCultureDashboard';
 
 // Mock Data for Super Admin
@@ -274,11 +275,7 @@ export const SuperAdminDashboard = () => {
             {selectedViews.includes('member') && (
                 <div className="border-t-4 border-blue-500 pt-4 mt-8 relative">
                     <div className="absolute top-0 left-0 bg-blue-500 text-white text-xs px-2 py-1 rounded-br-lg font-bold">Simulating Member View</div>
-                    <MemberDashboardView
-                        userEmail="simulated-member@example.com"
-                        userRole="company_member"
-                        isSimulated={true}
-                    />
+                    <TestMemberDashboard />
                 </div>
             )}
 

@@ -119,15 +119,16 @@ CREATE POLICY "HR can manage tags"
   USING (public.has_hr_access(auth.jwt() ->> 'sub'));
 
 -- Policies for saved_employee_filters
+-- Note: user_id might be UUID in existing table, so we cast appropriately
 DROP POLICY IF EXISTS "Users can view own filters" ON public.saved_employee_filters;
 CREATE POLICY "Users can view own filters"
   ON public.saved_employee_filters FOR SELECT
-  USING (user_id = (auth.jwt() ->> 'sub') OR is_shared = TRUE);
+  USING ((SELECT user_id::text = (auth.jwt() ->> 'sub')) OR is_shared = TRUE);
 
 DROP POLICY IF EXISTS "Users can manage own filters" ON public.saved_employee_filters;
 CREATE POLICY "Users can manage own filters"
   ON public.saved_employee_filters FOR ALL
-  USING (user_id = (auth.jwt() ->> 'sub'));
+  USING (user_id::text = (auth.jwt() ->> 'sub'));
 
 -- ============================================
 -- 6. TRIGGERS
