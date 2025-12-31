@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,11 @@ export interface JobPostingData {
     departmentOverview: string;
     preferredQualifications: string[];
     eeoStatement: string;
+    // Hiring Accountability
+    hrLead: string;
+    hiringTeamLead: string;
+    hiringTeamEmail: string;
+    requestingDepartment: string;
 }
 
 export const DEFAULT_JOB_DATA: JobPostingData = {
@@ -73,6 +78,11 @@ export const DEFAULT_JOB_DATA: JobPostingData = {
     departmentOverview: "",
     preferredQualifications: [],
     eeoStatement: "We are an equal opportunity employer and value diversity at our company. We do not discriminate on the basis of race, religion, color, national origin, gender, sexual orientation, age, marital status, veteran status, or disability status.",
+    // Accountability Defaults
+    hrLead: "",
+    hiringTeamLead: "",
+    hiringTeamEmail: "",
+    requestingDepartment: "",
 };
 
 export function JobsCareersWizard() {
@@ -81,11 +91,16 @@ export function JobsCareersWizard() {
     const [isInstalling, setIsInstalling] = useState(false);
     const [isInstalled, setIsInstalled] = useState(false);
     const [showPreview, setShowPreview] = useState(true);
+    const [isMounted, setIsMounted] = useState(false);
     const totalSteps = 4;
     const progress = (step / totalSteps) * 100;
 
     // Configuration state
     const [jobData, setJobData] = useState<JobPostingData>(DEFAULT_JOB_DATA);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     const handleNext = () => setStep(Math.min(totalSteps, step + 1));
     const handlePrev = () => {
@@ -95,6 +110,10 @@ export function JobsCareersWizard() {
             setStep(step - 1);
         }
     };
+
+    if (!isMounted) {
+        return null;
+    }
 
     const handleInstall = async () => {
         setIsInstalling(true);
@@ -130,6 +149,12 @@ export function JobsCareersWizard() {
             formData.append("application_link", jobData.applicationLink);
             formData.append("department_overview", jobData.departmentOverview);
             formData.append("eeo_statement", jobData.eeoStatement);
+
+            // Hiring Accountability
+            formData.append("hr_lead", jobData.hrLead);
+            formData.append("hiring_team_lead", jobData.hiringTeamLead);
+            formData.append("hiring_team_email", jobData.hiringTeamEmail);
+            formData.append("requesting_department", jobData.requestingDepartment);
 
             // Serialize arrays as JSON strings for server action to parse
             formData.append("schedule", JSON.stringify(jobData.schedule));
