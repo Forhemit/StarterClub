@@ -113,9 +113,11 @@ starter-club/
 
 ### 12. Jobs & Careers
 - **Job Postings**: Create and manage job listings with detailed descriptions and requirements
+- **Smart Form Wizard**: Progressive reveal UI (Granular: Title -> Dept -> Location -> Schedule) to reduce cognitive load
+- **Hiring Accountability**: Track HR Leads, Hiring Managers, and Requesting Departments with override logic
 - **Candidate Pipeline**: Visual Kanban board for tracking applicants through stages
 - **Application Logic**: Customizable application forms and screening questions
-- **Compensation Management**: Salary bands, equity packages, and benefits
+- **Compensation Management**: Salary bands, equity packages, and benefits (EEO, Dept Overview)
 - **Interview Scheduling**: Integrated calendar for scheduling interviews
 
 ### 13. Vault Builder
