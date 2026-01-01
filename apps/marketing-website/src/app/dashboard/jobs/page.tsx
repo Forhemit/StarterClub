@@ -1,4 +1,5 @@
 import { getJobs, deleteJob } from "@/actions/jobs";
+import { EmbedButton } from "@/components/jobs/EmbedButton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Trash2, MapPin, Briefcase, BriefcaseBusiness, DollarSign } from "lucide-react";
@@ -75,7 +76,8 @@ export default async function JobsDashboardPage() {
                                             </div>
                                         )}
                                     </div>
-                                    <div className="flex justify-end pt-2 border-t mt-4">
+                                    <div className="flex justify-end items-center pt-2 border-t mt-4 gap-2">
+                                        <EmbedButton jobId={job.id} jobTitle={job.title} />
                                         <form action={async () => {
                                             "use server";
                                             await deleteJob(job.id);

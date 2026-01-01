@@ -2,7 +2,84 @@
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+
+export interface CareerLevel {
+    id: string;
+    code: string;
+    name: string;
+    description: string | null;
+}
+
+export async function getCareerLevels(): Promise<{ data?: CareerLevel[]; error?: string }> {
+    const supabase = await createSupabaseServerClient();
+
+    const { data: levels, error } = await supabase
+        .from("career_levels")
+        .select("id, code, name, description")
+        .order("sort_order", { ascending: true });
+
+    if (error) {
+        console.error("Error fetching career levels:", error);
+        return { error: error.message };
+    }
+
+    return { data: levels };
+}
+
+export interface StartingSalaryResult {
+    baseSalary: number;
+    className: string;
+    careerLevelName: string;
+}
+
+export async function getStartingSalary(
+    careerLevelId: string,
+    jobClass: string
+): Promise<{ data?: StartingSalaryResult; error?: string }> {
+    const supabase = await createSupabaseServerClient();
+
+    // Extract just the class letter (A-F) from "Class A", "Class B", etc.
+    const classCode = jobClass.replace("Class ", "").trim().charAt(0).toUpperCase();
+
+    // First, get the pay_grade_class for this career level and class code
+    const { data: payGradeClass, error: classError } = await supabase
+        .from("pay_grade_classes")
+        .select("id, class_name, career_levels(name)")
+        .eq("career_level_id", careerLevelId)
+        .eq("class_code", classCode)
+        .single();
+
+    if (classError || !payGradeClass) {
+        console.error("Error fetching pay grade class:", classError);
+        return { error: classError?.message || "Pay grade class not found" };
+    }
+
+    // Now get the starting salary (year 1) for this class
+    const { data: payGrade, error: gradeError } = await supabase
+        .from("pay_grades")
+        .select("base_salary")
+        .eq("career_level_id", careerLevelId)
+        .eq("class_id", payGradeClass.id)
+        .eq("years_of_service", 1)
+        .single();
+
+    if (gradeError || !payGrade) {
+        console.error("Error fetching pay grade:", gradeError);
+        return { error: gradeError?.message || "Pay grade not found" };
+    }
+
+    // Extract career level name from nested object (Supabase returns singular relation as object)
+    const careerLevelData = payGradeClass.career_levels as unknown as { name: string } | null;
+    const careerLevelName = careerLevelData?.name || "Unknown";
+
+    return {
+        data: {
+            baseSalary: parseFloat(payGrade.base_salary),
+            className: payGradeClass.class_name,
+            careerLevelName: careerLevelName,
+        },
+    };
+}
 
 export async function getJobs() {
     const supabase = await createSupabaseServerClient();
@@ -50,6 +127,7 @@ export async function createJob(formData: FormData) {
     // Phase 2 Fields
     const jobId = formData.get("job_id") as string;
     const jobClass = formData.get("job_class") as string;
+    const jobGrade = formData.get("job_grade") as string;
     const applicationDeadline = formData.get("application_deadline") ? formData.get("application_deadline") as string : null;
     const applicationLink = formData.get("application_link") as string;
     const departmentOverview = formData.get("department_overview") as string;
@@ -61,6 +139,9 @@ export async function createJob(formData: FormData) {
     const hiringTeamEmail = formData.get("hiring_team_email") as string;
     const requestingDepartment = formData.get("requesting_department") as string;
 
+    // Partner Type (career level)
+    const partnerType = formData.get("partner_type") as string || null;
+
     try {
         // Parse Arrays from JSON
         const responsibilities = JSON.parse(formData.get("responsibilities") as string || "[]");
@@ -68,6 +149,8 @@ export async function createJob(formData: FormData) {
         const preferredQualifications = JSON.parse(formData.get("preferred_qualifications") as string || "[]");
         const benefits = JSON.parse(formData.get("benefits") as string || "[]");
         const schedule = JSON.parse(formData.get("schedule") as string || "[]");
+        const successMetrics = JSON.parse(formData.get("success_metrics") as string || "[]");
+        const restrictions = JSON.parse(formData.get("restrictions") as string || "[]");
 
         // Fetch org_id (MVP)
         const { data: roles } = await supabase
@@ -101,15 +184,19 @@ export async function createJob(formData: FormData) {
             additional_comments: additionalComments,
             job_id: jobId,
             job_class: jobClass,
+            job_grade: jobGrade,
             application_deadline: applicationDeadline,
             application_link: applicationLink,
             department_overview: departmentOverview,
             preferred_qualifications: preferredQualifications,
             eeo_statement: eeoStatement,
+            success_metrics: successMetrics,
+            restrictions: restrictions,
             hr_lead: hrLead,
             hiring_team_lead: hiringTeamLead,
             hiring_team_email: hiringTeamEmail,
             requesting_department: requestingDepartment,
+            partner_type: partnerType,
             status: 'draft'
         });
 

@@ -10,7 +10,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { ArrowLeft, ArrowRight, RotateCcw, Eye, EyeOff, Briefcase, FileText, DollarSign, Check } from "lucide-react";
 import { toast } from "sonner";
 import { installModule } from "@/actions/marketplace";
-import { createJob } from "@/actions/jobs";
+import { createJob, getCareerLevels, getStartingSalary, type CareerLevel } from "@/actions/jobs";
 import { Step1JobBasics } from "./Step1JobBasics";
 import { Step2Details } from "./Step2Details";
 import { Step3Compensation } from "./Step3Compensation";
@@ -39,16 +39,21 @@ export interface JobPostingData {
     // Phase 2 Fields
     jobId: string;
     jobClass: string;
+    jobGrade: string; // New
     applicationDeadline: string; // Date string
     applicationLink: string;
     departmentOverview: string;
     preferredQualifications: string[];
     eeoStatement: string;
+    successMetrics: string[];
+    restrictions: string[];
     // Hiring Accountability
     hrLead: string;
     hiringTeamLead: string;
     hiringTeamEmail: string;
     requestingDepartment: string;
+    // Partner Type
+    partnerType: string;
 }
 
 export const DEFAULT_JOB_DATA: JobPostingData = {
@@ -73,16 +78,21 @@ export const DEFAULT_JOB_DATA: JobPostingData = {
     // Phase 2 Defaults
     jobId: "",
     jobClass: "",
+    jobGrade: "",
     applicationDeadline: "",
     applicationLink: "",
     departmentOverview: "",
     preferredQualifications: [],
     eeoStatement: "We are an equal opportunity employer and value diversity at our company. We do not discriminate on the basis of race, religion, color, national origin, gender, sexual orientation, age, marital status, veteran status, or disability status.",
+    successMetrics: [],
+    restrictions: [],
     // Accountability Defaults
     hrLead: "",
     hiringTeamLead: "",
     hiringTeamEmail: "",
     requestingDepartment: "",
+    // Partner Type Default
+    partnerType: "",
 };
 
 export function JobsCareersWizard() {
@@ -90,17 +100,53 @@ export function JobsCareersWizard() {
     const [step, setStep] = useState(1);
     const [isInstalling, setIsInstalling] = useState(false);
     const [isInstalled, setIsInstalled] = useState(false);
-    const [showPreview, setShowPreview] = useState(true);
+    const [showPreview, setShowPreview] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
     const totalSteps = 4;
     const progress = (step / totalSteps) * 100;
 
     // Configuration state
     const [jobData, setJobData] = useState<JobPostingData>(DEFAULT_JOB_DATA);
+    const [careerLevels, setCareerLevels] = useState<CareerLevel[]>([]);
+    const [previewPartnerName, setPreviewPartnerName] = useState<string>("");
+    const [previewStartingSalary, setPreviewStartingSalary] = useState<number | undefined>(undefined);
 
     useEffect(() => {
         setIsMounted(true);
+        // Fetch career levels on mount
+        async function fetchLevels() {
+            const result = await getCareerLevels();
+            if (result.data) setCareerLevels(result.data);
+        }
+        fetchLevels();
     }, []);
+
+    // Update partner name when partnerType changes
+    useEffect(() => {
+        if (jobData.partnerType && careerLevels.length > 0) {
+            const level = careerLevels.find(l => l.id === jobData.partnerType);
+            setPreviewPartnerName(level?.name || "");
+        } else {
+            setPreviewPartnerName("");
+        }
+    }, [jobData.partnerType, careerLevels]);
+
+    // Fetch starting salary when partnerType and jobClass change
+    useEffect(() => {
+        async function fetchSalary() {
+            if (jobData.partnerType && jobData.jobClass) {
+                const result = await getStartingSalary(jobData.partnerType, jobData.jobClass);
+                if (result.data) {
+                    setPreviewStartingSalary(result.data.baseSalary);
+                } else {
+                    setPreviewStartingSalary(undefined);
+                }
+            } else {
+                setPreviewStartingSalary(undefined);
+            }
+        }
+        fetchSalary();
+    }, [jobData.partnerType, jobData.jobClass]);
 
     const handleNext = () => setStep(Math.min(totalSteps, step + 1));
     const handlePrev = () => {
@@ -145,23 +191,29 @@ export function JobsCareersWizard() {
             // Phase 2 Fields
             formData.append("job_id", jobData.jobId);
             formData.append("job_class", jobData.jobClass);
+            formData.append("job_grade", jobData.jobGrade);
             formData.append("application_deadline", jobData.applicationDeadline);
             formData.append("application_link", jobData.applicationLink);
             formData.append("department_overview", jobData.departmentOverview);
             formData.append("eeo_statement", jobData.eeoStatement);
 
+            // Serialize arrays as JSON strings for server action to parse
+            formData.append("schedule", JSON.stringify(jobData.schedule));
+            formData.append("responsibilities", JSON.stringify(jobData.responsibilities));
+            formData.append("qualifications", JSON.stringify(jobData.qualifications));
+            formData.append("benefits", JSON.stringify(jobData.benefits));
+            formData.append("preferred_qualifications", JSON.stringify(jobData.preferredQualifications));
+            formData.append("success_metrics", JSON.stringify(jobData.successMetrics));
+            formData.append("restrictions", JSON.stringify(jobData.restrictions));
+
             // Hiring Accountability
             formData.append("hr_lead", jobData.hrLead);
             formData.append("hiring_team_lead", jobData.hiringTeamLead);
             formData.append("hiring_team_email", jobData.hiringTeamEmail);
-            formData.append("requesting_department", jobData.requestingDepartment);
+            formData.append("requesting_department", jobData.requestingDepartment || jobData.department);
 
-            // Serialize arrays as JSON strings for server action to parse
-            formData.append("schedule", JSON.stringify(jobData.schedule));
-            formData.append("preferred_qualifications", JSON.stringify(jobData.preferredQualifications));
-            formData.append("responsibilities", JSON.stringify(jobData.responsibilities));
-            formData.append("qualifications", JSON.stringify(jobData.qualifications));
-            formData.append("benefits", JSON.stringify(jobData.benefits));
+            // Partner Type
+            formData.append("partner_type", jobData.partnerType);
 
             const jobResult = await createJob(formData);
             if (jobResult?.error) {
@@ -317,7 +369,11 @@ export function JobsCareersWizard() {
                     {/* Right Column: Live Preview */}
                     {showPreview && (
                         <div className="hidden lg:block sticky top-8 h-[calc(100vh-100px)]">
-                            <JobPostingPreview data={jobData} />
+                            <JobPostingPreview
+                                data={jobData}
+                                partnerTypeName={previewPartnerName}
+                                startingSalary={previewStartingSalary}
+                            />
                         </div>
                     )}
                 </div>

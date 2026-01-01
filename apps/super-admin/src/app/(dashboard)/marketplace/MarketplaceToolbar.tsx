@@ -75,7 +75,8 @@ export function MarketplaceToolbar() {
                     <option value="all">All Types</option>
                     <option value="industry">Industry</option>
                     <option value="submodule">Submodule</option>
-                    <option value="integration">Integration</option>
+                    <option value="core">Core / Resilience</option>
+                    <option value="function">Function</option>
                 </select>
             </div>
         </div>

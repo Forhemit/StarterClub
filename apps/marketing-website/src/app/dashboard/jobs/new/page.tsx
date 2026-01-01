@@ -1,3 +1,5 @@
+"use client";
+
 import { createJob } from "@/actions/jobs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,9 +14,23 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
 
 export default function NewJobPage() {
+    const router = useRouter();
+
+    async function handleSubmit(formData: FormData) {
+        const result = await createJob(formData);
+        if (result?.error) {
+            toast.error("Failed to create job", { description: result.error });
+        } else {
+            toast.success("Job created successfully!");
+            router.push("/dashboard/jobs");
+        }
+    }
+
     return (
         <div className="max-w-2xl mx-auto space-y-6">
             <Link href="/dashboard/jobs">
@@ -37,7 +53,7 @@ export default function NewJobPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form action={createJob} className="space-y-6">
+                    <form action={handleSubmit} className="space-y-6">
                         <div className="space-y-2">
                             <Label htmlFor="title">Job Title *</Label>
                             <Input id="title" name="title" placeholder="e.g. Senior Software Engineer" required />

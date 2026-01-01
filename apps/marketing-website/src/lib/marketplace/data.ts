@@ -165,5 +165,86 @@ export const MARKETPLACE_MODULES: MarketplaceModule[] = [
             "Growth scenario modeling"
         ],
         longDescription: "Understand what drives your company's value. The Valuation Optimizer helps you identify and focus on the metrics that matter most to investors and potential acquirers."
+    },
+    // --- Business Resilience Modules ---
+    {
+        id: "leadership-human-capital",
+        title: "Leadership & Human Capital",
+        description: "Remove key-person risk and decision paralysis.",
+        category: "Business Resilience",
+        iconName: "Users",
+        version: "1.0.0",
+        author: "Starter Club",
+        price: "Free",
+        features: [
+            "Succession planning & deputy mapping",
+            "Key person dependency tracking",
+            "Decision authority matrix"
+        ],
+        longDescription: "Investors don’t care who your CEO is — they care that the company doesn’t freeze when they’re gone. This module helps you identify key Person risks, map decision authority, and ensure leadership continuity."
+    },
+    {
+        id: "financial-resilience",
+        title: "Financial Resilience",
+        description: "Fortify your financial position against shocks.",
+        category: "Business Resilience",
+        iconName: "Landmark",
+        version: "1.0.0",
+        author: "Starter Club",
+        price: "Free",
+        features: [
+            "Cash flow stress testing",
+            "Emergency fund planning",
+            "Insurance coverage review"
+        ],
+        longDescription: "Prepare your business for financial uncertainty. This module provides tools to stress-test your cash flow, evaluate insurance coverage, and build a financial safety net."
+    },
+    {
+        id: "operations-supply-chain",
+        title: "Operations & Supply Chain",
+        description: "Secure your operational capabilities and supply lines.",
+        category: "Business Resilience",
+        iconName: "Truck",
+        version: "1.0.0",
+        author: "Starter Club",
+        price: "Free",
+        features: [
+            "Critical vendor redundancy",
+            "Inventory buffer analysis",
+            "Disaster recovery planning"
+        ],
+        longDescription: "Don't let a supply chain disruption shut you down. This module helps you identify critical vulnerabilities in your operations and build redundancy where it matters most."
+    },
+    {
+        id: "crisis-protocol",
+        title: "Crisis Protocol",
+        description: "Standardized responses for critical incidents.",
+        category: "Business Resilience",
+        iconName: "Siren",
+        version: "1.0.0",
+        author: "Starter Club",
+        price: "Free",
+        features: [
+            "Emergency communication plan",
+            "Incident response checklists",
+            "Post-mortem templates"
+        ],
+        longDescription: "When crisis strikes, seconds count. The Crisis Protocol module gives you pre-built response plans for common emergencies, ensuring your team knows exactly what to do."
+    },
+    {
+        id: "maintenance-audits",
+        title: "Maintenance & Audits",
+        description: "Regular checks to prevent system failures.",
+        category: "Business Resilience",
+        iconName: "ClipboardCheck",
+        version: "1.0.0",
+        author: "Starter Club",
+        price: "Free",
+        features: [
+            "Preventative maintenance schedule",
+            "Safety audit checklists",
+            "Compliance review logs"
+        ],
+        longDescription: "An ounce of prevention is worth a pound of cure. This module helps you schedule and track regular maintenance and audits to catch issues before they potential become failures."
     }
 ];

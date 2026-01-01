@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown, ChevronUp, Plus } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, Sparkles } from "lucide-react";
 import { JobPostingData } from "./JobsCareersWizard";
+import { getCareerLevels, getStartingSalary, type CareerLevel } from "@/actions/jobs";
 
 interface Step1JobBasicsProps {
     data: JobPostingData;
@@ -17,6 +18,42 @@ interface Step1JobBasicsProps {
 
 export function Step1JobBasics({ data, onChange }: Step1JobBasicsProps) {
     const [isAdminOpen, setIsAdminOpen] = useState(false);
+    const [careerLevels, setCareerLevels] = useState<CareerLevel[]>([]);
+    const [startingSalary, setStartingSalary] = useState<{ amount: number; className: string; levelName: string } | null>(null);
+    const [isLoadingSalary, setIsLoadingSalary] = useState(false);
+
+    useEffect(() => {
+        async function fetchCareerLevels() {
+            const result = await getCareerLevels();
+            if (result.data) {
+                setCareerLevels(result.data);
+            }
+        }
+        fetchCareerLevels();
+    }, []);
+
+    // Fetch starting salary when both Partner Type and Job Class are selected
+    useEffect(() => {
+        async function fetchStartingSalary() {
+            if (data.partnerType && data.jobClass) {
+                setIsLoadingSalary(true);
+                const result = await getStartingSalary(data.partnerType, data.jobClass);
+                if (result.data) {
+                    setStartingSalary({
+                        amount: result.data.baseSalary,
+                        className: result.data.className,
+                        levelName: result.data.careerLevelName,
+                    });
+                } else {
+                    setStartingSalary(null);
+                }
+                setIsLoadingSalary(false);
+            } else {
+                setStartingSalary(null);
+            }
+        }
+        fetchStartingSalary();
+    }, [data.partnerType, data.jobClass]);
 
     const updateField = (field: keyof JobPostingData, value: any) => {
         onChange({ ...data, [field]: value });
@@ -160,13 +197,70 @@ export function Step1JobBasics({ data, onChange }: Step1JobBasicsProps) {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="jobClass">Job Classification</Label>
-                                    <Input
-                                        id="jobClass"
-                                        placeholder="e.g. Class A, Pay Grade 4"
-                                        value={data.jobClass}
-                                        onChange={(e) => updateField("jobClass", e.target.value)}
-                                    />
+                                    <Label>Job Classification</Label>
+                                    <div className="flex gap-2">
+                                        <Select value={data.jobClass} onValueChange={(v) => updateField("jobClass", v)}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Class" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {["Class A", "Class B", "Class C", "Class D", "Class E", "Class F"].map(c => (
+                                                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <Select value={data.jobGrade} onValueChange={(v) => updateField("jobGrade", v)}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Grade" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(g => (
+                                                    <SelectItem key={g} value={g.toString()}>Grade {g}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label>Partner Type</Label>
+                                    <Select value={data.partnerType} onValueChange={(v) => updateField("partnerType", v)}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select Partner Type" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {careerLevels.map(level => (
+                                                <SelectItem key={level.id} value={level.id}>
+                                                    {level.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                {/* Dynamic Starting Salary Display */}
+                                <div className="space-y-2">
+                                    <Label className="flex items-center gap-1">
+                                        <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+                                        Starting Salary
+                                    </Label>
+                                    {isLoadingSalary ? (
+                                        <div className="h-10 bg-muted/50 rounded-md animate-pulse flex items-center justify-center">
+                                            <span className="text-xs text-muted-foreground">Calculating...</span>
+                                        </div>
+                                    ) : startingSalary ? (
+                                        <div className="h-10 px-3 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/30 rounded-md flex items-center">
+                                            <span className="font-semibold text-green-700 dark:text-green-400">
+                                                ${startingSalary.amount.toLocaleString()}
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        <div className="h-10 px-3 bg-muted/30 border border-dashed rounded-md flex items-center">
+                                            <span className="text-xs text-muted-foreground">
+                                                Select Partner Type & Job Class
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
