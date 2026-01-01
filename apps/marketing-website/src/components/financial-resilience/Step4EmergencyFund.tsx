@@ -33,6 +33,17 @@ const ACCESS_TIMES = [
     { id: "2-4 weeks", label: "2-4 Weeks" },
 ];
 
+// Color scale for coverage months
+const getCoverageColor = (months: number) => {
+    if (months <= 2) return { bg: "bg-red-600", text: "text-white", label: "Needs Improvement" };
+    if (months <= 4) return { bg: "bg-orange-500", text: "text-white", label: "At Risk" };
+    if (months <= 6) return { bg: "bg-amber-400", text: "text-amber-900", label: "Moderate" };
+    if (months <= 9) return { bg: "bg-lime-400", text: "text-lime-900", label: "Good" };
+    if (months <= 12) return { bg: "bg-green-500", text: "text-white", label: "Strong" };
+    if (months <= 18) return { bg: "bg-emerald-500", text: "text-white", label: "Excellent" };
+    return { bg: "bg-emerald-600", text: "text-white", label: "Fortress" };
+};
+
 export function Step4EmergencyFund({ data, onSave }: StepProps) {
     const [newSourceName, setNewSourceName] = useState("");
     const sources = data.fundingSources || [];
@@ -65,6 +76,9 @@ export function Step4EmergencyFund({ data, onSave }: StepProps) {
     const fundProgress = data.targetFundAmount ? Math.min(100, ((data.currentFundBalance || 0) / data.targetFundAmount) * 100) : 0;
     const targetFromBurn = (data.monthlyBurnRate || 0) * (data.targetMonthsCoverage || 6);
 
+    const currentMonths = data.targetMonthsCoverage || 6;
+    const coverageStyle = getCoverageColor(currentMonths);
+
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             {/* Header */}
@@ -83,22 +97,36 @@ export function Step4EmergencyFund({ data, onSave }: StepProps) {
                         <Target className="w-4 h-4 text-muted-foreground" />
                         Target Months of Coverage
                     </Label>
-                    <Badge variant="outline" className="bg-background text-lg font-bold">
-                        {data.targetMonthsCoverage || 6} months
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                        <Badge className={cn(coverageStyle.bg, coverageStyle.text, "text-xs")}>
+                            {coverageStyle.label}
+                        </Badge>
+                        <Badge variant="outline" className="bg-background text-lg font-bold">
+                            {currentMonths} months
+                        </Badge>
+                    </div>
                 </div>
+
+                {/* Gradient Color Bar */}
+                <div className="relative h-3 rounded-full overflow-hidden bg-gradient-to-r from-red-600 via-amber-400 via-50% to-emerald-600">
+                    <div
+                        className="absolute top-0 h-full w-1 bg-white shadow-lg border-2 border-slate-700 rounded-full transform -translate-x-1/2"
+                        style={{ left: `${Math.min(100, (currentMonths / 24) * 100)}%` }}
+                    />
+                </div>
+
                 <Slider
-                    value={[data.targetMonthsCoverage || 6]}
+                    value={[currentMonths]}
                     min={1}
                     max={24}
                     step={1}
                     onValueChange={([v]) => onSave({ targetMonthsCoverage: v })}
-                    className="py-4"
+                    className="py-2"
                 />
                 <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>1 month (minimal)</span>
-                    <span>12 months (conservative)</span>
-                    <span>24 months (fortress)</span>
+                    <span className="text-red-600 font-medium">1 mo (Needs Improvement)</span>
+                    <span className="text-amber-600 font-medium">6 mo (Moderate)</span>
+                    <span className="text-emerald-600 font-medium">24 mo (Fortress)</span>
                 </div>
             </div>
 

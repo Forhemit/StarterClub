@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -26,9 +27,17 @@ const FISCAL_YEAR_ENDS = [
     { id: "march", label: "March" },
     { id: "june", label: "June" },
     { id: "september", label: "September" },
+    { id: "custom", label: "Custom" },
 ];
 
 export function Step1FinancialOverview({ data, onSave }: StepProps) {
+    const [showOtherBusinessType, setShowOtherBusinessType] = useState(
+        data.businessType && !BUSINESS_TYPES.slice(0, -1).some(t => t.id === data.businessType)
+    );
+    const [showCustomFiscalYear, setShowCustomFiscalYear] = useState(
+        data.fiscalYearEnd === "custom" || (data.fiscalYearEnd && !FISCAL_YEAR_ENDS.slice(0, -1).some(f => f.id === data.fiscalYearEnd))
+    );
+
     const formatCurrency = (value: number | undefined) => {
         if (!value) return "";
         return new Intl.NumberFormat('en-US', {
@@ -49,6 +58,26 @@ export function Step1FinancialOverview({ data, onSave }: StepProps) {
         return Math.round(totalFunds / data.monthlyBurnRate);
     };
 
+    const handleBusinessTypeSelect = (typeId: string) => {
+        if (typeId === "other") {
+            setShowOtherBusinessType(true);
+            onSave({ businessType: "" });
+        } else {
+            setShowOtherBusinessType(false);
+            onSave({ businessType: typeId });
+        }
+    };
+
+    const handleFiscalYearSelect = (fyId: string) => {
+        if (fyId === "custom") {
+            setShowCustomFiscalYear(true);
+            onSave({ fiscalYearEnd: "" });
+        } else {
+            setShowCustomFiscalYear(false);
+            onSave({ fiscalYearEnd: fyId });
+        }
+    };
+
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             {/* Header */}
@@ -67,10 +96,10 @@ export function Step1FinancialOverview({ data, onSave }: StepProps) {
                     {BUSINESS_TYPES.map((type) => (
                         <div
                             key={type.id}
-                            onClick={() => onSave({ businessType: type.id })}
+                            onClick={() => handleBusinessTypeSelect(type.id)}
                             className={cn(
                                 "cursor-pointer rounded-xl border p-4 text-center transition-all hover:border-primary/50 relative overflow-hidden group",
-                                data.businessType === type.id
+                                (type.id === "other" && showOtherBusinessType) || data.businessType === type.id
                                     ? "border-primary bg-primary/5 text-primary shadow-sm ring-1 ring-primary"
                                     : "border-muted bg-card hover:bg-muted/30"
                             )}
@@ -80,6 +109,15 @@ export function Step1FinancialOverview({ data, onSave }: StepProps) {
                         </div>
                     ))}
                 </div>
+                {showOtherBusinessType && (
+                    <Input
+                        placeholder="Enter your business type..."
+                        value={data.businessType || ""}
+                        onChange={(e) => onSave({ businessType: e.target.value })}
+                        className="mt-2"
+                        autoFocus
+                    />
+                )}
             </div>
 
             {/* Financial Metrics */}
@@ -140,10 +178,11 @@ export function Step1FinancialOverview({ data, onSave }: StepProps) {
                     {FISCAL_YEAR_ENDS.map((fy) => (
                         <div
                             key={fy.id}
-                            onClick={() => onSave({ fiscalYearEnd: fy.id })}
+                            onClick={() => handleFiscalYearSelect(fy.id)}
                             className={cn(
                                 "cursor-pointer rounded-full border px-4 py-2 text-sm font-medium transition-all hover:bg-muted/50",
-                                data.fiscalYearEnd === fy.id
+                                (fy.id === "custom" && showCustomFiscalYear) ||
+                                    (fy.id !== "custom" && data.fiscalYearEnd === fy.id)
                                     ? "border-primary bg-primary/10 text-primary"
                                     : "border-muted bg-background text-muted-foreground"
                             )}
@@ -152,6 +191,15 @@ export function Step1FinancialOverview({ data, onSave }: StepProps) {
                         </div>
                     ))}
                 </div>
+                {showCustomFiscalYear && (
+                    <Input
+                        placeholder="Enter custom fiscal year end (e.g., January, February 15)..."
+                        value={data.fiscalYearEnd === "custom" ? "" : (data.fiscalYearEnd || "")}
+                        onChange={(e) => onSave({ fiscalYearEnd: e.target.value })}
+                        className="mt-2"
+                        autoFocus
+                    />
+                )}
             </div>
         </div>
     );

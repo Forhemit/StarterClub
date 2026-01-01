@@ -68,7 +68,6 @@ export function Step7BankingRelationships({ data, onSave }: StepProps) {
     };
 
     const totalCreditLines = contacts.reduce((sum, c) => sum + (c.creditLineAmount || 0), 0);
-    const primaryBank = contacts.find(c => c.isPrimary);
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
@@ -81,56 +80,14 @@ export function Step7BankingRelationships({ data, onSave }: StepProps) {
                 <p className="text-sm text-muted-foreground">Document your banking partners and credit lines.</p>
             </div>
 
-            {/* Primary/Backup Bank Selection */}
-            <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
-                    <Label>Primary Bank</Label>
-                    <Select
-                        value={data.primaryBank || ""}
-                        onValueChange={(v) => onSave({ primaryBank: v })}
-                    >
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select primary bank..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {contacts.map(c => (
-                                <SelectItem key={c.id} value={c.bankName}>{c.bankName}</SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div className="space-y-2">
-                    <Label>Backup Bank</Label>
-                    <Select
-                        value={data.backupBank || ""}
-                        onValueChange={(v) => onSave({ backupBank: v })}
-                    >
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select backup bank..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {contacts.filter(c => c.bankName !== data.primaryBank).map(c => (
-                                <SelectItem key={c.id} value={c.bankName}>{c.bankName}</SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
-            </div>
-
-            {/* Credit Summary */}
-            <div className="p-4 rounded-xl border bg-muted/30 flex justify-between items-center">
-                <div>
-                    <div className="text-sm text-muted-foreground">Total Credit Available</div>
-                    <div className="text-xl font-bold">${totalCreditLines.toLocaleString()}</div>
-                </div>
-                <Badge variant="outline" className="text-lg">
-                    {contacts.length} relationships
-                </Badge>
-            </div>
-
-            {/* Banking Contacts */}
+            {/* Bank Accounts & Contacts - MOVED TO TOP */}
             <div className="space-y-4">
-                <Label className="text-base">Bank Accounts & Contacts</Label>
+                <div className="flex justify-between items-center">
+                    <Label className="text-base">Bank Accounts & Contacts</Label>
+                    <Badge variant="outline" className="text-sm">
+                        {contacts.length} relationship{contacts.length !== 1 ? 's' : ''}
+                    </Badge>
+                </div>
 
                 <div className="space-y-4">
                     {contacts.map((contact) => (
@@ -242,6 +199,58 @@ export function Step7BankingRelationships({ data, onSave }: StepProps) {
                         <Plus className="w-4 h-4 mr-1" /> Add Bank
                     </Button>
                 </div>
+            </div>
+
+            {/* Primary Bank Selection */}
+            <div className="space-y-4 p-5 rounded-xl border bg-primary/5">
+                <Label className="text-base font-semibold flex items-center gap-2">
+                    <Star className="w-4 h-4 text-primary" />
+                    Primary Bank
+                </Label>
+                <Select
+                    value={data.primaryBank || ""}
+                    onValueChange={(v) => onSave({ primaryBank: v })}
+                >
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select primary bank..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {contacts.map(c => (
+                            <SelectItem key={c.id} value={c.bankName}>{c.bankName}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">Your main operating bank for day-to-day transactions</p>
+            </div>
+
+            {/* Backup Bank Selection */}
+            <div className="space-y-4 p-5 rounded-xl border bg-muted/30">
+                <Label className="text-base font-semibold">Backup Bank</Label>
+                <Select
+                    value={data.backupBank || ""}
+                    onValueChange={(v) => onSave({ backupBank: v })}
+                >
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select backup bank..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {contacts.filter(c => c.bankName !== data.primaryBank).map(c => (
+                            <SelectItem key={c.id} value={c.bankName}>{c.bankName}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">Secondary bank for redundancy and emergency access</p>
+            </div>
+
+            {/* Credit Summary */}
+            <div className="p-4 rounded-xl border bg-muted/30 flex justify-between items-center">
+                <div>
+                    <div className="text-sm text-muted-foreground">Total Credit Available</div>
+                    <div className="text-xl font-bold">${totalCreditLines.toLocaleString()}</div>
+                </div>
+                <Badge variant="outline" className="text-lg">
+                    {contacts.length} relationships
+                </Badge>
             </div>
         </div>
     );

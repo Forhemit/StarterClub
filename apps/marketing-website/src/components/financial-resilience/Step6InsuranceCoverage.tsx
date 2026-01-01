@@ -30,11 +30,24 @@ const INSURANCE_TYPES = [
     "Other"
 ];
 
+const GAP_TYPES = [
+    "Cyber Liability",
+    "Key Person",
+    "Business Interruption",
+    "D&O Coverage",
+    "Professional Liability",
+    "Umbrella/Excess",
+    "EPLI",
+    "Crime/Fidelity",
+    "Other"
+];
+
 const GAP_PRIORITIES = ["Critical", "High", "Medium", "Low"];
 
 export function Step6InsuranceCoverage({ data, onSave }: StepProps) {
     const [selectedType, setSelectedType] = useState("");
-    const [newGapType, setNewGapType] = useState("");
+    const [selectedGapType, setSelectedGapType] = useState("");
+    const [showOtherGapInput, setShowOtherGapInput] = useState<string | null>(null);
 
     const policies = data.insurancePolicies || [];
     const gaps = data.insuranceGaps || [];
@@ -67,15 +80,18 @@ export function Step6InsuranceCoverage({ data, onSave }: StepProps) {
     };
 
     const addGap = () => {
-        if (!newGapType.trim()) return;
+        if (!selectedGapType) return;
         const newGap = {
             id: crypto.randomUUID(),
-            gapType: newGapType,
+            gapType: selectedGapType === "Other" ? "" : selectedGapType,
             description: "",
             priority: "Medium"
         };
         onSave({ insuranceGaps: [...gaps, newGap] });
-        setNewGapType("");
+        if (selectedGapType === "Other") {
+            setShowOtherGapInput(newGap.id);
+        }
+        setSelectedGapType("");
     };
 
     const updateGap = (id: string, field: string, value: string) => {
@@ -87,6 +103,17 @@ export function Step6InsuranceCoverage({ data, onSave }: StepProps) {
 
     const removeGap = (id: string) => {
         onSave({ insuranceGaps: gaps.filter(g => g.id !== id) });
+        if (showOtherGapInput === id) setShowOtherGapInput(null);
+    };
+
+    const handleGapTypeChange = (gapId: string, newType: string) => {
+        if (newType === "Other") {
+            setShowOtherGapInput(gapId);
+            updateGap(gapId, "gapType", "");
+        } else {
+            setShowOtherGapInput(showOtherGapInput === gapId ? null : showOtherGapInput);
+            updateGap(gapId, "gapType", newType);
+        }
     };
 
     const totalPremium = policies.reduce((sum, p) => sum + (p.premium || 0), 0);
@@ -103,6 +130,10 @@ export function Step6InsuranceCoverage({ data, onSave }: StepProps) {
     const isExpired = (dateStr: string) => {
         if (!dateStr) return false;
         return new Date(dateStr) < new Date();
+    };
+
+    const isCustomGapType = (gapType: string) => {
+        return gapType && !GAP_TYPES.slice(0, -1).includes(gapType);
     };
 
     return (
@@ -257,58 +288,84 @@ export function Step6InsuranceCoverage({ data, onSave }: StepProps) {
 
                 <div className="space-y-3">
                     {gaps.map((gap) => (
-                        <div key={gap.id} className="grid grid-cols-12 gap-2 items-center p-3 rounded-lg border bg-amber-50/50">
-                            <div className="col-span-3">
+                        <div key={gap.id} className="p-3 rounded-lg border bg-amber-50/50 space-y-3">
+                            <div className="grid grid-cols-12 gap-2 items-center">
+                                <div className="col-span-3">
+                                    <Label className="text-xs text-muted-foreground mb-1 block">Gap Type</Label>
+                                    <Select
+                                        value={isCustomGapType(gap.gapType) ? "Other" : gap.gapType}
+                                        onValueChange={(v) => handleGapTypeChange(gap.id, v)}
+                                    >
+                                        <SelectTrigger className="h-8 text-sm">
+                                            <SelectValue placeholder="Select..." />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {GAP_TYPES.map(t => (
+                                                <SelectItem key={t} value={t}>{t}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="col-span-5">
+                                    <Label className="text-xs text-muted-foreground mb-1 block">Description</Label>
+                                    <Input
+                                        placeholder="Description"
+                                        value={gap.description}
+                                        onChange={(e) => updateGap(gap.id, "description", e.target.value)}
+                                        className="h-8 text-sm"
+                                    />
+                                </div>
+                                <div className="col-span-3">
+                                    <Label className="text-xs text-muted-foreground mb-1 block">Priority</Label>
+                                    <Select value={gap.priority} onValueChange={(v) => updateGap(gap.id, "priority", v)}>
+                                        <SelectTrigger className={cn("h-8 text-sm",
+                                            gap.priority === "Critical" ? "border-red-300 bg-red-50" :
+                                                gap.priority === "High" ? "border-orange-300 bg-orange-50" :
+                                                    gap.priority === "Medium" ? "border-amber-300 bg-amber-50" :
+                                                        "border-slate-300"
+                                        )}>
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {GAP_PRIORITIES.map(p => (
+                                                <SelectItem key={p} value={p}>{p}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="col-span-1 flex justify-end items-end h-full">
+                                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeGap(gap.id)}>
+                                        <Trash2 className="w-4 h-4 text-muted-foreground" />
+                                    </Button>
+                                </div>
+                            </div>
+
+                            {/* Other input field */}
+                            {(showOtherGapInput === gap.id || isCustomGapType(gap.gapType)) && (
                                 <Input
-                                    placeholder="Gap type"
+                                    placeholder="Enter custom gap type..."
                                     value={gap.gapType}
                                     onChange={(e) => updateGap(gap.id, "gapType", e.target.value)}
                                     className="h-8 text-sm"
+                                    autoFocus
                                 />
-                            </div>
-                            <div className="col-span-5">
-                                <Input
-                                    placeholder="Description"
-                                    value={gap.description}
-                                    onChange={(e) => updateGap(gap.id, "description", e.target.value)}
-                                    className="h-8 text-sm"
-                                />
-                            </div>
-                            <div className="col-span-3">
-                                <Select value={gap.priority} onValueChange={(v) => updateGap(gap.id, "priority", v)}>
-                                    <SelectTrigger className={cn("h-8 text-sm",
-                                        gap.priority === "Critical" ? "border-red-300 bg-red-50" :
-                                            gap.priority === "High" ? "border-orange-300 bg-orange-50" :
-                                                gap.priority === "Medium" ? "border-amber-300 bg-amber-50" :
-                                                    "border-slate-300"
-                                    )}>
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {GAP_PRIORITIES.map(p => (
-                                            <SelectItem key={p} value={p}>{p}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="col-span-1 flex justify-end">
-                                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeGap(gap.id)}>
-                                    <Trash2 className="w-4 h-4 text-muted-foreground" />
-                                </Button>
-                            </div>
+                            )}
                         </div>
                     ))}
                 </div>
 
                 <div className="flex gap-2">
-                    <Input
-                        placeholder="Add coverage gap..."
-                        value={newGapType}
-                        onChange={(e) => setNewGapType(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && addGap()}
-                        className="flex-1"
-                    />
-                    <Button variant="outline" onClick={addGap} disabled={!newGapType.trim()}>
+                    <Select value={selectedGapType} onValueChange={setSelectedGapType}>
+                        <SelectTrigger className="flex-1">
+                            <SelectValue placeholder="Select coverage gap type..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {GAP_TYPES.map(t => (
+                                <SelectItem key={t} value={t}>{t}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <Button variant="outline" onClick={addGap} disabled={!selectedGapType}>
                         <Plus className="w-4 h-4 mr-1" /> Add Gap
                     </Button>
                 </div>
