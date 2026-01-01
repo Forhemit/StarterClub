@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 export default function MarketplacePage() {
     const [selectedCategory, setSelectedCategory] = useState<ModuleCategory>("All");
 
-    const categories: ModuleCategory[] = ["All", "Foundation", "Operations", "Growth"];
+    const categories: ModuleCategory[] = ["All", "Foundation", "Operations", "Growth", "Business Resilience"];
 
     const filteredModules = MODULES.filter((module) => {
         if (selectedCategory === "All") return true;

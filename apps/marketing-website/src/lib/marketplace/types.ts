@@ -1,4 +1,4 @@
-export type ModuleCategory = "Foundation" | "Operations" | "Growth" | "All";
+export type ModuleCategory = "Foundation" | "Operations" | "Growth" | "Business Resilience" | "All";
 
 export interface MarketplaceModule {
     id: string;

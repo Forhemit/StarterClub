@@ -124,6 +124,20 @@ starter-club/
 - **Custom Module Creation**: Visual builder for creating new checklist-based modules
 - **Template Management**: Create and distribute templates via the marketplace
 
+### 14. Leadership & Human Capital (Business Resilience)
+- **Role Profile Wizard**: 11-step wizard to define succession plans for key leadership roles
+- **Role Identity**: Define target role, incumbent, designated deputy, backup, and alternate backup
+- **Response Protocols (4-Tier)**: Card-based selection UI for emergency actions, authority scope, and communication plans across Planned, Urgent, Severe, and Crisis scenarios
+- **Decision Authority Matrix**: OPEX/CAPEX limits and escalation pathways
+- **Critical Knowledge Capture**: Identify key knowledge domains, assign Bus Factor (Low/Med/High/Critical), and define mitigation/access strategies
+- **Spending Limits**: Define autonomous spending thresholds and approver roles
+- **Signing Authority Matrix**: Configure signing permissions for NDAs, Vendor Agreements, Employment, and Checks
+- **Two-Person Integrity (2PI)**: Toggle 2PI requirements for documents, financial transactions, and knowledge assets
+- **Key Relationships**: Document stakeholder registry with handoff status (Pending, Documented, Introduced)
+- **Legacy Handover**: Record voice memos and document formal mentoring arrangements
+- **Mentoring Program**: Split Downstream (Successors) and Upstream (Advisors) mentoring with cadence, focus areas, and rosters
+- **Compliance Log**: Track profile completion and expiry for governance audits
+- **Live Preview**: Full-screen preview panel displaying all captured data in a professional, printable format
 
 ---
 

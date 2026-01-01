@@ -2,14 +2,16 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Briefcase, BriefcaseBusiness, DollarSign, Clock, CheckCircle2 } from "lucide-react";
+import { MapPin, Briefcase, BriefcaseBusiness, DollarSign, Clock, CheckCircle2, Users, Sparkles } from "lucide-react";
 import { JobPostingData } from "./JobsCareersWizard";
 
 interface JobPostingPreviewProps {
     data: JobPostingData;
+    partnerTypeName?: string;
+    startingSalary?: number;
 }
 
-export function JobPostingPreview({ data }: JobPostingPreviewProps) {
+export function JobPostingPreview({ data, partnerTypeName, startingSalary }: JobPostingPreviewProps) {
     return (
         <Card className="h-full overflow-y-auto border-dashed">
             <CardHeader className="bg-muted/30 pb-6 border-b">
@@ -42,6 +44,18 @@ export function JobPostingPreview({ data }: JobPostingPreviewProps) {
                         <Clock className="w-4 h-4" />
                         {Array.isArray(data.schedule) && data.schedule.length > 0 ? data.schedule.join(", ") : "Schedule"}
                     </div>
+                    {partnerTypeName && (
+                        <div className="flex items-center gap-2">
+                            <Users className="w-4 h-4" />
+                            <span className="font-medium text-foreground">{partnerTypeName}</span>
+                        </div>
+                    )}
+                    {startingSalary && (
+                        <div className="flex items-center gap-2 font-medium text-green-600 dark:text-green-400">
+                            <Sparkles className="w-4 h-4" />
+                            ${startingSalary.toLocaleString()} starting
+                        </div>
+                    )}
                     {(data.salaryMin && data.salaryMax) && (
                         <div className="flex items-center gap-2 font-medium text-foreground">
                             <DollarSign className="w-4 h-4" />
@@ -52,6 +66,7 @@ export function JobPostingPreview({ data }: JobPostingPreviewProps) {
                         <div className="w-full flex gap-4 pt-2 text-xs uppercase tracking-wider font-semibold opacity-70">
                             {data.jobId && <span>ID: {data.jobId}</span>}
                             {data.jobClass && <span>Class: {data.jobClass}</span>}
+                            {data.jobGrade && <span>Grade: {data.jobGrade}</span>}
                             {data.applicationDeadline && <span>Deadline: {data.applicationDeadline}</span>}
                         </div>
                     )}
@@ -102,6 +117,20 @@ export function JobPostingPreview({ data }: JobPostingPreviewProps) {
                         )}
                     </div>
                 )}
+                {/* Success Metrics */}
+                {data.successMetrics && data.successMetrics.length > 0 && (
+                    <div className="space-y-3">
+                        <h3 className="text-lg font-semibold tracking-tight">Success Metrics (KPIs)</h3>
+                        <ul className="space-y-2">
+                            {data.successMetrics.map((item, i) => (
+                                <li key={i} className="flex gap-3 text-muted-foreground">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0 mt-2" />
+                                    <span className="leading-normal">{item}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
 
                 {/* Qualifications */}
                 {(data.qualifications.length > 0 || true) && (
@@ -134,6 +163,20 @@ export function JobPostingPreview({ data }: JobPostingPreviewProps) {
                                 </li>
                             ))}
                         </ul>
+                    </div>
+                )}
+
+                {/* Restrictions */}
+                {data.restrictions && data.restrictions.length > 0 && (
+                    <div className="space-y-3">
+                        <h3 className="text-lg font-semibold tracking-tight">Requirements & Restrictions</h3>
+                        <div className="flex flex-wrap gap-2">
+                            {data.restrictions.map((item, i) => (
+                                <Badge key={i} variant="outline" className="px-3 py-1 text-sm font-medium border-primary/20 bg-primary/5 text-primary">
+                                    {item}
+                                </Badge>
+                            ))}
+                        </div>
                     </div>
                 )}
 

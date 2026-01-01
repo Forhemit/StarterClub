@@ -104,6 +104,8 @@ export async function getUserNavItems(userId?: string): Promise<NavItem[]> {
             navItems.push({ label: "People & Culture", href: "/dashboard/hr/people-culture", iconName: "Users", section: "HR" });
             navItems.push({ label: "Interview Pipeline", href: "/dashboard/hr/interview-history", iconName: "FileText", section: "HR" });
             navItems.push({ label: "Wait Pool", href: "/dashboard/hr/wait-pool", iconName: "Users", section: "HR" });
+            navItems.push({ label: "Pay Tables", href: "/dashboard/hr/pay-tables", iconName: "Calculator", section: "HR" });
+            navItems.push({ label: "Manage Pay Tables", href: "/dashboard/hr/pay-tables/manage", iconName: "Settings", section: "HR" });
         }
     }
 
