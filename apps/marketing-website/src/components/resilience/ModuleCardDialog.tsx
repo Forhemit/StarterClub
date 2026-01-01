@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { completeCard } from "@/actions/resilience";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, RotateCcw } from "lucide-react";
 
@@ -31,25 +31,14 @@ export function ModuleCardDialog({ card, initialStatus, children }: ModuleCardDi
         try {
             const result = await completeCard(card.id, "completed");
             if (result.error) {
-                toast({
-                    title: "Error",
-                    description: result.error,
-                    variant: "destructive",
-                });
+                toast.error(result.error);
             } else {
                 setStatus("completed");
-                toast({
-                    title: "Task Completed",
-                    description: "Your progress has been updated.",
-                });
+                toast.success("Task Completed");
                 setIsOpen(false);
             }
         } catch (e) {
-            toast({
-                title: "Error",
-                description: "Something went wrong.",
-                variant: "destructive",
-            });
+            toast.error("Something went wrong.");
         } finally {
             setIsSubmitting(false);
         }
@@ -60,10 +49,10 @@ export function ModuleCardDialog({ card, initialStatus, children }: ModuleCardDi
         try {
             const result = await completeCard(card.id, "in_progress"); // Revert to in-progress or pending
             if (result.error) {
-                toast({ title: "Error", description: result.error, variant: "destructive" });
+                toast.error(result.error);
             } else {
                 setStatus("in_progress");
-                toast({ title: "Status Updated", description: "Task marked as in progress." });
+                toast.success("Task marked as in progress.");
             }
         } catch (e) {
             // err

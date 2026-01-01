@@ -327,6 +327,8 @@ export function Step1SuccessionPlanning({ data, onSave }: Step1Props) {
                                                 </SelectContent>
                                             </Select>
                                         </div>
+                                        <div className="space-y-1">
+                                            <Label className="text-xs uppercase text-red-700/70">Authority Scope</Label>
                                             <Select value={data.tier4Scope || ""} onValueChange={(v) => onSave({ ...data, tier4Scope: v })}>
                                                 <SelectTrigger className="h-8 border-red-200 dark:border-red-800">
                                                     <SelectValue placeholder="-- Select Authority Scope --" />

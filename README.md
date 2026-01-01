@@ -139,6 +139,20 @@ starter-club/
 - **Compliance Log**: Track profile completion and expiry for governance audits
 - **Live Preview**: Full-screen preview panel displaying all captured data in a professional, printable format
 
+### 15. Financial Resilience (Business Resilience)
+- **11-Step Financial Wizard**: Comprehensive financial fortification assessment
+- **Financial Overview**: Business type, revenue, monthly burn rate, runway calculation
+- **Cash Flow Analysis**: Revenue streams, expense categories, net cash flow tracking
+- **Stress Test Scenarios**: Define shock scenarios (recession, key client loss) with impact modeling
+- **Emergency Fund Planning**: Target coverage months, current balance, funding source tracking
+- **Liquidity Buffers**: Tiered buffer configuration (Tier 1 Immediate, Tier 2 Short-term, Tier 3 Medium-term)
+- **Insurance Coverage Review**: Policy inventory with expiry tracking and gap analysis
+- **Banking Relationships**: Primary/backup bank contacts, credit lines, account management
+- **Financial Backup Contacts**: CFO/accountant succession planning with credential access tracking
+- **Recovery Protocols**: Action plans linked to stress scenarios with escalation thresholds
+- **Financial Controls**: Dual signature requirements, segregation of duties, access controls
+- **Compliance Review**: Profile completion tracking, review history, and audit log
+
 ---
 
 ## 📦 Shared Packages

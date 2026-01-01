@@ -591,3 +591,367 @@ export async function getAllLeadershipProfiles(): Promise<LeadershipRoleData[]> 
         upstreamFocus: d.upstream_focus,
     }));
 }
+
+// ==================== FINANCIAL RESILIENCE PROFILE ACTIONS ====================
+
+interface RevenueStream {
+    id: string;
+    name: string;
+    amount: number;
+    frequency: string;
+    reliability: string;
+}
+
+interface ExpenseCategory {
+    id: string;
+    name: string;
+    amount: number;
+    type: string;
+    fixedOrVariable: string;
+}
+
+interface StressScenario {
+    id: string;
+    name: string;
+    revenueImpactPct: number;
+    expenseImpactPct: number;
+    durationMonths: number;
+    probability: string;
+}
+
+interface FundingSource {
+    id: string;
+    source: string;
+    amount: number;
+    accessTime: string;
+    terms: string;
+}
+
+interface BufferLocation {
+    id: string;
+    institution: string;
+    accountType: string;
+    balance: number;
+    tier: number;
+}
+
+interface InsurancePolicy {
+    id: string;
+    type: string;
+    provider: string;
+    coverageAmount: number;
+    deductible: number;
+    premium: number;
+    expiryDate: string;
+    policyNumber: string;
+}
+
+interface InsuranceGap {
+    id: string;
+    gapType: string;
+    description: string;
+    priority: string;
+}
+
+interface BankingContact {
+    id: string;
+    bankName: string;
+    accountType: string;
+    contactName: string;
+    contactPhone: string;
+    contactEmail: string;
+    isPrimary: boolean;
+    creditLineAmount: number;
+}
+
+interface FinancialContact {
+    id: string;
+    role: string;
+    name: string;
+    email: string;
+    phone: string;
+    company: string;
+    accessLevel: string;
+    hasCredentials: boolean;
+    isSuccessor: boolean;
+}
+
+interface RecoveryProtocol {
+    id: string;
+    scenarioId: string;
+    triggerCondition: string;
+    immediateActions: string;
+    responsibleParty: string;
+    timelineDays: number;
+}
+
+interface AccessControl {
+    id: string;
+    system: string;
+    users: string[];
+    accessLevel: string;
+    requires2fa: boolean;
+}
+
+interface ComplianceLogEntry {
+    id: string;
+    date: string;
+    reviewer: string;
+    status: string;
+    notes: string;
+}
+
+export interface FinancialResilienceData {
+    // Step 1: Financial Overview
+    businessType?: string;
+    annualRevenue?: number;
+    monthlyBurnRate?: number;
+    runwayMonths?: number;
+    fiscalYearEnd?: string;
+
+    // Step 2: Cash Flow Analysis
+    revenueStreams?: RevenueStream[];
+    expenseCategories?: ExpenseCategory[];
+    cashFlowCycle?: string;
+    averageCollectionDays?: number;
+    averagePaymentDays?: number;
+
+    // Step 3: Stress Test Scenarios
+    stressScenarios?: StressScenario[];
+    baselineMonthlyCashFlow?: number;
+
+    // Step 4: Emergency Fund
+    targetFundAmount?: number;
+    currentFundBalance?: number;
+    targetMonthsCoverage?: number;
+    fundingSources?: FundingSource[];
+
+    // Step 5: Liquidity Buffers
+    tier1Buffer?: number;
+    tier2Buffer?: number;
+    tier3Buffer?: number;
+    bufferLocations?: BufferLocation[];
+
+    // Step 6: Insurance Coverage
+    insurancePolicies?: InsurancePolicy[];
+    insuranceGaps?: InsuranceGap[];
+
+    // Step 7: Banking Relationships
+    bankingContacts?: BankingContact[];
+    primaryBank?: string;
+    backupBank?: string;
+    totalCreditAvailable?: number;
+
+    // Step 8: Financial Backup Contacts
+    financialContacts?: FinancialContact[];
+    cfoSuccessor?: string;
+    accountantSuccessor?: string;
+
+    // Step 9: Recovery Protocols
+    recoveryProtocols?: RecoveryProtocol[];
+    escalationThreshold?: number;
+    boardNotificationThreshold?: number;
+
+    // Step 10: Financial Controls
+    requireDualSignature?: boolean;
+    dualSignatureThreshold?: number;
+    approvalThresholds?: Record<string, Record<string, number>>;
+    accessControls?: AccessControl[];
+    segregationOfDuties?: boolean;
+
+    // Step 11: Compliance & Review
+    lastReviewDate?: string;
+    nextReviewDate?: string;
+    complianceLog?: ComplianceLogEntry[];
+    completedAt?: string;
+    expiryDate?: string;
+}
+
+export async function saveFinancialResilienceProfile(data: FinancialResilienceData) {
+    const supabase = await createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return { error: "Not authenticated" };
+
+    const { data: business } = await supabase
+        .from("user_businesses")
+        .select("id")
+        .eq("user_id", user.id)
+        .single();
+
+    if (!business) return { error: "Business not found" };
+
+    // Convert camelCase to snake_case for database
+    const dbData = {
+        user_business_id: business.id,
+
+        // Step 1
+        business_type: data.businessType,
+        annual_revenue: data.annualRevenue || 0,
+        monthly_burn_rate: data.monthlyBurnRate || 0,
+        runway_months: data.runwayMonths || 0,
+        fiscal_year_end: data.fiscalYearEnd,
+
+        // Step 2
+        revenue_streams: data.revenueStreams || [],
+        expense_categories: data.expenseCategories || [],
+        cash_flow_cycle: data.cashFlowCycle,
+        average_collection_days: data.averageCollectionDays || 30,
+        average_payment_days: data.averagePaymentDays || 30,
+
+        // Step 3
+        stress_scenarios: data.stressScenarios || [],
+        baseline_monthly_cash_flow: data.baselineMonthlyCashFlow || 0,
+
+        // Step 4
+        target_fund_amount: data.targetFundAmount || 0,
+        current_fund_balance: data.currentFundBalance || 0,
+        target_months_coverage: data.targetMonthsCoverage || 6,
+        funding_sources: data.fundingSources || [],
+
+        // Step 5
+        tier1_buffer: data.tier1Buffer || 0,
+        tier2_buffer: data.tier2Buffer || 0,
+        tier3_buffer: data.tier3Buffer || 0,
+        buffer_locations: data.bufferLocations || [],
+
+        // Step 6
+        insurance_policies: data.insurancePolicies || [],
+        insurance_gaps: data.insuranceGaps || [],
+
+        // Step 7
+        banking_contacts: data.bankingContacts || [],
+        primary_bank: data.primaryBank,
+        backup_bank: data.backupBank,
+        total_credit_available: data.totalCreditAvailable || 0,
+
+        // Step 8
+        financial_contacts: data.financialContacts || [],
+        cfo_successor: data.cfoSuccessor,
+        accountant_successor: data.accountantSuccessor,
+
+        // Step 9
+        recovery_protocols: data.recoveryProtocols || [],
+        escalation_threshold: data.escalationThreshold || 0,
+        board_notification_threshold: data.boardNotificationThreshold || 0,
+
+        // Step 10
+        require_dual_signature: data.requireDualSignature || false,
+        dual_signature_threshold: data.dualSignatureThreshold || 10000,
+        approval_thresholds: data.approvalThresholds || {},
+        access_controls: data.accessControls || [],
+        segregation_of_duties: data.segregationOfDuties || false,
+
+        // Step 11
+        last_review_date: data.lastReviewDate,
+        next_review_date: data.nextReviewDate,
+        compliance_log: data.complianceLog || [],
+        completed_at: data.completedAt,
+        expiry_date: data.expiryDate,
+    };
+
+    const { error } = await supabase
+        .from("financial_resilience_profiles")
+        .upsert(dbData, {
+            onConflict: "user_business_id",
+            ignoreDuplicates: false
+        });
+
+    if (error) {
+        console.error("Save financial resilience profile error:", error);
+        return { error: "Failed to save profile" };
+    }
+
+    revalidatePath("/dashboard/marketplace/financial-resilience");
+    return { success: true };
+}
+
+export async function getFinancialResilienceProfile(): Promise<FinancialResilienceData | null> {
+    const supabase = await createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return null;
+
+    const { data: business } = await supabase
+        .from("user_businesses")
+        .select("id")
+        .eq("user_id", user.id)
+        .single();
+
+    if (!business) return null;
+
+    const { data, error } = await supabase
+        .from("financial_resilience_profiles")
+        .select("*")
+        .eq("user_business_id", business.id)
+        .single();
+
+    if (error || !data) return null;
+
+    // Convert snake_case back to camelCase for frontend
+    return {
+        // Step 1
+        businessType: data.business_type,
+        annualRevenue: data.annual_revenue,
+        monthlyBurnRate: data.monthly_burn_rate,
+        runwayMonths: data.runway_months,
+        fiscalYearEnd: data.fiscal_year_end,
+
+        // Step 2
+        revenueStreams: data.revenue_streams || [],
+        expenseCategories: data.expense_categories || [],
+        cashFlowCycle: data.cash_flow_cycle,
+        averageCollectionDays: data.average_collection_days,
+        averagePaymentDays: data.average_payment_days,
+
+        // Step 3
+        stressScenarios: data.stress_scenarios || [],
+        baselineMonthlyCashFlow: data.baseline_monthly_cash_flow,
+
+        // Step 4
+        targetFundAmount: data.target_fund_amount,
+        currentFundBalance: data.current_fund_balance,
+        targetMonthsCoverage: data.target_months_coverage,
+        fundingSources: data.funding_sources || [],
+
+        // Step 5
+        tier1Buffer: data.tier1_buffer,
+        tier2Buffer: data.tier2_buffer,
+        tier3Buffer: data.tier3_buffer,
+        bufferLocations: data.buffer_locations || [],
+
+        // Step 6
+        insurancePolicies: data.insurance_policies || [],
+        insuranceGaps: data.insurance_gaps || [],
+
+        // Step 7
+        bankingContacts: data.banking_contacts || [],
+        primaryBank: data.primary_bank,
+        backupBank: data.backup_bank,
+        totalCreditAvailable: data.total_credit_available,
+
+        // Step 8
+        financialContacts: data.financial_contacts || [],
+        cfoSuccessor: data.cfo_successor,
+        accountantSuccessor: data.accountant_successor,
+
+        // Step 9
+        recoveryProtocols: data.recovery_protocols || [],
+        escalationThreshold: data.escalation_threshold,
+        boardNotificationThreshold: data.board_notification_threshold,
+
+        // Step 10
+        requireDualSignature: data.require_dual_signature,
+        dualSignatureThreshold: data.dual_signature_threshold,
+        approvalThresholds: data.approval_thresholds || {},
+        accessControls: data.access_controls || [],
+        segregationOfDuties: data.segregation_of_duties,
+
+        // Step 11
+        lastReviewDate: data.last_review_date,
+        nextReviewDate: data.next_review_date,
+        complianceLog: data.compliance_log || [],
+        completedAt: data.completed_at,
+        expiryDate: data.expiry_date,
+    };
+}

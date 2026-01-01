@@ -80,11 +80,11 @@ export default async function ModuleDetailPage({ params }: { params: { moduleSlu
                                     <ModuleCardDialog
                                         key={card.id}
                                         card={card}
-                                        initialStatus={completion?.status || 'pending'}
+                                        initialStatus={(completion?.status as "pending" | "in_progress" | "completed") || 'pending'}
                                     >
                                         <Card className={`cursor-pointer transition-all hover:shadow-md border-l-4 ${isCompleted ? "border-l-green-500 bg-green-50/5 dark:bg-green-900/10" :
-                                                isInProgress ? "border-l-yellow-500 bg-yellow-50/5 dark:bg-yellow-900/10" :
-                                                    "border-l-muted hover:border-l-primary"
+                                            isInProgress ? "border-l-yellow-500 bg-yellow-50/5 dark:bg-yellow-900/10" :
+                                                "border-l-muted hover:border-l-primary"
                                             }`}>
                                             <CardContent className="p-4 space-y-3">
                                                 <div className="flex items-start justify-between gap-2">
