@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 // import { useToast } from "@/components/ui/use-toast"; // assuming standard hook
 import { toast } from "sonner";
+import { AutoSaveIndicator, type SaveStatus } from "@/components/ui/auto-save-indicator";
+import { useDebounce } from "@/hooks/use-debounce";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -78,10 +81,16 @@ interface LegalVaultWizardProps {
 }
 
 export function LegalVaultWizard({ initialData, onSave, onReset, onComplete, onCancel }: LegalVaultWizardProps) {
+    const router = useRouter();
     const [currentStep, setCurrentStep] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [isPreviewMode, setIsPreviewMode] = useState(false);
     const [showResetConfirm, setShowResetConfirm] = useState(false);
+
+    // Auto-Save State
+    const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+    const [lastSaved, setLastSaved] = useState<Date | undefined>(undefined);
+
     const DEFAULT_DATA: LegalVaultData = {
         company_name: "",
         addresses: [],
@@ -105,15 +114,45 @@ export function LegalVaultWizard({ initialData, onSave, onReset, onComplete, onC
 
     const [data, setData] = useState<LegalVaultData>(initialData || DEFAULT_DATA);
 
+    const debouncedData = useDebounce(data, 1500);
+    const isFirstMount = useRef(true);
+
+    // Auto-Save Effect
+    useEffect(() => {
+        if (isFirstMount.current) {
+            isFirstMount.current = false;
+            return;
+        }
+
+        async function autoSave() {
+            if (saveStatus === "unsaved" && onSave) {
+                setSaveStatus("saving");
+                try {
+                    await onSave(debouncedData);
+                    setSaveStatus("saved");
+                    setLastSaved(new Date());
+                } catch (error) {
+                    setSaveStatus("error");
+                    toast.error("Auto-save failed");
+                }
+            }
+        }
+
+        autoSave();
+    }, [debouncedData, onSave, saveStatus]);
+
+
     useEffect(() => {
         if (initialData) {
             setData(initialData);
+            setSaveStatus("idle");
         }
     }, [initialData]);
 
-    const handleUpdate = (updates: Partial<LegalVaultData>) => {
+    const handleUpdate = useCallback((updates: Partial<LegalVaultData>) => {
         setData(prev => ({ ...prev, ...updates }));
-    };
+        setSaveStatus("unsaved");
+    }, []);
 
     const handleNext = async () => {
         if (currentStep < WIZARD_STEPS.length - 1) {
@@ -154,6 +193,13 @@ export function LegalVaultWizard({ initialData, onSave, onReset, onComplete, onC
         if (currentStep > 0) {
             setCurrentStep(currentStep - 1);
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            // Exit to marketplace or previous page
+            if (onCancel) {
+                onCancel();
+            } else {
+                router.back();
+            }
         }
     };
 
@@ -173,6 +219,7 @@ export function LegalVaultWizard({ initialData, onSave, onReset, onComplete, onC
             }
             setData(DEFAULT_DATA);
             setCurrentStep(0);
+            setSaveStatus("idle"); // Reset status
             toast.success("Form has been reset", {
                 description: "All data has been cleared and your saved profile removed."
             });
@@ -285,9 +332,14 @@ export function LegalVaultWizard({ initialData, onSave, onReset, onComplete, onC
                         <div className="lg:col-span-9">
                             <div className="rounded-xl border bg-card text-card-foreground shadow-sm">
                                 <div className="p-6 md:p-8">
-                                    <div className="mb-6">
-                                        <h2 className="text-2xl font-semibold tracking-tight">{WIZARD_STEPS[currentStep].title}</h2>
-                                        <p className="text-muted-foreground">{WIZARD_STEPS[currentStep].description}</p>
+                                    <div className="mb-6 flex items-start justify-between gap-4">
+                                        <div>
+                                            <h2 className="text-2xl font-semibold tracking-tight">{WIZARD_STEPS[currentStep].title}</h2>
+                                            <p className="text-muted-foreground">{WIZARD_STEPS[currentStep].description}</p>
+                                        </div>
+                                        <div className="pt-1">
+                                            <AutoSaveIndicator status={saveStatus} lastSaved={lastSaved} />
+                                        </div>
                                     </div>
 
                                     <AnimatePresence mode="wait">
@@ -311,19 +363,13 @@ export function LegalVaultWizard({ initialData, onSave, onReset, onComplete, onC
                                     <Button
                                         variant="outline"
                                         onClick={handleBack}
-                                        disabled={currentStep === 0}
                                         className="gap-2"
                                     >
                                         <ArrowLeft className="w-4 h-4" />
-                                        Back
+                                        {currentStep === 0 ? "Back to Marketplace" : "Back"}
                                     </Button>
 
                                     <div className="flex items-center gap-2">
-                                        {onSave && (
-                                            <Button variant="ghost" onClick={() => onSave(data)} disabled={isLoading}>
-                                                Save Draft
-                                            </Button>
-                                        )}
                                         <Button onClick={handleNext} disabled={isLoading} className="gap-2 min-w-[100px]">
                                             {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                                             {currentStep === WIZARD_STEPS.length - 1 ? "Complete" : "Next Step"}

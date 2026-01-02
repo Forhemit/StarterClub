@@ -19,6 +19,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ArrowLeft, ArrowRight, Save, RotateCcw, Eye, EyeOff, CheckCircle2, Loader2, LayoutTemplate, Shield, DollarSign } from "lucide-react";
 import { toast } from "sonner";
+import { AutoSaveIndicator, type SaveStatus } from "@/components/ui/auto-save-indicator";
+import { useDebounce } from "@/hooks/use-debounce";
+import { motion, AnimatePresence } from "framer-motion";
+import { useCallback, useRef } from "react";
 import { Step1FinancialOverview } from "./Step1FinancialOverview";
 import { Step1bFinancialMetrics } from "./Step1bFinancialMetrics";
 import { Step2CashFlowAnalysis } from "./Step2CashFlowAnalysis";
@@ -116,7 +120,8 @@ export function FinancialResilienceWizard() {
     const [currentStep, setCurrentStep] = useState(0);
     const [showPreview, setShowPreview] = useState(true);
     const [resetKey, setResetKey] = useState(0);
-    const [isSaving, setIsSaving] = useState(false);
+    const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+    const [lastSaved, setLastSaved] = useState<Date | undefined>(undefined);
     const [isLoading, setIsLoading] = useState(true);
     const [previewKey, setPreviewKey] = useState(0);
 
@@ -128,6 +133,38 @@ export function FinancialResilienceWizard() {
         dualSignatureThreshold: 10000,
     });
 
+    const debouncedData = useDebounce(profileData, 1500);
+    const isFirstMount = useRef(true);
+
+    // Auto-Save Effect
+    useEffect(() => {
+        if (isFirstMount.current) {
+            isFirstMount.current = false;
+            return;
+        }
+
+        async function autoSave() {
+            if (saveStatus === "unsaved") {
+                setSaveStatus("saving");
+                try {
+                    const result = await saveFinancialResilienceProfile(debouncedData);
+                    if (result.error) {
+                        setSaveStatus("error");
+                        toast.error("Auto-save failed");
+                    } else {
+                        setSaveStatus("saved");
+                        setLastSaved(new Date());
+                        setPreviewKey(prev => prev + 1);
+                    }
+                } catch (error) {
+                    setSaveStatus("error");
+                }
+            }
+        }
+
+        autoSave();
+    }, [debouncedData]);
+
     // Load existing profile on mount
     useEffect(() => {
         async function loadProfile() {
@@ -136,6 +173,7 @@ export function FinancialResilienceWizard() {
                 const existingProfile = await getFinancialResilienceProfile();
                 if (existingProfile) {
                     setProfileData(existingProfile);
+                    setSaveStatus("idle");
                 }
             } catch (error) {
                 console.error("Failed to load profile:", error);
@@ -146,9 +184,10 @@ export function FinancialResilienceWizard() {
         loadProfile();
     }, []);
 
-    const updateData = (newData: Partial<FinancialResilienceData>) => {
-        setProfileData({ ...profileData, ...newData });
-    };
+    const updateData = useCallback((newData: Partial<FinancialResilienceData>) => {
+        setProfileData(prev => ({ ...prev, ...newData }));
+        setSaveStatus("unsaved");
+    }, []);
 
     const CurrentStepComponent = WIZARD_STEPS[currentStep].component;
     const totalSteps = WIZARD_STEPS.length;
@@ -167,24 +206,6 @@ export function FinancialResilienceWizard() {
         }
     };
 
-    const handleSave = async () => {
-        setIsSaving(true);
-        try {
-            const result = await saveFinancialResilienceProfile(profileData);
-            if (result.error) {
-                toast.error(result.error);
-            } else {
-                toast.success(`Progress saved!`);
-            }
-        } catch (error) {
-            toast.error("Failed to save profile");
-        } finally {
-            setIsSaving(false);
-        }
-        // Trigger preview refresh
-        setPreviewKey(k => k + 1);
-    };
-
     const handleReset = async () => {
         setProfileData({
             targetMonthsCoverage: 6,
@@ -195,11 +216,12 @@ export function FinancialResilienceWizard() {
         });
         setCurrentStep(0);
         setResetKey(prev => prev + 1);
-        toast.success("Form reset successfully!");
+        setSaveStatus("unsaved");
+        toast.success("Form reset to defaults");
     };
 
     const handleComplete = async () => {
-        setIsSaving(true);
+        setSaveStatus("saving");
         try {
             const result = await saveFinancialResilienceProfile({
                 ...profileData,
@@ -207,14 +229,16 @@ export function FinancialResilienceWizard() {
             });
             if (result.error) {
                 toast.error(result.error);
+                setSaveStatus("error");
             } else {
+                setSaveStatus("saved");
+                setLastSaved(new Date());
                 toast.success("Financial Resilience profile completed!");
                 router.push("/dashboard/resilience");
             }
         } catch (error) {
             toast.error("Failed to save profile");
-        } finally {
-            setIsSaving(false);
+            setSaveStatus("error");
         }
     };
 
@@ -307,24 +331,24 @@ export function FinancialResilienceWizard() {
                                             <CardDescription>{WIZARD_STEPS[currentStep].description}</CardDescription>
                                         </div>
                                         <div className="flex items-center gap-1">
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <Button variant="ghost" size="icon" onClick={handleSave} disabled={isSaving}>
-                                                        {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                                                    </Button>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    <p>Save Progress</p>
-                                                </TooltipContent>
-                                            </Tooltip>
+                                            <AutoSaveIndicator status={saveStatus} lastSaved={lastSaved} />
                                         </div>
                                     </CardHeader>
-                                    <CardContent className="p-6 sm:p-8">
-                                        <CurrentStepComponent
-                                            data={profileData}
-                                            onSave={updateData}
-                                            key={`step-${currentStep}-${resetKey}`}
-                                        />
+                                    <CardContent className="p-6 sm:p-8 overflow-hidden">
+                                        <AnimatePresence mode="wait">
+                                            <motion.div
+                                                key={`step-${currentStep}-${resetKey}`}
+                                                initial={{ opacity: 0, x: 20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                exit={{ opacity: 0, x: -20 }}
+                                                transition={{ duration: 0.3, ease: "easeInOut" }}
+                                            >
+                                                <CurrentStepComponent
+                                                    data={profileData}
+                                                    onSave={updateData}
+                                                />
+                                            </motion.div>
+                                        </AnimatePresence>
                                     </CardContent>
                                 </Card>
 
@@ -342,8 +366,8 @@ export function FinancialResilienceWizard() {
                                                 <ArrowRight className="w-4 h-4 ml-2" />
                                             </Button>
                                         ) : (
-                                            <Button onClick={handleComplete} disabled={isSaving} className="min-w-[120px] shadow-lg shadow-green-500/20 bg-green-600 hover:bg-green-700 transition-all hover:scale-105">
-                                                {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
+                                            <Button onClick={handleComplete} disabled={saveStatus === "saving"} className="min-w-[120px] shadow-lg shadow-green-500/20 bg-green-600 hover:bg-green-700 transition-all hover:scale-105">
+                                                {saveStatus === "saving" ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
                                                 Complete
                                             </Button>
                                         )}

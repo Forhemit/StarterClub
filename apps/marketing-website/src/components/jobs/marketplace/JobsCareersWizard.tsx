@@ -18,6 +18,7 @@ import { Step4Review } from "./Step4Review";
 import { JobPostingPreview } from "./JobPostingPreview";
 import { ModuleErrorBoundary } from "@/components/ui/module-error-boundary";
 import { WizardSkeleton } from "@/components/ui/wizard-skeleton";
+import { motion, AnimatePresence } from "framer-motion";
 
 export interface JobPostingData {
     title: string;
@@ -326,23 +327,33 @@ export function JobsCareersWizard() {
                                         </Tooltip>
                                     </div>
                                 </CardHeader>
-                                <CardContent className="px-0 sm:px-6">
-                                    {step === 1 && (
-                                        <Step1JobBasics data={jobData} onChange={setJobData} />
-                                    )}
-                                    {step === 2 && (
-                                        <Step2Details data={jobData} onChange={setJobData} />
-                                    )}
-                                    {step === 3 && (
-                                        <Step3Compensation data={jobData} onChange={setJobData} />
-                                    )}
-                                    {step === 4 && (
-                                        <Step4Review
-                                            isInstalling={isInstalling}
-                                            isInstalled={isInstalled}
-                                            onInstall={handleInstall}
-                                        />
-                                    )}
+                                <CardContent className="px-0 sm:px-6 overflow-hidden">
+                                    <AnimatePresence mode="wait">
+                                        <motion.div
+                                            key={step}
+                                            initial={{ opacity: 0, x: 20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: -20 }}
+                                            transition={{ duration: 0.3, ease: "easeInOut" }}
+                                        >
+                                            {step === 1 && (
+                                                <Step1JobBasics data={jobData} onChange={setJobData} />
+                                            )}
+                                            {step === 2 && (
+                                                <Step2Details data={jobData} onChange={setJobData} />
+                                            )}
+                                            {step === 3 && (
+                                                <Step3Compensation data={jobData} onChange={setJobData} />
+                                            )}
+                                            {step === 4 && (
+                                                <Step4Review
+                                                    isInstalling={isInstalling}
+                                                    isInstalled={isInstalled}
+                                                    onInstall={handleInstall}
+                                                />
+                                            )}
+                                        </motion.div>
+                                    </AnimatePresence>
                                 </CardContent>
                             </Card>
 

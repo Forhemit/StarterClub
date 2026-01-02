@@ -10,6 +10,7 @@ import { Step3CloseItems } from "./Step3CloseItems";
 import { FinancialControlsDashboard } from "./FinancialControlsDashboard";
 import { ArrowLeft, ArrowRight, Save } from "lucide-react";
 import { ModuleErrorBoundary } from "@/components/ui/module-error-boundary";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function FinancialControlsWizard() {
     const router = useRouter();
@@ -55,10 +56,20 @@ export function FinancialControlsWizard() {
                             </div>
                         </div>
 
-                        <div className="min-h-[400px]">
-                            {step === 1 && <Step1Settings onSave={() => { handleDataChange(); handleNext(); }} />}
-                            {step === 2 && <Step2Accounts onSave={handleDataChange} />}
-                            {step === 3 && <Step3CloseItems onSave={handleDataChange} />}
+                        <div className="min-h-[400px] overflow-hidden">
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={step}
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}
+                                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                                >
+                                    {step === 1 && <Step1Settings onSave={() => { handleDataChange(); handleNext(); }} />}
+                                    {step === 2 && <Step2Accounts onSave={handleDataChange} />}
+                                    {step === 3 && <Step3CloseItems onSave={handleDataChange} />}
+                                </motion.div>
+                            </AnimatePresence>
                         </div>
 
                         <div className="flex justify-between pt-4">

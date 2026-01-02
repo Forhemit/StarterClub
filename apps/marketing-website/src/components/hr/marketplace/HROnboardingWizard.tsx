@@ -19,6 +19,7 @@ import { Step6Access, DEFAULT_ACCESS, AccessItem } from "./Step6Access";
 import { Step7Review } from "./Step7Review";
 import { OnboardingLetterPreview } from "./OnboardingLetterPreview";
 import { ModuleErrorBoundary } from "@/components/ui/module-error-boundary";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function HROnboardingWizard() {
     const router = useRouter();
@@ -166,53 +167,63 @@ export function HROnboardingWizard() {
                                         </Tooltip>
                                     </div>
                                 </CardHeader>
-                                <CardContent className="px-0 sm:px-6">
-                                    {step === 1 && (
-                                        <Step1EmployeeInfo
-                                            data={employeeInfo}
-                                            onChange={setEmployeeInfo}
-                                        />
-                                    )}
-                                    {step === 2 && (
-                                        <Step2PositionInfo
-                                            data={positionInfo}
-                                            onChange={setPositionInfo}
-                                        />
-                                    )}
-                                    {step === 3 && (
-                                        <Step3Compensation
-                                            data={compensation}
-                                            onChange={setCompensation}
-                                        />
-                                    )}
-                                    {step === 4 && (
-                                        <Step4Checklist
-                                            checklist={checklist}
-                                            onChecklistChange={setChecklist}
-                                        />
-                                    )}
-                                    {step === 5 && (
-                                        <Step5Equipment
-                                            equipment={equipment}
-                                            onEquipmentChange={setEquipment}
-                                        />
-                                    )}
-                                    {step === 6 && (
-                                        <Step6Access
-                                            access={access}
-                                            onAccessChange={setAccess}
-                                        />
-                                    )}
-                                    {step === 7 && (
-                                        <Step7Review
-                                            checklist={checklist}
-                                            equipment={equipment}
-                                            access={access}
-                                            isInstalling={isInstalling}
-                                            isInstalled={isInstalled}
-                                            onInstall={handleInstall}
-                                        />
-                                    )}
+                                <CardContent className="px-0 sm:px-6 overflow-hidden">
+                                    <AnimatePresence mode="wait">
+                                        <motion.div
+                                            key={step}
+                                            initial={{ opacity: 0, x: 20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: -20 }}
+                                            transition={{ duration: 0.3, ease: "easeInOut" }}
+                                        >
+                                            {step === 1 && (
+                                                <Step1EmployeeInfo
+                                                    data={employeeInfo}
+                                                    onChange={setEmployeeInfo}
+                                                />
+                                            )}
+                                            {step === 2 && (
+                                                <Step2PositionInfo
+                                                    data={positionInfo}
+                                                    onChange={setPositionInfo}
+                                                />
+                                            )}
+                                            {step === 3 && (
+                                                <Step3Compensation
+                                                    data={compensation}
+                                                    onChange={setCompensation}
+                                                />
+                                            )}
+                                            {step === 4 && (
+                                                <Step4Checklist
+                                                    checklist={checklist}
+                                                    onChecklistChange={setChecklist}
+                                                />
+                                            )}
+                                            {step === 5 && (
+                                                <Step5Equipment
+                                                    equipment={equipment}
+                                                    onEquipmentChange={setEquipment}
+                                                />
+                                            )}
+                                            {step === 6 && (
+                                                <Step6Access
+                                                    access={access}
+                                                    onAccessChange={setAccess}
+                                                />
+                                            )}
+                                            {step === 7 && (
+                                                <Step7Review
+                                                    checklist={checklist}
+                                                    equipment={equipment}
+                                                    access={access}
+                                                    isInstalling={isInstalling}
+                                                    isInstalled={isInstalled}
+                                                    onInstall={handleInstall}
+                                                />
+                                            )}
+                                        </motion.div>
+                                    </AnimatePresence>
                                 </CardContent>
                             </Card>
 
