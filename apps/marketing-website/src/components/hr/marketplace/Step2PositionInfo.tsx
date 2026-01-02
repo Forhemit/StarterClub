@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Briefcase, Building2, Users } from "lucide-react";
-import { formatPhoneNumber } from "./Step1EmployeeInfo";
+import { formatPhone } from "@/lib/utils";
 
 export interface PositionInfo {
     jobTitle: string;
@@ -143,7 +143,7 @@ export function Step2PositionInfo({ data, onChange }: Step2PositionInfoProps) {
                                 placeholder="(555) 123-4567"
                                 value={data.managerPhone}
                                 type="tel"
-                                onChange={(e) => updateField("managerPhone", formatPhoneNumber(e.target.value))}
+                                onChange={(e) => updateField("managerPhone", formatPhone(e.target.value))}
                             />
                         </div>
                     </div>

@@ -1,9 +1,6 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { getContactsForEntity, deleteContact, ContactRecord } from "@/actions/contacts";
 import { ContactForm } from "./ContactForm";
 import { ContactCard } from "./ContactCard";
 import { toast } from "sonner";
@@ -18,35 +15,19 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LegalVaultData } from "./types";
+import { ContactRecord } from "@/actions/contacts"; // Use import for compatibility
 
 interface Step2Props {
-    entityId: string | null;
-    onSave?: (id: string) => void;
+    data: LegalVaultData;
+    onUpdate: (data: Partial<LegalVaultData>) => void;
 }
 
-export function Step2ContactInfo({ entityId, onSave }: Step2Props) {
-    const [contacts, setContacts] = useState<ContactRecord[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+export function Step2ContactInfo({ data, onUpdate }: Step2Props) {
+    const { contacts = [] } = data;
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingContact, setEditingContact] = useState<ContactRecord | undefined>(undefined);
     const [deleteId, setDeleteId] = useState<string | null>(null);
-
-    const loadContacts = async () => {
-        if (!entityId) return;
-        setIsLoading(true);
-        const data = await getContactsForEntity(entityId);
-        // Cast the data to ContactRecord[] to fix type mismatch with the Supabase response
-        const typedData: ContactRecord[] = data ? data.map(record => ({
-            ...record,
-            contact_type: record.contact_type as any // Assert type as it comes from DB as string
-        })) : [];
-        setContacts(typedData);
-        setIsLoading(false);
-    };
-
-    useEffect(() => {
-        loadContacts();
-    }, [entityId]);
 
     const handleAddClick = () => {
         setEditingContact(undefined);
@@ -62,28 +43,25 @@ export function Step2ContactInfo({ entityId, onSave }: Step2Props) {
         setDeleteId(id);
     };
 
-    const confirmDelete = async () => {
+    const confirmDelete = () => {
         if (deleteId) {
-            await deleteContact(deleteId);
-            toast.success("Contact deleted");
+            const updatedContacts = contacts.filter(c => c.id !== deleteId);
+            onUpdate({ contacts: updatedContacts as any });
             setDeleteId(null);
-            loadContacts();
-            onSave?.(entityId!);
+            toast.success("Contact removed");
         }
     };
 
-    const handleSuccess = () => {
-        loadContacts();
-        onSave?.(entityId!);
+    const handleContactSave = (newContact: any) => {
+        let updatedContacts;
+        // If editing
+        if (editingContact) {
+            updatedContacts = contacts.map(c => c.id === newContact.id ? newContact : c);
+        } else {
+            updatedContacts = [...contacts, newContact];
+        }
+        onUpdate({ contacts: updatedContacts as any });
     };
-
-    if (!entityId) {
-        return (
-            <div className="flex flex-col items-center justify-center p-8 text-center border-2 border-dashed rounded-lg">
-                <p className="text-muted-foreground mb-4">Please complete Step 1 to generate an Entity ID before adding contacts.</p>
-            </div>
-        );
-    }
 
     return (
         <div className="space-y-6 max-w-2xl">
@@ -98,19 +76,13 @@ export function Step2ContactInfo({ entityId, onSave }: Step2Props) {
             </div>
 
             <div className="grid gap-4">
-                {isLoading ? (
-                    <div className="grid gap-4">
-                        <Skeleton className="h-[100px] w-full rounded-xl" />
-                        <Skeleton className="h-[100px] w-full rounded-xl" />
-                        <Skeleton className="h-[100px] w-full rounded-xl" />
-                    </div>
-                ) : contacts.length === 0 ? (
+                {contacts.length === 0 ? (
                     <div className="text-center py-12 border-2 border-dashed rounded-lg bg-muted/50">
                         <p className="text-muted-foreground mb-2">No contact records found.</p>
                         <Button variant="link" onClick={handleAddClick}>Add your first contact</Button>
                     </div>
                 ) : (
-                    contacts.map((contact) => (
+                    contacts.map((contact: any) => (
                         <ContactCard
                             key={contact.id}
                             contact={contact}
@@ -122,11 +94,12 @@ export function Step2ContactInfo({ entityId, onSave }: Step2Props) {
             </div>
 
             <ContactForm
-                entityId={entityId}
+                entityId={data.id || "temp"}
                 initialData={editingContact}
                 open={isFormOpen}
                 onOpenChange={setIsFormOpen}
-                onSuccess={handleSuccess}
+                onSuccess={() => { }}
+                onLocalSave={handleContactSave}
             />
 
             <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>

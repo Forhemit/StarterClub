@@ -18,6 +18,7 @@ import { Step5Equipment, DEFAULT_EQUIPMENT, EquipmentOption } from "./Step5Equip
 import { Step6Access, DEFAULT_ACCESS, AccessItem } from "./Step6Access";
 import { Step7Review } from "./Step7Review";
 import { OnboardingLetterPreview } from "./OnboardingLetterPreview";
+import { ModuleErrorBoundary } from "@/components/ui/module-error-boundary";
 
 export function HROnboardingWizard() {
     const router = useRouter();
@@ -96,163 +97,165 @@ export function HROnboardingWizard() {
     const stepInfo = getStepInfo();
 
     return (
-        <TooltipProvider>
-            <div className="space-y-6 max-w-7xl mx-auto pb-12 w-full">
-                {/* Header */}
-                <div className="flex items-center justify-between">
-                    <div>
-                        <div className="flex items-center gap-3 mb-1">
-                            <h1 className="text-3xl font-bold font-display tracking-tight">HR Onboarding System</h1>
-                            <Badge variant="secondary">Foundation</Badge>
-                        </div>
-                        <p className="text-muted-foreground">Configure your employee onboarding workflow in {totalSteps} easy steps.</p>
-                    </div>
-                </div>
-
-                {/* Grid Layout */}
-                <div className={`grid gap-8 items-start transition-all duration-300 ${showPreview ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1 max-w-3xl mx-auto'}`}>
-                    {/* Left Column: Wizard */}
-                    <div className="space-y-6">
-                        {/* Progress */}
-                        <div className="space-y-2">
-                            <Progress value={progress} className="h-2" />
-                            <div className="flex justify-between text-xs text-muted-foreground">
-                                <span className="flex items-center gap-1">
-                                    {stepInfo.icon}
-                                    Step {step} of {totalSteps}
-                                </span>
-                                <span>{stepInfo.label}</span>
+        <ModuleErrorBoundary name="HR Onboarding Module">
+            <TooltipProvider>
+                <div className="space-y-6 max-w-7xl mx-auto pb-12 w-full">
+                    {/* Header */}
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <div className="flex items-center gap-3 mb-1">
+                                <h1 className="text-3xl font-bold font-display tracking-tight">HR Onboarding System</h1>
+                                <Badge variant="secondary">Foundation</Badge>
                             </div>
-                        </div>
-
-                        {/* Form Content */}
-                        <Card className="border-0 shadow-none bg-transparent sm:border sm:bg-card sm:shadow-sm">
-                            <CardHeader className="px-0 sm:px-6 flex flex-row items-start justify-between space-y-0">
-                                <div className="space-y-1.5">
-                                    <CardTitle>{stepInfo.label}</CardTitle>
-                                    <CardDescription>
-                                        {step === 1 && "Enter the new hire's contact information and expected start date."}
-                                        {step === 2 && "Define the role, department, and reporting structure."}
-                                        {step === 3 && "Set salary, bonuses, and benefits package."}
-                                        {step === 4 && "Configure onboarding tasks and sub-items."}
-                                        {step === 5 && "Select equipment to provision for the new hire."}
-                                        {step === 6 && "Configure system access and auto-provisioning."}
-                                        {step === 7 && "Review configuration and complete installation."}
-                                    </CardDescription>
-                                </div>
-                                <div className="flex items-center gap-1 -mr-2">
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <Button variant="ghost" size="icon" onClick={() => setShowPreview(!showPreview)}>
-                                                {showPreview ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                                            </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>{showPreview ? "Hide Preview" : "Show Preview"}</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <Button variant="ghost" size="icon" onClick={handleReset}>
-                                                <RotateCcw className="w-4 h-4" />
-                                            </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Reset Form</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </div>
-                            </CardHeader>
-                            <CardContent className="px-0 sm:px-6">
-                                {step === 1 && (
-                                    <Step1EmployeeInfo
-                                        data={employeeInfo}
-                                        onChange={setEmployeeInfo}
-                                    />
-                                )}
-                                {step === 2 && (
-                                    <Step2PositionInfo
-                                        data={positionInfo}
-                                        onChange={setPositionInfo}
-                                    />
-                                )}
-                                {step === 3 && (
-                                    <Step3Compensation
-                                        data={compensation}
-                                        onChange={setCompensation}
-                                    />
-                                )}
-                                {step === 4 && (
-                                    <Step4Checklist
-                                        checklist={checklist}
-                                        onChecklistChange={setChecklist}
-                                    />
-                                )}
-                                {step === 5 && (
-                                    <Step5Equipment
-                                        equipment={equipment}
-                                        onEquipmentChange={setEquipment}
-                                    />
-                                )}
-                                {step === 6 && (
-                                    <Step6Access
-                                        access={access}
-                                        onAccessChange={setAccess}
-                                    />
-                                )}
-                                {step === 7 && (
-                                    <Step7Review
-                                        checklist={checklist}
-                                        equipment={equipment}
-                                        access={access}
-                                        isInstalling={isInstalling}
-                                        isInstalled={isInstalled}
-                                        onInstall={handleInstall}
-                                    />
-                                )}
-                            </CardContent>
-                        </Card>
-
-                        {/* Navigation */}
-                        <div className="flex justify-between pt-4">
-                            <Button variant="ghost" onClick={handlePrev}>
-                                <ArrowLeft className="w-4 h-4 mr-2" />
-                                {step === 1 ? "Back to Marketplace" : "Back"}
-                            </Button>
-                            <div className="flex gap-2">
-                                {step < totalSteps && (
-                                    <Button onClick={handleNext}>
-                                        Next Step
-                                        <ArrowRight className="w-4 h-4 ml-2" />
-                                    </Button>
-                                )}
-                                {step === totalSteps && isInstalled && (
-                                    <Button onClick={handleComplete}>
-                                        Go to HR Dashboard
-                                        <ArrowRight className="w-4 h-4 ml-2" />
-                                    </Button>
-                                )}
-                            </div>
+                            <p className="text-muted-foreground">Configure your employee onboarding workflow in {totalSteps} easy steps.</p>
                         </div>
                     </div>
 
-                    {/* Right Column: Live Preview */}
-                    {showPreview && (
-                        <div className="hidden lg:block sticky top-8 h-[calc(100vh-100px)]">
-                            <OnboardingLetterPreview
-                                employeeInfo={employeeInfo}
-                                positionInfo={positionInfo}
-                                compensation={compensation}
-                                checklist={checklist}
-                                equipment={equipment}
-                                access={access}
-                                className="h-full"
-                            />
+                    {/* Grid Layout */}
+                    <div className={`grid gap-8 items-start transition-all duration-300 ${showPreview ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1 max-w-3xl mx-auto'}`}>
+                        {/* Left Column: Wizard */}
+                        <div className="space-y-6">
+                            {/* Progress */}
+                            <div className="space-y-2">
+                                <Progress value={progress} className="h-2" />
+                                <div className="flex justify-between text-xs text-muted-foreground">
+                                    <span className="flex items-center gap-1">
+                                        {stepInfo.icon}
+                                        Step {step} of {totalSteps}
+                                    </span>
+                                    <span>{stepInfo.label}</span>
+                                </div>
+                            </div>
+
+                            {/* Form Content */}
+                            <Card className="border-0 shadow-none bg-transparent sm:border sm:bg-card sm:shadow-sm">
+                                <CardHeader className="px-0 sm:px-6 flex flex-row items-start justify-between space-y-0">
+                                    <div className="space-y-1.5">
+                                        <CardTitle>{stepInfo.label}</CardTitle>
+                                        <CardDescription>
+                                            {step === 1 && "Enter the new hire's contact information and expected start date."}
+                                            {step === 2 && "Define the role, department, and reporting structure."}
+                                            {step === 3 && "Set salary, bonuses, and benefits package."}
+                                            {step === 4 && "Configure onboarding tasks and sub-items."}
+                                            {step === 5 && "Select equipment to provision for the new hire."}
+                                            {step === 6 && "Configure system access and auto-provisioning."}
+                                            {step === 7 && "Review configuration and complete installation."}
+                                        </CardDescription>
+                                    </div>
+                                    <div className="flex items-center gap-1 -mr-2">
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button variant="ghost" size="icon" onClick={() => setShowPreview(!showPreview)}>
+                                                    {showPreview ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>{showPreview ? "Hide Preview" : "Show Preview"}</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button variant="ghost" size="icon" onClick={handleReset}>
+                                                    <RotateCcw className="w-4 h-4" />
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>Reset Form</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="px-0 sm:px-6">
+                                    {step === 1 && (
+                                        <Step1EmployeeInfo
+                                            data={employeeInfo}
+                                            onChange={setEmployeeInfo}
+                                        />
+                                    )}
+                                    {step === 2 && (
+                                        <Step2PositionInfo
+                                            data={positionInfo}
+                                            onChange={setPositionInfo}
+                                        />
+                                    )}
+                                    {step === 3 && (
+                                        <Step3Compensation
+                                            data={compensation}
+                                            onChange={setCompensation}
+                                        />
+                                    )}
+                                    {step === 4 && (
+                                        <Step4Checklist
+                                            checklist={checklist}
+                                            onChecklistChange={setChecklist}
+                                        />
+                                    )}
+                                    {step === 5 && (
+                                        <Step5Equipment
+                                            equipment={equipment}
+                                            onEquipmentChange={setEquipment}
+                                        />
+                                    )}
+                                    {step === 6 && (
+                                        <Step6Access
+                                            access={access}
+                                            onAccessChange={setAccess}
+                                        />
+                                    )}
+                                    {step === 7 && (
+                                        <Step7Review
+                                            checklist={checklist}
+                                            equipment={equipment}
+                                            access={access}
+                                            isInstalling={isInstalling}
+                                            isInstalled={isInstalled}
+                                            onInstall={handleInstall}
+                                        />
+                                    )}
+                                </CardContent>
+                            </Card>
+
+                            {/* Navigation */}
+                            <div className="flex justify-between pt-4">
+                                <Button variant="ghost" onClick={handlePrev}>
+                                    <ArrowLeft className="w-4 h-4 mr-2" />
+                                    {step === 1 ? "Back to Marketplace" : "Back"}
+                                </Button>
+                                <div className="flex gap-2">
+                                    {step < totalSteps && (
+                                        <Button onClick={handleNext}>
+                                            Next Step
+                                            <ArrowRight className="w-4 h-4 ml-2" />
+                                        </Button>
+                                    )}
+                                    {step === totalSteps && isInstalled && (
+                                        <Button onClick={handleComplete}>
+                                            Go to HR Dashboard
+                                            <ArrowRight className="w-4 h-4 ml-2" />
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
                         </div>
-                    )}
+
+                        {/* Right Column: Live Preview */}
+                        {showPreview && (
+                            <div className="hidden lg:block sticky top-8 h-[calc(100vh-100px)]">
+                                <OnboardingLetterPreview
+                                    employeeInfo={employeeInfo}
+                                    positionInfo={positionInfo}
+                                    compensation={compensation}
+                                    checklist={checklist}
+                                    equipment={equipment}
+                                    access={access}
+                                    className="h-full"
+                                />
+                            </div>
+                        )}
+                    </div>
                 </div>
-            </div>
-        </TooltipProvider>
+            </TooltipProvider>
+        </ModuleErrorBoundary>
     );
 }

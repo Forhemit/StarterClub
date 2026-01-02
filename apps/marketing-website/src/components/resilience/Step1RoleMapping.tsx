@@ -10,10 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Check, UserPlus, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface Step1Props {
-    data: any;
-    onSave: (data: any) => void;
-}
+import { LeadershipStepProps } from "./types";
 
 const TEAM_MEMBERS = [
     { id: "tm1", name: "Alice Chen", role: "CFO", avatar: "AC", color: "bg-blue-500" },
@@ -21,7 +18,7 @@ const TEAM_MEMBERS = [
     { id: "tm3", name: "Sarah Miller", role: "Gen. Counsel", avatar: "SM", color: "bg-purple-500" },
 ];
 
-export function Step1RoleMapping({ data, onSave }: Step1Props) {
+export function Step1RoleMapping({ data, onSave }: LeadershipStepProps) {
     const [showCustomDeputy, setShowCustomDeputy] = useState(false);
 
     const handleDeputySelect = (name: string) => {
@@ -38,7 +35,7 @@ export function Step1RoleMapping({ data, onSave }: Step1Props) {
 
     const getSliderValue = () => {
         if (data.interimDays === "indefinite") return 180;
-        return parseInt(data.interimDays) || 30;
+        return parseInt(data.interimDays || "30") || 30;
     };
 
     const getSliderLabel = (val: number) => {

@@ -1,6 +1,4 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -10,11 +8,11 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon, Info, ArrowRight } from "lucide-react";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { cn, formatPhone } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { createOrUpdateLegalEntity, getLegalEntity } from "@/actions/legal-vault";
 import { AttorneyManager } from "./AttorneyManager";
+import { LegalVaultData } from "./types";
 
 // US States for formation state
 const US_STATES = [
@@ -79,104 +77,54 @@ const NONPROFIT_TYPES = [
 ];
 
 // Phone formatting function: (###) ###-####
-function formatPhone(value: string): string {
-    const digits = value.replace(/\D/g, '').slice(0, 10);
-    if (digits.length === 0) return '';
-    if (digits.length <= 3) return `(${digits}`;
-    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
-    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
-}
+
 
 interface Step3Props {
-    entityId: string | null;
-    onSave: (id: string) => void;
+    data: LegalVaultData;
+    onUpdate: (data: Partial<LegalVaultData>) => void;
 }
 
-export function Step3FormationDetails({ entityId, onSave }: Step3Props) {
-    // Org Type State
-    const [orgType, setOrgType] = useState<string>("");
-    const [formationInProgress, setFormationInProgress] = useState(false);
-    const [nonprofitType, setNonprofitType] = useState<string>("");
+export function Step3FormationDetails({ data, onUpdate }: Step3Props) {
+    const {
+        organization_type,
+        formation_in_progress,
+        nonprofit_type,
+        formation_date,
+        primary_state,
+        business_purpose,
+        naics_code,
+        skip_business_purpose,
+        registered_agent_name,
+        registered_agent_phone,
+        registered_agent_email,
+        registered_agent_website,
+        attorneys = []
+    } = data;
 
-    // Formation Details State
-    const [formationDate, setFormationDate] = useState<Date>();
-    const [formationState, setFormationState] = useState<string>("");
+    const handleAttorneySave = (updatedAttorney: any) => {
+        // If ID exists and is in the list, update it
+        // If ID exists but not in list (shouldn't happen for update), append? 
+        // If new attorney (from "Add"), it might have a temp ID or we assign one.
+        // AttorneyManager assigns temp ID 'crypto.randomUUID()' for new ones.
 
-    // Business Purpose State
-    const [purpose, setPurpose] = useState<string>("");
-    const [naicsCode, setNaicsCode] = useState<string>("");
-    const [skipBusinessPurpose, setSkipBusinessPurpose] = useState<boolean>(false);
+        const existingIndex = attorneys.findIndex(a => a.id === updatedAttorney.id);
 
-    // Registered Agent State (Moved from old Step 3)
-    const [agentName, setAgentName] = useState("");
-    const [agentPhone, setAgentPhone] = useState("");
-    const [agentEmail, setAgentEmail] = useState("");
-    const [agentWebsite, setAgentWebsite] = useState("");
-
-    const [isLoaded, setIsLoaded] = useState(false);
-
-    // Initial Load
-    useEffect(() => {
-        let mounted = true;
-        async function loadData() {
-            const data = await getLegalEntity();
-            if (!mounted) return;
-
-            if (data) {
-                if (data.organization_type) setOrgType(data.organization_type);
-                if (data.formation_in_progress) setFormationInProgress(data.formation_in_progress);
-                if (data.nonprofit_type) setNonprofitType(data.nonprofit_type);
-                if (data.formation_date) setFormationDate(new Date(data.formation_date));
-                if (data.primary_state) setFormationState(data.primary_state);
-                if (data.business_purpose) setPurpose(data.business_purpose);
-                if (data.naics_code) setNaicsCode(data.naics_code);
-                if (data.skip_business_purpose) setSkipBusinessPurpose(!!data.skip_business_purpose);
-                if (data.registered_agent_name) setAgentName(data.registered_agent_name);
-                if (data.registered_agent_phone) setAgentPhone(data.registered_agent_phone);
-                if (data.registered_agent_email) setAgentEmail(data.registered_agent_email);
-                if (data.registered_agent_website) setAgentWebsite(data.registered_agent_website);
-
-                // Only call onSave if we don't already have an entityId (first load)
-                if (data.id && !entityId) {
-                    onSave(data.id);
-                }
-            }
-            setIsLoaded(true);
+        if (existingIndex >= 0) {
+            // Update existing
+            const updatedAttorneys = [...attorneys];
+            updatedAttorneys[existingIndex] = updatedAttorney;
+            onUpdate({ attorneys: updatedAttorneys as any });
+        } else {
+            // Add new
+            const newAttorney = { ...updatedAttorney, id: updatedAttorney.id || crypto.randomUUID() };
+            onUpdate({ attorneys: [...attorneys, newAttorney] as any });
         }
-        loadData();
-        return () => { mounted = false; };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    };
 
-    // Auto-Save Effect
-    useEffect(() => {
-        if (!isLoaded || !entityId) return;
-
-        const timeoutId = setTimeout(async () => {
-            try {
-                await createOrUpdateLegalEntity({
-                    id: entityId,
-                    organization_type: orgType,
-                    formation_in_progress: formationInProgress,
-                    nonprofit_type: orgType === 'Nonprofit' ? nonprofitType : undefined,
-                    formation_date: formationDate,
-                    primary_state: formationState,
-                    business_purpose: purpose,
-                    naics_code: naicsCode,
-                    skip_business_purpose: skipBusinessPurpose,
-                    registered_agent_name: agentName,
-                    registered_agent_phone: agentPhone,
-                    registered_agent_email: agentEmail,
-                    registered_agent_website: agentWebsite,
-                });
-                if (entityId) onSave(entityId);
-            } catch (error) {
-                console.error("Auto-save failed:", error);
-            }
-        }, 1000);
-
-        return () => clearTimeout(timeoutId);
-    }, [orgType, formationInProgress, nonprofitType, formationDate, formationState, purpose, naicsCode, skipBusinessPurpose, agentName, agentPhone, agentEmail, agentWebsite, entityId, isLoaded]); // onSave excluded from deps to avoid loop
+    const handleAttorneyDelete = (id: string) => {
+        const updatedAttorneys = attorneys.filter(a => a.id !== id);
+        onUpdate({ attorneys: updatedAttorneys as any });
+    };
 
     return (
         <div className="space-y-6 max-w-2xl">
@@ -186,14 +134,13 @@ export function Step3FormationDetails({ entityId, onSave }: Step3Props) {
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
                         <Label htmlFor="org-type">Organization Type</Label>
-
                         {/* Formation In Progress Toggle */}
                         <div className="flex items-center space-x-2">
                             <div className="flex items-center gap-2">
                                 <Switch
                                     id="formation-in-progress"
-                                    checked={formationInProgress}
-                                    onCheckedChange={setFormationInProgress}
+                                    checked={formation_in_progress}
+                                    onCheckedChange={(val) => onUpdate({ formation_in_progress: val })}
                                     className="scale-75 origin-right"
                                 />
                                 <Label htmlFor="formation-in-progress" className="text-xs font-normal text-muted-foreground cursor-pointer">
@@ -210,7 +157,7 @@ export function Step3FormationDetails({ entityId, onSave }: Step3Props) {
                                     </TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>
-                            {formationInProgress && (
+                            {formation_in_progress && (
                                 <Badge variant="secondary" className="ml-2 bg-amber-100 text-amber-800 hover:bg-amber-100 border-amber-200 h-5 px-2 text-[10px]">
                                     IN PROGRESS
                                 </Badge>
@@ -218,7 +165,7 @@ export function Step3FormationDetails({ entityId, onSave }: Step3Props) {
                         </div>
                     </div>
 
-                    <Select value={orgType} onValueChange={setOrgType}>
+                    <Select value={organization_type} onValueChange={(val) => onUpdate({ organization_type: val })}>
                         <SelectTrigger id="org-type">
                             <SelectValue placeholder="Select organization type" />
                         </SelectTrigger>
@@ -233,10 +180,10 @@ export function Step3FormationDetails({ entityId, onSave }: Step3Props) {
                         </SelectContent>
                     </Select>
 
-                    {orgType === "Nonprofit" && (
+                    {organization_type === "Nonprofit" && (
                         <div className="pl-4 border-l-2 border-muted animate-in fade-in slide-in-from-left-2">
                             <Label htmlFor="nonprofit-type" className="text-sm">Nonprofit Classification</Label>
-                            <Select value={nonprofitType} onValueChange={setNonprofitType}>
+                            <Select value={nonprofit_type} onValueChange={(val) => onUpdate({ nonprofit_type: val })}>
                                 <SelectTrigger id="nonprofit-type" className="mt-2">
                                     <SelectValue placeholder="Select classification" />
                                 </SelectTrigger>
@@ -251,7 +198,7 @@ export function Step3FormationDetails({ entityId, onSave }: Step3Props) {
                 </div>
 
                 {/* Formation Details */}
-                {orgType && (
+                {organization_type && (
                     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2 flex flex-col">
@@ -262,11 +209,11 @@ export function Step3FormationDetails({ entityId, onSave }: Step3Props) {
                                             variant={"outline"}
                                             className={cn(
                                                 "w-full pl-3 text-left font-normal",
-                                                !formationDate && "text-muted-foreground"
+                                                !formation_date && "text-muted-foreground"
                                             )}
                                         >
-                                            {formationDate ? (
-                                                format(formationDate, "PPP")
+                                            {formation_date ? (
+                                                format(new Date(formation_date), "PPP")
                                             ) : (
                                                 <span>Pick a date</span>
                                             )}
@@ -276,8 +223,8 @@ export function Step3FormationDetails({ entityId, onSave }: Step3Props) {
                                     <PopoverContent className="w-auto p-0" align="start">
                                         <Calendar
                                             mode="single"
-                                            selected={formationDate}
-                                            onSelect={setFormationDate}
+                                            selected={formation_date ? new Date(formation_date) : undefined}
+                                            onSelect={(date) => onUpdate({ formation_date: date })}
                                             disabled={(date) =>
                                                 date > new Date() || date < new Date("1900-01-01")
                                             }
@@ -289,7 +236,7 @@ export function Step3FormationDetails({ entityId, onSave }: Step3Props) {
 
                             <div className="space-y-2">
                                 <Label htmlFor="state">State of Formation</Label>
-                                <Select value={formationState} onValueChange={setFormationState}>
+                                <Select value={primary_state} onValueChange={(val) => onUpdate({ primary_state: val })}>
                                     <SelectTrigger id="state">
                                         <SelectValue placeholder="Select state" />
                                     </SelectTrigger>
@@ -315,8 +262,8 @@ export function Step3FormationDetails({ entityId, onSave }: Step3Props) {
                                     id="purpose"
                                     className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                     placeholder="Describe your primary business activities..."
-                                    value={purpose}
-                                    onChange={(e) => setPurpose(e.target.value)}
+                                    value={business_purpose || ""}
+                                    onChange={(e) => onUpdate({ business_purpose: e.target.value })}
                                 />
                             </div>
 
@@ -330,7 +277,7 @@ export function Step3FormationDetails({ entityId, onSave }: Step3Props) {
                                             rel="noopener noreferrer"
                                             className={cn(
                                                 "text-xs text-primary hover:underline flex items-center gap-1",
-                                                skipBusinessPurpose && "pointer-events-none opacity-50"
+                                                skip_business_purpose && "pointer-events-none opacity-50"
                                             )}
                                         >
                                             Find your code <ArrowRight className="w-3 h-3" />
@@ -338,8 +285,8 @@ export function Step3FormationDetails({ entityId, onSave }: Step3Props) {
                                         <div className="flex items-center gap-2">
                                             <Switch
                                                 id="skip-purpose"
-                                                checked={skipBusinessPurpose}
-                                                onCheckedChange={setSkipBusinessPurpose}
+                                                checked={skip_business_purpose}
+                                                onCheckedChange={(val) => onUpdate({ skip_business_purpose: val })}
                                                 className="scale-75 origin-right"
                                             />
                                             <Label htmlFor="skip-purpose" className="text-xs font-normal text-muted-foreground cursor-pointer">
@@ -351,15 +298,15 @@ export function Step3FormationDetails({ entityId, onSave }: Step3Props) {
                                 <Input
                                     id="naics-code"
                                     placeholder="e.g. 541511"
-                                    value={naicsCode}
-                                    onChange={(e) => setNaicsCode(e.target.value)}
-                                    disabled={skipBusinessPurpose}
+                                    value={naics_code || ""}
+                                    onChange={(e) => onUpdate({ naics_code: e.target.value })}
+                                    disabled={skip_business_purpose}
                                 />
                             </div>
                         </div>
 
-                        {/* Registered Agent - Only show for types that require it */}
-                        {["LLC", "C-Corp", "S-Corp", "Nonprofit", "Public Benefit Corporation"].includes(orgType) && (
+                        {/* Registered Agent */}
+                        {["LLC", "C-Corp", "S-Corp", "Nonprofit", "Public Benefit Corporation"].includes(organization_type) && (
                             <div className="pt-6 border-t animate-in fade-in slide-in-from-bottom-2 duration-300">
                                 <h3 className="text-lg font-medium mb-4">Registered Agent</h3>
                                 <div className="space-y-4">
@@ -368,13 +315,12 @@ export function Step3FormationDetails({ entityId, onSave }: Step3Props) {
                                         <Input
                                             id="agent-name"
                                             placeholder="e.g. Northwest Registered Agent"
-                                            value={agentName}
-                                            onChange={(e) => setAgentName(e.target.value)}
+                                            value={registered_agent_name || ""}
+                                            onChange={(e) => onUpdate({ registered_agent_name: e.target.value })}
                                         />
                                     </div>
 
-                                    {/* Show contact fields when agent name is filled */}
-                                    {agentName && (
+                                    {registered_agent_name && (
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pl-4 border-l-2 border-muted animate-in fade-in slide-in-from-left-2">
                                             <div className="space-y-2">
                                                 <Label htmlFor="agent-phone">Phone</Label>
@@ -382,8 +328,8 @@ export function Step3FormationDetails({ entityId, onSave }: Step3Props) {
                                                     id="agent-phone"
                                                     type="tel"
                                                     placeholder="(555) 123-4567"
-                                                    value={agentPhone}
-                                                    onChange={(e) => setAgentPhone(formatPhone(e.target.value))}
+                                                    value={registered_agent_phone || ""}
+                                                    onChange={(e) => onUpdate({ registered_agent_phone: formatPhone(e.target.value) })}
                                                 />
                                             </div>
                                             <div className="space-y-2">
@@ -392,8 +338,8 @@ export function Step3FormationDetails({ entityId, onSave }: Step3Props) {
                                                     id="agent-email"
                                                     type="email"
                                                     placeholder="agent@example.com"
-                                                    value={agentEmail}
-                                                    onChange={(e) => setAgentEmail(e.target.value)}
+                                                    value={registered_agent_email || ""}
+                                                    onChange={(e) => onUpdate({ registered_agent_email: e.target.value })}
                                                 />
                                             </div>
                                             <div className="space-y-2">
@@ -402,8 +348,8 @@ export function Step3FormationDetails({ entityId, onSave }: Step3Props) {
                                                     id="agent-website"
                                                     type="url"
                                                     placeholder="https://example.com"
-                                                    value={agentWebsite}
-                                                    onChange={(e) => setAgentWebsite(e.target.value)}
+                                                    value={registered_agent_website || ""}
+                                                    onChange={(e) => onUpdate({ registered_agent_website: e.target.value })}
                                                 />
                                             </div>
                                         </div>
@@ -413,21 +359,22 @@ export function Step3FormationDetails({ entityId, onSave }: Step3Props) {
                         )}
 
                         {/* Attorney Section */}
-                        {entityId && (
-                            <div className="pt-6 border-t animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-lg font-medium">Attorneys</h3>
-                                    <p className="text-xs text-muted-foreground">Add your legal counsel</p>
-                                </div>
-                                <AttorneyManager
-                                    entityId={entityId}
-                                    onUpdate={() => onSave(entityId)}
-                                />
+                        <div className="pt-6 border-t animate-in fade-in slide-in-from-bottom-2 duration-300">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-lg font-medium">Attorneys</h3>
+                                <p className="text-xs text-muted-foreground">Add your legal counsel</p>
                             </div>
-                        )}
+                            <AttorneyManager
+                                // We need to refactor AttorneyManager to accept local save too.
+                                // For now we assume we will fix it.
+                                attorneys={attorneys}
+                                onLocalSave={handleAttorneySave}
+                                onLocalDelete={handleAttorneyDelete}
+                                entityId={data.id || "temp"}
+                            />
+                        </div>
                     </div>
                 )}
-
             </div>
         </div>
     );

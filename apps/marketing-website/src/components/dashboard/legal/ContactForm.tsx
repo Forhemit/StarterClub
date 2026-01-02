@@ -25,6 +25,7 @@ import {
 import { createOrUpdateContact, ContactRecord, getDistinctContactTypes } from "@/actions/contacts";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { formatPhone } from "@/lib/utils";
 
 // Schema
 // We allow any string now, but if it's new it comes from the custom input
@@ -41,9 +42,10 @@ interface ContactFormProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     onSuccess: () => void;
+    onLocalSave?: (contact: any) => void;
 }
 
-export function ContactForm({ entityId, initialData, open, onOpenChange, onSuccess }: ContactFormProps) {
+export function ContactForm({ entityId, initialData, open, onOpenChange, onSuccess, onLocalSave }: ContactFormProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [availableTypes, setAvailableTypes] = useState<string[]>([]);
     const [showCustomType, setShowCustomType] = useState(false);
@@ -104,12 +106,25 @@ export function ContactForm({ entityId, initialData, open, onOpenChange, onSucce
                 return;
             }
 
+            if (onLocalSave) {
+                onLocalSave({
+                    id: initialData?.id || crypto.randomUUID(),
+                    entity_id: entityId,
+                    ...values,
+                    contact_type: finalType
+                });
+                toast.success(initialData ? "Contact updated" : "Contact added");
+                onSuccess();
+                onOpenChange(false);
+                return;
+            }
+
             await createOrUpdateContact({
                 id: initialData?.id,
                 entity_id: entityId,
-                is_primary: false, // For now default false, could add toggle
+                is_primary: false,
                 ...values,
-                contact_type: finalType as any // dynamic string
+                contact_type: finalType as any
             });
             toast.success(initialData ? "Contact updated" : "Contact added");
             onSuccess();
@@ -164,7 +179,16 @@ export function ContactForm({ entityId, initialData, open, onOpenChange, onSucce
                     <div className="grid grid-cols-2 gap-4">
                         <div className="grid gap-2">
                             <Label htmlFor="phone">Phone</Label>
-                            <Input id="phone" {...form.register("phone")} placeholder="(555) 123-4567" />
+                            <Input
+                                id="phone"
+                                {...form.register("phone", {
+                                    onChange: (e) => {
+                                        const formatted = formatPhone(e.target.value);
+                                        form.setValue("phone", formatted);
+                                    }
+                                })}
+                                placeholder="(555) 123-4567"
+                            />
                             {form.formState.errors.phone && <p className="text-xs text-destructive">{form.formState.errors.phone.message}</p>}
                         </div>
                         <div className="grid gap-2">

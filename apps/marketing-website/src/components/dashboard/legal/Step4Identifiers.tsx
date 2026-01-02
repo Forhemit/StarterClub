@@ -1,11 +1,8 @@
-"use client";
 
-import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus, Info, ExternalLink, Loader2 } from "lucide-react";
-import { createOrUpdateLegalEntity, getLegalEntity } from "@/actions/legal-vault";
+import { Plus, Info, ExternalLink } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
     Tooltip,
@@ -13,67 +10,18 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { LegalVaultData } from "./types";
 
 interface Step4Props {
-    entityId: string | null;
-    onSave: (id: string) => void;
+    data: LegalVaultData;
+    onUpdate: (data: Partial<LegalVaultData>) => void;
 }
 
-export function Step4Identifiers({ entityId, onSave }: Step4Props) {
-    const [ein, setEin] = useState("");
-    const [stateTaxId, setStateTaxId] = useState("");
-    const [stateTaxIdStatus, setStateTaxIdStatus] = useState("to_do"); // 'to_do', 'in_progress', 'completed', 'not_needed'
-    const [dunsNumber, setDunsNumber] = useState("");
-
-    const [isLoaded, setIsLoaded] = useState(false);
-
-    // Load Data
-    useEffect(() => {
-        let mounted = true;
-        async function loadData() {
-            const data = await getLegalEntity();
-            if (!mounted) return;
-
-            if (data) {
-                if (data.ein) setEin(data.ein);
-                if (data.state_tax_id) setStateTaxId(data.state_tax_id);
-                if (data.state_tax_id_status) setStateTaxIdStatus(data.state_tax_id_status);
-                if (data.duns_number) setDunsNumber(data.duns_number);
-
-                // Only call onSave if we don't already have an entityId (first load)
-                if (data.id && !entityId) {
-                    onSave(data.id);
-                }
-            }
-            setIsLoaded(true);
-        }
-        loadData();
-        return () => { mounted = false; };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    // Auto-Save
-    useEffect(() => {
-        if (!isLoaded || !entityId) return;
-
-        const timeoutId = setTimeout(async () => {
-            try {
-                await createOrUpdateLegalEntity({
-                    id: entityId,
-                    ein,
-                    state_tax_id: stateTaxId,
-                    state_tax_id_status: stateTaxIdStatus,
-                    duns_number: dunsNumber
-                });
-                if (entityId) onSave(entityId);
-            } catch (error) {
-                console.error("Auto-save failed:", error);
-            }
-        }, 1000);
-
-        return () => clearTimeout(timeoutId);
-    }, [ein, stateTaxId, stateTaxIdStatus, dunsNumber, entityId, isLoaded]); // onSave excluded from deps
-
+export function Step4Identifiers({ data, onUpdate }: Step4Props) {
+    const ein = data.ein || "";
+    const state_tax_id = data.state_tax_id || "";
+    const state_tax_id_status = data.state_tax_id_status || "to_do";
+    const duns_number = data.duns_number || "";
 
     return (
         <div className="space-y-6 max-w-2xl">
@@ -91,7 +39,7 @@ export function Step4Identifiers({ entityId, onSave }: Step4Props) {
                         id="ein"
                         placeholder="XX-XXXXXXX"
                         value={ein}
-                        onChange={(e) => setEin(e.target.value)}
+                        onChange={(e) => onUpdate({ ein: e.target.value })}
                     />
                 </div>
 
@@ -101,7 +49,7 @@ export function Step4Identifiers({ entityId, onSave }: Step4Props) {
                         <div className="flex items-center justify-between">
                             <Label htmlFor="state-tax" className="text-base font-semibold">State Tax ID / Withholding</Label>
                             {/* Status Switch Pill */}
-                            <ToggleGroup type="single" value={stateTaxIdStatus} onValueChange={(val) => val && setStateTaxIdStatus(val)}>
+                            <ToggleGroup type="single" value={state_tax_id_status} onValueChange={(val) => val && onUpdate({ state_tax_id_status: val })}>
                                 <ToggleGroupItem value="to_do" size="sm" className="text-xs data-[state=on]:bg-yellow-100 data-[state=on]:text-yellow-800 border-transparent">To Do</ToggleGroupItem>
                                 <ToggleGroupItem value="in_progress" size="sm" className="text-xs data-[state=on]:bg-blue-100 data-[state=on]:text-blue-800 border-transparent">In Progress</ToggleGroupItem>
                                 <ToggleGroupItem value="completed" size="sm" className="text-xs data-[state=on]:bg-green-100 data-[state=on]:text-green-800 border-transparent">Completed</ToggleGroupItem>
@@ -109,14 +57,14 @@ export function Step4Identifiers({ entityId, onSave }: Step4Props) {
                             </ToggleGroup>
                         </div>
 
-                        {stateTaxIdStatus !== 'not_needed' && (
+                        {state_tax_id_status !== 'not_needed' && (
                             <div className="animate-in fade-in slide-in-from-top-2">
                                 <Label htmlFor="state-tax" className="text-sm text-muted-foreground mb-1.5 block">Tax ID Number</Label>
                                 <Input
                                     id="state-tax"
                                     placeholder="Enter your State Tax ID"
-                                    value={stateTaxId}
-                                    onChange={(e) => setStateTaxId(e.target.value)}
+                                    value={state_tax_id}
+                                    onChange={(e) => onUpdate({ state_tax_id: e.target.value })}
                                 />
                             </div>
                         )}
@@ -148,8 +96,8 @@ export function Step4Identifiers({ entityId, onSave }: Step4Props) {
                     <Input
                         id="duns"
                         placeholder="Data Universal Numbering System"
-                        value={dunsNumber}
-                        onChange={(e) => setDunsNumber(e.target.value)}
+                        value={duns_number}
+                        onChange={(e) => onUpdate({ duns_number: e.target.value })}
                     />
                 </div>
 

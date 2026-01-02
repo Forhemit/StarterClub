@@ -151,7 +151,15 @@ starter-club/
 - **Financial Backup Contacts**: CFO/accountant succession planning with credential access tracking
 - **Recovery Protocols**: Action plans linked to stress scenarios with escalation thresholds
 - **Financial Controls**: Dual signature requirements, segregation of duties, access controls
+- **Financial Controls**: Dual signature requirements, segregation of duties, access controls
 - **Compliance Review**: Profile completion tracking, review history, and audit log
+
+### 16. Module Architecture Standards (New)
+All marketplace modules adhere to the "Antigravity Stability Protocol":
+- **Crash Protection**: Wrapped in granular Error Boundaries to prevent dashboard-wide failures.
+- **Auto-Save**: Automatic data persistence with visual status indicators.
+- **Strict Typing**: Enforced TypeScript interfaces for reliable data handling.
+- **Skeleton Loading**: Smooth hydration states to prevent layout shifts.
 
 ---
 
