@@ -26,21 +26,35 @@ function getOrgTypeColors(orgType: string) {
     return ORG_TYPE_COLORS[orgType] || { bg: 'bg-gray-100', text: 'text-gray-800', border: 'border-gray-300', printBg: '#f3f4f6', printColor: '#1f2937' };
 }
 
+import { LegalVaultData } from "./types";
+
 interface LegalProfilePreviewProps {
-    entityId: string | null;
+    entityId?: string | null;
+    data?: LegalVaultData;
+    mode?: "preview" | "live";
     lastUpdated?: number;
     className?: string;
 }
 
-export function LegalProfilePreview({ entityId, lastUpdated, className }: LegalProfilePreviewProps) {
-    const [data, setData] = useState<any>(null);
-    const [addresses, setAddresses] = useState<AddressRecord[]>([]);
-    const [contacts, setContacts] = useState<ContactRecord[]>([]);
-    const [documents, setDocuments] = useState<LegalDocument[]>([]);
-    const [legalContacts, setLegalContacts] = useState<EntityLegalContact[]>([]);
+export function LegalProfilePreview({ entityId, data: propData, mode = "live", lastUpdated, className }: LegalProfilePreviewProps) {
+    const [data, setData] = useState<any>(propData || null);
+    const [addresses, setAddresses] = useState<any[]>(propData?.addresses || []);
+    const [contacts, setContacts] = useState<any[]>(propData?.contacts || []);
+    const [documents, setDocuments] = useState<any[]>(propData?.documents || []);
+    const [legalContacts, setLegalContacts] = useState<any[]>(propData?.attorneys || []);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        if (propData) {
+            setData(propData);
+            setAddresses(propData.addresses || []);
+            setContacts(propData.contacts || []);
+            setDocuments(propData.documents || []);
+            setLegalContacts(propData.attorneys || []);
+            // Convert registered agent to a legal contact format for uniform display if needed
+            return;
+        }
+
         if (!entityId) return;
 
         async function load() {
@@ -214,7 +228,9 @@ export function LegalProfilePreview({ entityId, lastUpdated, className }: LegalP
 
     const isBlank = !data || !data.company_name;
 
-    if (!entityId) {
+
+
+    if (!entityId && !propData) {
         return (
             <div className={`bg-card border rounded-xl overflow-hidden shadow-sm flex flex-col h-full ${className || ''}`}>
                 <div className="p-4 border-b flex items-center justify-between bg-muted/30">

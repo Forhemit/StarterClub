@@ -96,9 +96,10 @@ interface AddressFormProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     onSuccess: () => void;
+    onLocalSave?: (address: any) => void; // New prop for draft mode
 }
 
-export function AddressForm({ entityId, initialData, open, onOpenChange, onSuccess }: AddressFormProps) {
+export function AddressForm({ entityId, initialData, open, onOpenChange, onSuccess, onLocalSave }: AddressFormProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [availableTypes, setAvailableTypes] = useState<string[]>([]);
     const [showCustomType, setShowCustomType] = useState(false);
@@ -166,6 +167,20 @@ export function AddressForm({ entityId, initialData, open, onOpenChange, onSucce
             if (!finalType) {
                 form.setError('custom_type', { message: "Please specify the address type" });
                 setIsSubmitting(false);
+                return;
+            }
+
+            if (onLocalSave) {
+                // Draft Mode: Pass back to parent
+                onLocalSave({
+                    id: initialData?.id || crypto.randomUUID(), // Temp ID for drafts
+                    ...values,
+                    address_type: finalType,
+                    entity_id: entityId // Might be empty/temp
+                });
+                toast.success("Address added to draft");
+                onSuccess();
+                onOpenChange(false);
                 return;
             }
 

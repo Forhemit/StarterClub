@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trash2, Plus, UserRound, Loader2 } from "lucide-react";
-import { createOrUpdateLegalContact, getLegalContactsForEntity, deleteLegalContact, EntityLegalContact, AttorneyType } from "@/actions/legal-contacts";
+import { Trash2, Plus, UserRound } from "lucide-react";
+import { EntityLegalContact, AttorneyType } from "@/actions/legal-contacts"; // Type imports only
 import { toast } from "sonner";
+import { formatPhone } from "@/lib/utils";
 
 const ATTORNEY_TYPES: AttorneyType[] = [
     'Corporate',
@@ -41,26 +42,16 @@ const US_STATES = [
     { value: 'WI', label: 'Wisconsin' }, { value: 'WY', label: 'Wyoming' }
 ];
 
-// Phone formatting function: (###) ###-####
-function formatPhone(value: string): string {
-    const digits = value.replace(/\D/g, '').slice(0, 10);
-    if (digits.length === 0) return '';
-    if (digits.length <= 3) return `(${digits}`;
-    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
-    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
-}
+
 
 interface AttorneyManagerProps {
     entityId: string;
-    onUpdate?: () => void;
+    attorneys?: EntityLegalContact[];
+    onLocalSave?: (contact: EntityLegalContact) => void;
+    onLocalDelete?: (id: string) => void;
 }
 
-export function AttorneyManager({ entityId, onUpdate }: AttorneyManagerProps) {
-    const [attorneys, setAttorneys] = useState<EntityLegalContact[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isSaving, setIsSaving] = useState(false);
-    const hasMounted = useRef(false);
-
+export function AttorneyManager({ entityId, attorneys = [], onLocalSave, onLocalDelete }: AttorneyManagerProps) {
     // Empty attorney template
     const emptyAttorney: Omit<EntityLegalContact, 'id'> = {
         entity_id: entityId,
@@ -76,78 +67,37 @@ export function AttorneyManager({ entityId, onUpdate }: AttorneyManagerProps) {
         zip: ''
     };
 
-    const loadAttorneys = useCallback(async () => {
-        if (!entityId) return;
-        setIsLoading(true);
-        try {
-            const contacts = await getLegalContactsForEntity(entityId);
-            setAttorneys(contacts.filter(c => c.role === 'attorney'));
-        } catch (error) {
-            console.error("Failed to load attorneys", error);
-        } finally {
-            setIsLoading(false);
-        }
-    }, [entityId]);
-
-    // Only load once on mount
-    useEffect(() => {
-        if (!hasMounted.current) {
-            hasMounted.current = true;
-            loadAttorneys();
-        }
-    }, [loadAttorneys]);
-
-    async function handleAddAttorney() {
-        setIsSaving(true);
-        try {
-            const result = await createOrUpdateLegalContact({
+    function handleAddAttorney() {
+        if (onLocalSave) {
+            onLocalSave({
                 ...emptyAttorney,
+                id: crypto.randomUUID(), // Temp ID
                 name: 'New Attorney'
             });
-            await loadAttorneys();
-            onUpdate?.();
             toast.success("Attorney added");
-        } catch (error: any) {
-            toast.error("Failed to add attorney");
-        } finally {
-            setIsSaving(false);
         }
     }
 
-    async function handleUpdateAttorney(attorney: EntityLegalContact) {
-        try {
-            await createOrUpdateLegalContact(attorney);
-            // Don't call onUpdate here to prevent render loops
-            // Updates are saved silently on blur
-        } catch (error) {
-            toast.error("Failed to save attorney");
+    function handleUpdateAttorney(attorney: EntityLegalContact) {
+        if (onLocalSave) {
+            onLocalSave(attorney);
         }
     }
 
-    async function handleDeleteAttorney(id: string) {
-        if (!confirm("Delete this attorney?")) return;
-        try {
-            await deleteLegalContact(id);
-            setAttorneys(prev => prev.filter(a => a.id !== id));
-            onUpdate?.();
-            toast.success("Attorney removed");
-        } catch (error) {
-            toast.error("Failed to delete attorney");
+    function handleDeleteAttorney(id: string) {
+        if (onLocalDelete) {
+            onLocalDelete(id);
+            toast.success("Attorney removed", {
+                description: "The attorney record has been deleted from your draft."
+            });
         }
     }
 
     function updateField(id: string, field: keyof EntityLegalContact, value: string) {
-        setAttorneys(prev => prev.map(a =>
-            a.id === id ? { ...a, [field]: value } : a
-        ));
-    }
-
-    if (isLoading) {
-        return (
-            <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-            </div>
-        );
+        const attorney = attorneys.find(a => a.id === id);
+        if (attorney) {
+            handleUpdateAttorney({ ...attorney, [field]: value });
+        }
     }
 
     return (
@@ -178,7 +128,6 @@ export function AttorneyManager({ entityId, onUpdate }: AttorneyManagerProps) {
                                     <Input
                                         value={attorney.name}
                                         onChange={(e) => updateField(attorney.id!, 'name', e.target.value)}
-                                        onBlur={() => handleUpdateAttorney(attorney)}
                                         placeholder="Attorney Name"
                                     />
                                 </div>
@@ -188,7 +137,6 @@ export function AttorneyManager({ entityId, onUpdate }: AttorneyManagerProps) {
                                         value={attorney.attorney_type || 'General'}
                                         onValueChange={(v) => {
                                             updateField(attorney.id!, 'attorney_type', v);
-                                            handleUpdateAttorney({ ...attorney, attorney_type: v as AttorneyType });
                                         }}
                                     >
                                         <SelectTrigger>
@@ -210,7 +158,6 @@ export function AttorneyManager({ entityId, onUpdate }: AttorneyManagerProps) {
                                         type="tel"
                                         value={attorney.phone || ''}
                                         onChange={(e) => updateField(attorney.id!, 'phone', formatPhone(e.target.value))}
-                                        onBlur={() => handleUpdateAttorney(attorney)}
                                         placeholder="(555) 123-4567"
                                     />
                                 </div>
@@ -220,7 +167,6 @@ export function AttorneyManager({ entityId, onUpdate }: AttorneyManagerProps) {
                                         type="email"
                                         value={attorney.email || ''}
                                         onChange={(e) => updateField(attorney.id!, 'email', e.target.value)}
-                                        onBlur={() => handleUpdateAttorney(attorney)}
                                         placeholder="attorney@lawfirm.com"
                                     />
                                 </div>
@@ -230,7 +176,6 @@ export function AttorneyManager({ entityId, onUpdate }: AttorneyManagerProps) {
                                         type="url"
                                         value={attorney.website || ''}
                                         onChange={(e) => updateField(attorney.id!, 'website', e.target.value)}
-                                        onBlur={() => handleUpdateAttorney(attorney)}
                                         placeholder="https://"
                                     />
                                 </div>
@@ -241,21 +186,18 @@ export function AttorneyManager({ entityId, onUpdate }: AttorneyManagerProps) {
                                 <Input
                                     value={attorney.address_line1 || ''}
                                     onChange={(e) => updateField(attorney.id!, 'address_line1', e.target.value)}
-                                    onBlur={() => handleUpdateAttorney(attorney)}
                                     placeholder="Street Address"
                                 />
                                 <div className="grid grid-cols-3 gap-2">
                                     <Input
                                         value={attorney.city || ''}
                                         onChange={(e) => updateField(attorney.id!, 'city', e.target.value)}
-                                        onBlur={() => handleUpdateAttorney(attorney)}
                                         placeholder="City"
                                     />
                                     <Select
                                         value={attorney.state || ''}
                                         onValueChange={(v) => {
                                             updateField(attorney.id!, 'state', v);
-                                            handleUpdateAttorney({ ...attorney, state: v });
                                         }}
                                     >
                                         <SelectTrigger>
@@ -270,7 +212,6 @@ export function AttorneyManager({ entityId, onUpdate }: AttorneyManagerProps) {
                                     <Input
                                         value={attorney.zip || ''}
                                         onChange={(e) => updateField(attorney.id!, 'zip', e.target.value)}
-                                        onBlur={() => handleUpdateAttorney(attorney)}
                                         placeholder="ZIP"
                                     />
                                 </div>
@@ -285,13 +226,8 @@ export function AttorneyManager({ entityId, onUpdate }: AttorneyManagerProps) {
                 size="sm"
                 className="w-full"
                 onClick={handleAddAttorney}
-                disabled={isSaving}
             >
-                {isSaving ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                ) : (
-                    <Plus className="w-4 h-4 mr-2" />
-                )}
+                <Plus className="w-4 h-4 mr-2" />
                 Add Attorney
             </Button>
         </div>

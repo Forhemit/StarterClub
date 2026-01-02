@@ -16,6 +16,8 @@ import { Step2Details } from "./Step2Details";
 import { Step3Compensation } from "./Step3Compensation";
 import { Step4Review } from "./Step4Review";
 import { JobPostingPreview } from "./JobPostingPreview";
+import { ModuleErrorBoundary } from "@/components/ui/module-error-boundary";
+import { WizardSkeleton } from "@/components/ui/wizard-skeleton";
 
 export interface JobPostingData {
     title: string;
@@ -158,7 +160,7 @@ export function JobsCareersWizard() {
     };
 
     if (!isMounted) {
-        return null;
+        return <WizardSkeleton />;
     }
 
     const handleInstall = async () => {
@@ -258,126 +260,128 @@ export function JobsCareersWizard() {
     const stepInfo = getStepInfo();
 
     return (
-        <TooltipProvider>
-            <div className="space-y-6 max-w-7xl mx-auto pb-12 w-full">
-                {/* Header */}
-                <div className="flex items-center justify-between">
-                    <div>
-                        <div className="flex items-center gap-3 mb-1">
-                            <h1 className="text-3xl font-bold font-display tracking-tight">Jobs & Careers</h1>
-                            <Badge variant="secondary">Growth</Badge>
-                        </div>
-                        <p className="text-muted-foreground">Launch your careers page by creating your first job posting.</p>
-                    </div>
-                </div>
-
-                {/* Grid Layout */}
-                <div className={`grid gap-8 items-start transition-all duration-300 ${showPreview ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1 max-w-3xl mx-auto'}`}>
-                    {/* Left Column: Wizard */}
-                    <div className="space-y-6">
-                        {/* Progress */}
-                        <div className="space-y-2">
-                            <Progress value={progress} className="h-2" />
-                            <div className="flex justify-between text-xs text-muted-foreground">
-                                <span className="flex items-center gap-1">
-                                    {stepInfo.icon}
-                                    Step {step} of {totalSteps}
-                                </span>
-                                <span>{stepInfo.label}</span>
+        <ModuleErrorBoundary name="Jobs & Careers Module">
+            <TooltipProvider>
+                <div className="space-y-6 max-w-7xl mx-auto pb-12 w-full">
+                    {/* Header */}
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <div className="flex items-center gap-3 mb-1">
+                                <h1 className="text-3xl font-bold font-display tracking-tight">Jobs & Careers</h1>
+                                <Badge variant="secondary">Growth</Badge>
                             </div>
-                        </div>
-
-                        {/* Form Content */}
-                        <Card className="border-0 shadow-none bg-transparent sm:border sm:bg-card sm:shadow-sm">
-                            <CardHeader className="px-0 sm:px-6 flex flex-row items-start justify-between space-y-0">
-                                <div className="space-y-1.5">
-                                    <CardTitle>{stepInfo.label}</CardTitle>
-                                    <CardDescription>
-                                        {step === 1 && "Define the core details of the position."}
-                                        {step === 2 && "Outline responsibilities and requirements."}
-                                        {step === 3 && "Set up compensation and benefits."}
-                                        {step === 4 && "Review your job posting and install."}
-                                    </CardDescription>
-                                </div>
-                                <div className="flex items-center gap-1 -mr-2">
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <Button variant="ghost" size="icon" onClick={() => setShowPreview(!showPreview)}>
-                                                {showPreview ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                                            </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>{showPreview ? "Hide Preview" : "Show Preview"}</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <Button variant="ghost" size="icon" onClick={handleReset}>
-                                                <RotateCcw className="w-4 h-4" />
-                                            </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Reset Form</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </div>
-                            </CardHeader>
-                            <CardContent className="px-0 sm:px-6">
-                                {step === 1 && (
-                                    <Step1JobBasics data={jobData} onChange={setJobData} />
-                                )}
-                                {step === 2 && (
-                                    <Step2Details data={jobData} onChange={setJobData} />
-                                )}
-                                {step === 3 && (
-                                    <Step3Compensation data={jobData} onChange={setJobData} />
-                                )}
-                                {step === 4 && (
-                                    <Step4Review
-                                        isInstalling={isInstalling}
-                                        isInstalled={isInstalled}
-                                        onInstall={handleInstall}
-                                    />
-                                )}
-                            </CardContent>
-                        </Card>
-
-                        {/* Navigation */}
-                        <div className="flex justify-between pt-4">
-                            <Button variant="ghost" onClick={handlePrev}>
-                                <ArrowLeft className="w-4 h-4 mr-2" />
-                                {step === 1 ? "Back to Marketplace" : "Back"}
-                            </Button>
-                            <div className="flex gap-2">
-                                {step < totalSteps && (
-                                    <Button onClick={handleNext}>
-                                        Next Step
-                                        <ArrowRight className="w-4 h-4 ml-2" />
-                                    </Button>
-                                )}
-                                {step === totalSteps && isInstalled && (
-                                    <Button onClick={handleComplete}>
-                                        Go to Jobs Dashboard
-                                        <ArrowRight className="w-4 h-4 ml-2" />
-                                    </Button>
-                                )}
-                            </div>
+                            <p className="text-muted-foreground">Launch your careers page by creating your first job posting.</p>
                         </div>
                     </div>
 
-                    {/* Right Column: Live Preview */}
-                    {showPreview && (
-                        <div className="hidden lg:block sticky top-8 h-[calc(100vh-100px)]">
-                            <JobPostingPreview
-                                data={jobData}
-                                partnerTypeName={previewPartnerName}
-                                startingSalary={previewStartingSalary}
-                            />
+                    {/* Grid Layout */}
+                    <div className={`grid gap-8 items-start transition-all duration-300 ${showPreview ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1 max-w-3xl mx-auto'}`}>
+                        {/* Left Column: Wizard */}
+                        <div className="space-y-6">
+                            {/* Progress */}
+                            <div className="space-y-2">
+                                <Progress value={progress} className="h-2" />
+                                <div className="flex justify-between text-xs text-muted-foreground">
+                                    <span className="flex items-center gap-1">
+                                        {stepInfo.icon}
+                                        Step {step} of {totalSteps}
+                                    </span>
+                                    <span>{stepInfo.label}</span>
+                                </div>
+                            </div>
+
+                            {/* Form Content */}
+                            <Card className="border-0 shadow-none bg-transparent sm:border sm:bg-card sm:shadow-sm">
+                                <CardHeader className="px-0 sm:px-6 flex flex-row items-start justify-between space-y-0">
+                                    <div className="space-y-1.5">
+                                        <CardTitle>{stepInfo.label}</CardTitle>
+                                        <CardDescription>
+                                            {step === 1 && "Define the core details of the position."}
+                                            {step === 2 && "Outline responsibilities and requirements."}
+                                            {step === 3 && "Set up compensation and benefits."}
+                                            {step === 4 && "Review your job posting and install."}
+                                        </CardDescription>
+                                    </div>
+                                    <div className="flex items-center gap-1 -mr-2">
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button variant="ghost" size="icon" onClick={() => setShowPreview(!showPreview)}>
+                                                    {showPreview ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>{showPreview ? "Hide Preview" : "Show Preview"}</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button variant="ghost" size="icon" onClick={handleReset}>
+                                                    <RotateCcw className="w-4 h-4" />
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>Reset Form</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="px-0 sm:px-6">
+                                    {step === 1 && (
+                                        <Step1JobBasics data={jobData} onChange={setJobData} />
+                                    )}
+                                    {step === 2 && (
+                                        <Step2Details data={jobData} onChange={setJobData} />
+                                    )}
+                                    {step === 3 && (
+                                        <Step3Compensation data={jobData} onChange={setJobData} />
+                                    )}
+                                    {step === 4 && (
+                                        <Step4Review
+                                            isInstalling={isInstalling}
+                                            isInstalled={isInstalled}
+                                            onInstall={handleInstall}
+                                        />
+                                    )}
+                                </CardContent>
+                            </Card>
+
+                            {/* Navigation */}
+                            <div className="flex justify-between pt-4">
+                                <Button variant="ghost" onClick={handlePrev}>
+                                    <ArrowLeft className="w-4 h-4 mr-2" />
+                                    {step === 1 ? "Back to Marketplace" : "Back"}
+                                </Button>
+                                <div className="flex gap-2">
+                                    {step < totalSteps && (
+                                        <Button onClick={handleNext}>
+                                            Next Step
+                                            <ArrowRight className="w-4 h-4 ml-2" />
+                                        </Button>
+                                    )}
+                                    {step === totalSteps && isInstalled && (
+                                        <Button onClick={handleComplete}>
+                                            Go to Jobs Dashboard
+                                            <ArrowRight className="w-4 h-4 ml-2" />
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
                         </div>
-                    )}
+
+                        {/* Right Column: Live Preview */}
+                        {showPreview && (
+                            <div className="hidden lg:block sticky top-8 h-[calc(100vh-100px)]">
+                                <JobPostingPreview
+                                    data={jobData}
+                                    partnerTypeName={previewPartnerName}
+                                    startingSalary={previewStartingSalary}
+                                />
+                            </div>
+                        )}
+                    </div>
                 </div>
-            </div>
-        </TooltipProvider>
+            </TooltipProvider>
+        </ModuleErrorBoundary>
     );
 }

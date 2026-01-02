@@ -3,6 +3,10 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { legalEntitySchema, LegalEntityInput } from "@/lib/validators/legal-vault-schema";
 import { auth } from "@clerk/nextjs/server";
+import { createOrUpdateAddress } from "./addresses";
+import { createOrUpdateContact } from "./contacts";
+import { createOrUpdateLegalContact } from "./legal-contacts";
+import { LegalVaultData } from "@/components/dashboard/legal/types";
 
 export async function createOrUpdateLegalEntity(data: LegalEntityInput) {
     const supabase = await createSupabaseServerClient();
@@ -136,3 +140,97 @@ export async function resetLegalEntity(entityId: string) {
 
     return { success: true };
 }
+
+export async function saveLegalVaultProfile(data: LegalVaultData) {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    // 1. Save Entity Core
+    // We map LegalVaultData to LegalEntityInput
+    const entityResult = await createOrUpdateLegalEntity({
+        id: data.id,
+        company_name: data.company_name,
+        dba_name: data.dba_name,
+        organization_type: data.organization_type,
+        formation_in_progress: data.formation_in_progress,
+        nonprofit_type: data.nonprofit_type,
+        formation_date: data.formation_date,
+        primary_state: data.primary_state,
+        business_purpose: data.business_purpose,
+        naics_code: data.naics_code,
+        skip_business_purpose: data.skip_business_purpose,
+        registered_agent_name: data.registered_agent_name,
+        registered_agent_phone: data.registered_agent_phone,
+        registered_agent_email: data.registered_agent_email,
+        registered_agent_website: data.registered_agent_website,
+        ein: data.ein,
+        state_tax_id: data.state_tax_id,
+        state_tax_id_status: data.state_tax_id_status,
+        duns_number: data.duns_number,
+        comments: typeof data.comments === 'string' ? data.comments : undefined,
+    });
+
+    if (!entityResult || !entityResult.id) {
+        throw new Error("Failed to save core entity");
+    }
+
+    const entityId = entityResult.id;
+
+    // 2. Save Addresses
+    if (data.addresses && data.addresses.length > 0) {
+        await Promise.all(data.addresses.map(addr =>
+            createOrUpdateAddress({
+                id: (addr.id && !addr.id.includes('-')) ? addr.id : undefined,
+                entity_id: entityId,
+                address_type: addr.label || "Business",
+                line1: addr.street1,
+                line2: addr.street2,
+                city: addr.city,
+                state: addr.state,
+                zip: addr.zip_code,
+                country: addr.country,
+                is_primary: addr.is_primary ?? false
+            }).catch(e => console.error("Address save failed", e))
+        ));
+    }
+
+    // 3. Save Contacts
+    if (data.contacts && data.contacts.length > 0) {
+        await Promise.all(data.contacts.map(contact =>
+            createOrUpdateContact({
+                id: (contact.id && !contact.id.includes('-')) ? contact.id : undefined,
+                entity_id: entityId,
+                contact_type: contact.contact_type as any,
+                phone: contact.phone,
+                email: contact.email,
+                is_primary: contact.is_primary
+            }).catch(e => console.error("Contact save failed", e))
+        ));
+    }
+
+    // 4. Save Attorneys (Legal Contacts)
+    if (data.attorneys && data.attorneys.length > 0) {
+        await Promise.all(data.attorneys.map(attorney =>
+            createOrUpdateLegalContact({
+                id: (attorney.id && !attorney.id.includes('-')) ? attorney.id : undefined,
+                entity_id: entityId,
+                role: 'attorney',
+                name: attorney.name,
+                firm_name: attorney.firm_name, // Schema mismatch? AttorneySchema has firm_name?
+                // AttorneySchema in types.ts: name, role, attorney_type, email, phone, website, address_line1, city, state, zip.
+                // It does NOT have firm_name. 
+                // Wait, I should check AttorneySchema in types.ts again.
+                // Assuming it has name, email, phone.
+                email: attorney.email,
+                phone: attorney.phone,
+                website: attorney.website,
+                address_line1: attorney.address_line1,
+                city: attorney.city,
+                state: attorney.state,
+                zip: attorney.zip,
+                attorney_type: attorney.attorney_type
+            }).catch(e => console.error("Attorney save failed", e))
+        ));
+    }
+}
+

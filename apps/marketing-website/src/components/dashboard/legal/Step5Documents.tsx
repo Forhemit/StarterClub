@@ -1,18 +1,19 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, CheckCircle } from "lucide-react";
-import { createOrUpdateLegalEntity, getLegalEntity } from "@/actions/legal-vault";
-import { getEntityDocuments, LegalDocument } from "@/actions/documents";
+import { CheckCircle } from "lucide-react";
+import { getEntityDocuments } from "@/actions/documents";
 import { DocumentUpload } from "./DocumentUpload";
+import { LegalVaultData } from "./types";
 
 interface Step5Props {
-    entityId: string | null;
-    onSave: (id: string) => void;
+    data: LegalVaultData;
+    onUpdate: (data: Partial<LegalVaultData>) => void;
 }
 
-export function Step5Documents({ entityId, onSave }: Step5Props) {
+export function Step5Documents({ data, onUpdate }: Step5Props) {
+    const { id: entityId, documents = [], comments = "" } = data;
+
     const requiredDocs = [
         "Articles of Incorporation / Organization",
         "Operating Agreement / Bylaws",
@@ -20,82 +21,30 @@ export function Step5Documents({ entityId, onSave }: Step5Props) {
         "Initial Resolutions"
     ];
 
-    const [comments, setComments] = useState("");
-    const [documents, setDocuments] = useState<LegalDocument[]>([]);
-    const [isLoaded, setIsLoaded] = useState(false);
-
-    const loadDocuments = useCallback(async () => {
+    const handleUploadComplete = async () => {
         if (!entityId) return;
         try {
-            const docs = await getEntityDocuments(entityId);
-            setDocuments(docs);
+            // Re-fetch documents to keep local state in sync with server side effects
+            const freshDocs = await getEntityDocuments(entityId);
+            onUpdate({ documents: freshDocs as any }); // Cast if needed
         } catch (error) {
-            console.error("Failed to load documents", error);
+            console.error("Failed to refresh documents", error);
         }
-    }, [entityId]);
-
-    // Load Data
-    useEffect(() => {
-        let mounted = true;
-        async function loadData() {
-            const data = await getLegalEntity();
-            if (!mounted) return;
-
-            if (data) {
-                if (data.comments) setComments(data.comments);
-                // Only call onSave if we don't already have an entityId (first load)
-                if (data.id && !entityId) {
-                    onSave(data.id);
-                }
-            }
-            setIsLoaded(true);
-        }
-        loadData();
-        return () => { mounted = false; };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    useEffect(() => {
-        if (entityId) {
-            loadDocuments();
-        }
-    }, [entityId, loadDocuments]);
-
-    // Auto-Save Comments
-    useEffect(() => {
-        if (!isLoaded || !entityId) return;
-        const timeoutId = setTimeout(async () => {
-            try {
-                await createOrUpdateLegalEntity({
-                    id: entityId,
-                    comments
-                });
-                if (entityId) onSave(entityId);
-            } catch (error) {
-                console.error("Auto-save failed:", error);
-            }
-        }, 1000);
-        return () => clearTimeout(timeoutId);
-    }, [comments, entityId, isLoaded]);
-
-    const handleUploadComplete = () => {
-        loadDocuments();
-        if (entityId) onSave(entityId);
     };
 
     return (
         <div className="space-y-8 max-w-2xl">
             <div className="space-y-4">
                 {requiredDocs.map((doc, i) => {
-                    const existingDoc = documents.find(d => d.document_type === doc);
+                    const existingDoc = documents.find(d => d.document_type === doc || d.type === doc);
                     return (
                         <div key={i} className="flex items-center justify-between p-4 border rounded-lg bg-card animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: `${i * 100}ms` }}>
                             <div className="space-y-1">
                                 <span className="flex items-center gap-2">
-                                    <Label className="text-base">{existingDoc?.display_name || doc}</Label>
+                                    <Label className="text-base">{existingDoc?.name || existingDoc?.display_name || doc}</Label>
                                     {existingDoc && <CheckCircle className="w-4 h-4 text-green-500 fill-green-100" />}
                                 </span>
-                                {(existingDoc?.display_name && existingDoc.display_name !== doc) && (
+                                {(existingDoc?.name && existingDoc.name !== doc) && (
                                     <p className="text-xs text-muted-foreground">Type: {doc}</p>
                                 )}
                                 {existingDoc?.expiration_date && (
@@ -109,7 +58,7 @@ export function Step5Documents({ entityId, onSave }: Step5Props) {
                                 entityId={entityId || ""}
                                 documentType={doc}
                                 documentId={existingDoc?.id}
-                                existingPath={existingDoc?.file_path}
+                                existingPath={existingDoc?.file_path || existingDoc?.url}
                                 onUploadComplete={handleUploadComplete}
                             />
                         </div>
@@ -122,8 +71,8 @@ export function Step5Documents({ entityId, onSave }: Step5Props) {
                 <Textarea
                     id="comments"
                     placeholder="Add any additional notes about these documents or compliance status..."
-                    value={comments}
-                    onChange={(e) => setComments(e.target.value)}
+                    value={comments || ""}
+                    onChange={(e) => onUpdate({ comments: e.target.value })}
                     className="min-h-[100px]"
                 />
             </div>

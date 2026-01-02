@@ -56,26 +56,103 @@ export function FinancialResiliencePreview({ data: propData, lastUpdated, classN
             <head>
                 <title>Financial Resilience Profile</title>
                 <style>
-                    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 40px; line-height: 1.6; color: #1a1a1a; }
-                    .document-title { text-align: center; font-size: 24px; font-weight: 700; color: #059669; margin-bottom: 8px; letter-spacing: 0.05em; }
-                    .subtitle { text-align: center; font-size: 14px; color: #6b7280; margin-bottom: 32px; }
-                    .section { margin-bottom: 24px; page-break-inside: avoid; }
-                    .section-title { font-size: 16px; font-weight: 600; color: #059669; border-bottom: 2px solid #d1fae5; padding-bottom: 8px; margin-bottom: 12px; }
-                    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-                    .metric { background: #f9fafb; padding: 12px; border-radius: 8px; }
-                    .metric-label { font-size: 12px; color: #6b7280; }
-                    .metric-value { font-size: 18px; font-weight: 600; color: #1a1a1a; }
-                    .list-item { padding: 8px 0; border-bottom: 1px solid #f3f4f6; }
-                    .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; }
-                    .badge-green { background: #d1fae5; color: #059669; }
-                    .badge-amber { background: #fef3c7; color: #d97706; }
-                    .badge-red { background: #fee2e2; color: #dc2626; }
-                    @media print { body { padding: 20px; } }
+                    body { 
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+                        padding: 40px; 
+                        max-width: 900px;
+                        margin: 0 auto;
+                        color: #1a1a1a; 
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                    }
+                    
+                    /* Typography */
+                    .document-title { 
+                        text-align: center; 
+                        font-size: 28px; 
+                        font-weight: 800; 
+                        color: #047857; 
+                        margin-bottom: 8px; 
+                        letter-spacing: -0.02em;
+                        text-transform: uppercase;
+                    }
+                    .subtitle { 
+                        text-align: center; 
+                        font-size: 14px; 
+                        color: #6b7280; 
+                        margin-bottom: 40px; 
+                        border-bottom: 1px solid #e5e7eb;
+                        padding-bottom: 20px;
+                    }
+                    h4 {
+                        font-size: 16px;
+                        font-weight: 700;
+                        color: #111827;
+                        margin: 24px 0 12px 0;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        border-bottom: 2px solid #e5e7eb;
+                        padding-bottom: 8px;
+                    }
+                    
+                    /* Grids & Layout */
+                    .grid { display: grid; gap: 16px; }
+                    .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+                    .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+                    
+                    /* Cards & Containers */
+                    .border { border: 1px solid #e2e8f0; }
+                    .rounded-xl, .rounded-lg { border-radius: 8px; }
+                    .p-4, .p-3 { padding: 12px 16px; }
+                    .bg-card { background-color: #ffffff; }
+                    .bg-muted\\/30 { background-color: #f8fafc; }
+                    
+                    /* Colors & States */
+                    .bg-emerald-50 { background-color: #ecfdf5 !important; }
+                    .bg-green-50 { background-color: #f0fdf4 !important; }
+                    .bg-amber-50 { background-color: #fffbeb !important; }
+                    .bg-red-50 { background-color: #fef2f2 !important; }
+                    .bg-blue-50 { background-color: #eff6ff !important; }
+                    .bg-violet-100 { background-color: #ede9fe !important; }
+                    
+                    .text-emerald-600 { color: #059669 !important; }
+                    .text-emerald-700 { color: #047857 !important; }
+                    .text-green-700 { color: #15803d !important; }
+                    .text-amber-700 { color: #b45309 !important; }
+                    .text-red-700 { color: #b91c1c !important; }
+                    .text-blue-700 { color: #1d4ed8 !important; }
+                    .text-violet-600 { color: #7c3aed !important; }
+                    
+                    /* Metrics */
+                    .text-xl { font-size: 20px; font-weight: 700; }
+                    .text-xs { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; display: block; }
+                    
+                    /* Badges */
+                    .badge, .rounded-full {
+                        display: inline-block;
+                        padding: 2px 8px;
+                        border-radius: 999px;
+                        font-size: 11px;
+                        font-weight: 600;
+                        border: 1px solid transparent;
+                    }
+                    
+                    /* Page Breaks */
+                    .space-y-3, .space-y-6 > * { 
+                        page-break-inside: avoid; 
+                        margin-bottom: 24px;
+                    }
+                    
+                    /* Icons - Hide roughly in print if needed, or style them */
+                    svg { display: none; } /* Simplify print by hiding icons usually, unless inline SVGs are robust */
+                    
+                    @page { margin: 1cm; size: portrait; }
                 </style>
             </head>
             <body>
-                <div class="document-title">FINANCIAL RESILIENCE PROFILE</div>
-                <div class="subtitle">Generated ${new Date().toLocaleDateString()}</div>
+                <div class="document-title">Financial Resilience Profile</div>
+                <div class="subtitle">Generated on ${new Date().toLocaleDateString()}</div>
                 ${printContent.innerHTML}
             </body>
             </html>
@@ -85,7 +162,7 @@ export function FinancialResiliencePreview({ data: propData, lastUpdated, classN
         setTimeout(() => {
             printWindow.print();
             printWindow.close();
-        }, 250);
+        }, 500);
     };
 
     // Calculate metrics
