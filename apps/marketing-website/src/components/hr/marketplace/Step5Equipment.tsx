@@ -8,13 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2, Laptop, Monitor, Keyboard, Mouse, Headphones, Phone, CreditCard, Key } from "lucide-react";
 
-interface EquipmentOption {
-    id: string;
-    label: string;
-    category: string;
-    enabled: boolean;
-    icon: string;
-}
+import { type EquipmentOption } from "./types";
 
 const DEFAULT_EQUIPMENT: EquipmentOption[] = [
     { id: "laptop", label: "Laptop", category: "Computing", enabled: true, icon: "Laptop" },

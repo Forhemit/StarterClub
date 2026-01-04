@@ -8,17 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Briefcase, Building2, Users } from "lucide-react";
 import { formatPhone } from "@/lib/utils";
 
-export interface PositionInfo {
-    jobTitle: string;
-    department: string;
-    employmentType: string;
-    reportsTo: string;
-    managerEmail: string;
-    managerPhone: string;
-    workLocation: string;
-    remoteStatus: string;
-    jobDescription: string;
-}
+import { type PositionInfo } from "./types";
 
 interface Step2PositionInfoProps {
     data: PositionInfo;
@@ -75,19 +65,18 @@ export function Step2PositionInfo({ data, onChange }: Step2PositionInfoProps) {
                         <Input
                             id="jobTitle"
                             placeholder="Software Engineer"
-                            value={data.jobTitle}
+                            value={data.jobTitle || ""}
                             onChange={(e) => updateField("jobTitle", e.target.value)}
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="department" className="flex items-center gap-2">
-                            <Building2 className="w-4 h-4" />
+                        <Label htmlFor="department">
                             Department *
                         </Label>
                         <Input
                             id="department"
                             placeholder="Engineering"
-                            value={data.department}
+                            value={data.department || ""}
                             onChange={(e) => updateField("department", e.target.value)}
                         />
                     </div>
@@ -96,7 +85,7 @@ export function Step2PositionInfo({ data, onChange }: Step2PositionInfoProps) {
                 {/* Employment Type */}
                 <div className="space-y-2">
                     <Label>Employment Type *</Label>
-                    <Select value={data.employmentType} onValueChange={(v) => updateField("employmentType", v)}>
+                    <Select value={data.employmentType || "full-time"} onValueChange={(v) => updateField("employmentType", v)}>
                         <SelectTrigger>
                             <SelectValue placeholder="Select type" />
                         </SelectTrigger>
@@ -122,7 +111,7 @@ export function Step2PositionInfo({ data, onChange }: Step2PositionInfoProps) {
                             <Input
                                 id="reportsTo"
                                 placeholder="e.g. Sarah Smith"
-                                value={data.reportsTo}
+                                value={data.reportsTo || ""}
                                 onChange={(e) => updateField("reportsTo", e.target.value)}
                             />
                         </div>
@@ -132,7 +121,7 @@ export function Step2PositionInfo({ data, onChange }: Step2PositionInfoProps) {
                                 id="managerEmail"
                                 type="email"
                                 placeholder="sarah@example.com"
-                                value={data.managerEmail}
+                                value={data.managerEmail || ""}
                                 onChange={(e) => updateField("managerEmail", e.target.value)}
                             />
                         </div>
@@ -141,7 +130,7 @@ export function Step2PositionInfo({ data, onChange }: Step2PositionInfoProps) {
                             <Input
                                 id="managerPhone"
                                 placeholder="(555) 123-4567"
-                                value={data.managerPhone}
+                                value={data.managerPhone || ""}
                                 type="tel"
                                 onChange={(e) => updateField("managerPhone", formatPhone(e.target.value))}
                             />
@@ -156,13 +145,13 @@ export function Step2PositionInfo({ data, onChange }: Step2PositionInfoProps) {
                         <Input
                             id="workLocation"
                             placeholder="San Francisco, CA"
-                            value={data.workLocation}
+                            value={data.workLocation || ""}
                             onChange={(e) => updateField("workLocation", e.target.value)}
                         />
                     </div>
                     <div className="space-y-2">
                         <Label>Remote Status</Label>
-                        <Select value={data.remoteStatus} onValueChange={(v) => updateField("remoteStatus", v)}>
+                        <Select value={data.remoteStatus || "onsite"} onValueChange={(v) => updateField("remoteStatus", v)}>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select status" />
                             </SelectTrigger>
@@ -183,7 +172,7 @@ export function Step2PositionInfo({ data, onChange }: Step2PositionInfoProps) {
                     <Textarea
                         id="jobDescription"
                         placeholder="Brief overview of role responsibilities..."
-                        value={data.jobDescription}
+                        value={data.jobDescription || ""}
                         onChange={(e) => updateField("jobDescription", e.target.value)}
                         rows={4}
                     />

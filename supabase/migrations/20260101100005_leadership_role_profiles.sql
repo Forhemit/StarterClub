@@ -68,6 +68,9 @@ ON leadership_role_profiles(user_business_id);
 ALTER TABLE leadership_role_profiles ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policy: Users can only access their own business's profiles
+-- RLS Policy: Users can only access their own business's profiles
+DROP POLICY IF EXISTS "Users can manage their own leadership profiles" ON leadership_role_profiles;
+
 CREATE POLICY "Users can manage their own leadership profiles"
 ON leadership_role_profiles
 FOR ALL
@@ -90,6 +93,8 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS leadership_profile_updated ON leadership_role_profiles;
 
 CREATE TRIGGER leadership_profile_updated
     BEFORE UPDATE ON leadership_role_profiles

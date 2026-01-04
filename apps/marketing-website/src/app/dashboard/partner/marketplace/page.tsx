@@ -7,30 +7,53 @@ import { MarketplaceFilters } from '@/components/dashboard/MarketplaceFilters';
 interface MarketplacePageProps {
     searchParams: Promise<{
         category?: string;
+        search?: string;
+        sort?: string;
     }>;
 }
 
 export default async function MarketplacePage({ searchParams }: MarketplacePageProps) {
     const params = await searchParams;
     const category = params.category || 'all';
+    const search = params.search || '';
+    const sort = params.sort || 'az';
 
     const modules = await getMarketplaceModules();
     const { business, activeModuleIds, stagedModuleIds } = await getChecklistData();
 
-    // 1. Filter by Category
+    // 1. Filter by Category and Search
     const filteredModules = modules.filter((mod) => {
+        // Search Filter
+        if (search && !mod.name.toLowerCase().includes(search.toLowerCase()) && !mod.description.toLowerCase().includes(search.toLowerCase())) {
+            return false;
+        }
+
+        // Category Filter
         if (category === 'all') return true;
-        // Normalize names for simpler matching if needed, but 'module_type' is the key
-        // The view returns 'module_type' as 'industry', 'function', or 'submodule'
-        // But the 'category' filter might be these types, or actual tags?
-        // Let's assume the filter is for 'module_type' first.
-        
+
         // Map common UI categories to DB types
         if (category === 'Industries' && mod.module_type === 'industry') return true;
         if (category === 'Functions' && mod.module_type === 'function') return true;
         if (category === 'Sub-Modules' && mod.module_type === 'submodule') return true;
-        
+
         return false;
+    });
+
+    // 2. Sort Modules
+    filteredModules.sort((a, b) => {
+        if (sort === 'latest') {
+            // Assuming created_at or similar exists, otherwise fallback to name
+            const dateA = new Date(a.created_at || 0).getTime();
+            const dateB = new Date(b.created_at || 0).getTime();
+            return dateB - dateA;
+        }
+        if (sort === 'popular') {
+            // Mock popularity by installed count if available, or just random/persistent metric
+            // For now, let's just use a placeholder or fallback to AZ if no metric
+            return (b.install_count || 0) - (a.install_count || 0);
+        }
+        // Default AZ
+        return a.name.localeCompare(b.name);
     });
 
     // 2. Derive Categories for the Filter Component
@@ -57,15 +80,15 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
                     filteredModules.map((module) => {
                         const isActive = activeModuleIds.includes(module.id);
                         const isStaged = stagedModuleIds.includes(module.id);
-                        
+
                         let status: 'active' | 'staged' | 'none' = 'none';
                         if (isActive) status = 'active';
                         else if (isStaged) status = 'staged';
 
                         return (
-                            <MarketplaceModuleCard 
-                                key={module.id} 
-                                module={module} 
+                            <MarketplaceModuleCard
+                                key={module.id}
+                                module={module}
                                 businessId={business.id}
                                 status={status}
                             />

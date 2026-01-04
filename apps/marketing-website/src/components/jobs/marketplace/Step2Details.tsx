@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, X } from "lucide-react";
-import { JobPostingData } from "./JobsCareersWizard";
+import { JobPostingData } from "./types";
 
 interface Step2DetailsProps {
     data: JobPostingData;
@@ -258,8 +258,8 @@ export function Step2Details({ data, onChange }: Step2DetailsProps) {
                                         key={r}
                                         onClick={() => toggleRestriction(r)}
                                         className={`px-3 py-1.5 rounded-full text-xs font-medium cursor-pointer transition-colors border ${(data.restrictions || []).includes(r)
-                                                ? 'bg-primary text-primary-foreground border-primary'
-                                                : 'bg-muted/50 text-muted-foreground border-transparent hover:bg-muted hover:border-border'
+                                            ? 'bg-primary text-primary-foreground border-primary'
+                                            : 'bg-muted/50 text-muted-foreground border-transparent hover:bg-muted hover:border-border'
                                             }`}
                                     >
                                         {r}

@@ -1,7 +1,7 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { JobPostingPreview } from "@/components/jobs/marketplace/JobPostingPreview";
 import { notFound } from "next/navigation";
-import { JobPostingData } from "@/components/jobs/marketplace/JobsCareersWizard";
+import { JobPostingData } from "@/components/jobs/marketplace/types";
 
 export default async function JobEmbedPage({ params }: { params: { id: string } }) {
     const supabase = await createSupabaseServerClient();

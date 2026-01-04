@@ -1,16 +1,33 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { ArrowLeft, ArrowRight, RotateCcw, Eye, EyeOff, Briefcase, FileText, DollarSign, Check } from "lucide-react";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ArrowLeft, ArrowRight, RotateCcw, Eye, LayoutTemplate, Loader2, CheckCircle2, Briefcase, FileText, DollarSign, Check, Save, Trash2, MoreVertical } from "lucide-react";
 import { toast } from "sonner";
 import { installModule } from "@/actions/marketplace";
-import { createJob, getCareerLevels, getStartingSalary, type CareerLevel } from "@/actions/jobs";
+import { type SaveStatus } from "@/components/ui/auto-save-indicator";
+import { createJob, getCareerLevels, getStartingSalary, deleteAllJobPostings, type CareerLevel } from "@/actions/jobs";
 import { Step1JobBasics } from "./Step1JobBasics";
 import { Step2Details } from "./Step2Details";
 import { Step3Compensation } from "./Step3Compensation";
@@ -19,45 +36,10 @@ import { JobPostingPreview } from "./JobPostingPreview";
 import { ModuleErrorBoundary } from "@/components/ui/module-error-boundary";
 import { WizardSkeleton } from "@/components/ui/wizard-skeleton";
 import { motion, AnimatePresence } from "framer-motion";
+import { JobPostingSchema, type JobPostingData } from "./types";
 
-export interface JobPostingData {
-    title: string;
-    department: string;
-    type: string;
-    remoteType: string;
-    location: string;
-    description: string;
-    responsibilities: string[];
-    qualifications: string[];
-    benefits: string[];
-    schedule: string[];
-    education: string;
-    experience: string;
-    salaryMin: string;
-    salaryMax: string;
-    salaryCurrency: string;
-    salaryPeriod: string;
-    internalNotes: string;
-    additionalComments: string;
-    // Phase 2 Fields
-    jobId: string;
-    jobClass: string;
-    jobGrade: string; // New
-    applicationDeadline: string; // Date string
-    applicationLink: string;
-    departmentOverview: string;
-    preferredQualifications: string[];
-    eeoStatement: string;
-    successMetrics: string[];
-    restrictions: string[];
-    // Hiring Accountability
-    hrLead: string;
-    hiringTeamLead: string;
-    hiringTeamEmail: string;
-    requestingDepartment: string;
-    // Partner Type
-    partnerType: string;
-}
+// Removed inline interface definition in favor of imported Zod type
+
 
 export const DEFAULT_JOB_DATA: JobPostingData = {
     title: "",
@@ -104,6 +86,7 @@ export function JobsCareersWizard() {
     const [isInstalling, setIsInstalling] = useState(false);
     const [isInstalled, setIsInstalled] = useState(false);
     const [showPreview, setShowPreview] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [isMounted, setIsMounted] = useState(false);
     const totalSteps = 4;
     const progress = (step / totalSteps) * 100;
@@ -114,15 +97,56 @@ export function JobsCareersWizard() {
     const [previewPartnerName, setPreviewPartnerName] = useState<string>("");
     const [previewStartingSalary, setPreviewStartingSalary] = useState<number | undefined>(undefined);
 
+    // Save state
+    const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+    const [lastSaved, setLastSaved] = useState<Date | undefined>(undefined);
+
+    // Load from localStorage on mount
+    useEffect(() => {
+        const saved = localStorage.getItem('jobs-careers-draft');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                setJobData(parsed);
+                setSaveStatus("saved");
+            } catch (e) {
+                console.error("Failed to load draft", e);
+            }
+        }
+    }, []);
+
+    // Manual Save Handler
+    const handleSave = useCallback(() => {
+        setSaveStatus("saving");
+        try {
+            localStorage.setItem('jobs-careers-draft', JSON.stringify(jobData));
+            setSaveStatus("saved");
+            setLastSaved(new Date());
+            toast.success("Draft saved!");
+        } catch (error) {
+            setSaveStatus("error");
+            toast.error("Failed to save draft");
+        }
+    }, [jobData]);
+
+    // Handler that marks unsaved
+    const handleJobDataChange = useCallback((updates: JobPostingData) => {
+        setJobData(updates);
+        setSaveStatus("unsaved");
+    }, []);
+
     useEffect(() => {
         setIsMounted(true);
         // Fetch career levels on mount
         async function fetchLevels() {
             const result = await getCareerLevels();
             if (result.data) setCareerLevels(result.data);
+            setIsLoading(false);
         }
         fetchLevels();
     }, []);
+
+
 
     // Update partner name when partnerType changes
     useEffect(() => {
@@ -160,21 +184,32 @@ export function JobsCareersWizard() {
         }
     };
 
-    if (!isMounted) {
-        return <WizardSkeleton />;
-    }
+
 
     const handleInstall = async () => {
         setIsInstalling(true);
         try {
-            // 1. Install Module
+            // 1. Zod Validation
+            const validationResult = JobPostingSchema.safeParse(jobData);
+            if (!validationResult.success) {
+                setIsInstalling(false);
+                const firstError = validationResult.error.issues[0];
+                const errorMessage = `${firstError.path.join(" > ")}: ${firstError.message}`;
+                toast.error("Validation Failed", {
+                    description: errorMessage,
+                    duration: 5000
+                });
+                return;
+            }
+
+            // 2. Install Module
             const installResult = await installModule("jobs-careers");
             if (installResult.error && !installResult.error.includes("already installed")) {
                 toast.error("Installation Failed", { description: installResult.error });
                 return;
             }
 
-            // 2. Create Job Posting
+            // 3. Create Job Posting
             const formData = new FormData();
             formData.append("title", jobData.title);
             formData.append("department", jobData.department);
@@ -188,35 +223,35 @@ export function JobsCareersWizard() {
             formData.append("salary_period", jobData.salaryPeriod);
             formData.append("education", jobData.education);
             formData.append("experience", jobData.experience);
-            formData.append("internal_notes", jobData.internalNotes);
-            formData.append("additional_comments", jobData.additionalComments);
+            formData.append("internal_notes", jobData.internalNotes || "");
+            formData.append("additional_comments", jobData.additionalComments || "");
 
             // Phase 2 Fields
-            formData.append("job_id", jobData.jobId);
-            formData.append("job_class", jobData.jobClass);
-            formData.append("job_grade", jobData.jobGrade);
-            formData.append("application_deadline", jobData.applicationDeadline);
-            formData.append("application_link", jobData.applicationLink);
-            formData.append("department_overview", jobData.departmentOverview);
-            formData.append("eeo_statement", jobData.eeoStatement);
+            formData.append("job_id", jobData.jobId || "");
+            formData.append("job_class", jobData.jobClass || "");
+            formData.append("job_grade", jobData.jobGrade || "");
+            formData.append("application_deadline", jobData.applicationDeadline || "");
+            formData.append("application_link", jobData.applicationLink || "");
+            formData.append("department_overview", jobData.departmentOverview || "");
+            formData.append("eeo_statement", jobData.eeoStatement || "");
 
             // Serialize arrays as JSON strings for server action to parse
-            formData.append("schedule", JSON.stringify(jobData.schedule));
-            formData.append("responsibilities", JSON.stringify(jobData.responsibilities));
-            formData.append("qualifications", JSON.stringify(jobData.qualifications));
-            formData.append("benefits", JSON.stringify(jobData.benefits));
-            formData.append("preferred_qualifications", JSON.stringify(jobData.preferredQualifications));
-            formData.append("success_metrics", JSON.stringify(jobData.successMetrics));
-            formData.append("restrictions", JSON.stringify(jobData.restrictions));
+            formData.append("schedule", JSON.stringify(jobData.schedule || []));
+            formData.append("responsibilities", JSON.stringify(jobData.responsibilities || []));
+            formData.append("qualifications", JSON.stringify(jobData.qualifications || []));
+            formData.append("benefits", JSON.stringify(jobData.benefits || []));
+            formData.append("preferred_qualifications", JSON.stringify(jobData.preferredQualifications || []));
+            formData.append("success_metrics", JSON.stringify(jobData.successMetrics || []));
+            formData.append("restrictions", JSON.stringify(jobData.restrictions || []));
 
             // Hiring Accountability
-            formData.append("hr_lead", jobData.hrLead);
-            formData.append("hiring_team_lead", jobData.hiringTeamLead);
-            formData.append("hiring_team_email", jobData.hiringTeamEmail);
-            formData.append("requesting_department", jobData.requestingDepartment || jobData.department);
+            formData.append("hr_lead", jobData.hrLead || "");
+            formData.append("hiring_team_lead", jobData.hiringTeamLead || "");
+            formData.append("hiring_team_email", jobData.hiringTeamEmail || "");
+            formData.append("requesting_department", jobData.requestingDepartment || jobData.department || "");
 
             // Partner Type
-            formData.append("partner_type", jobData.partnerType);
+            formData.append("partner_type", jobData.partnerType || "");
 
             const jobResult = await createJob(formData);
             if (jobResult?.error) {
@@ -241,11 +276,43 @@ export function JobsCareersWizard() {
         router.push("/dashboard/jobs");
     };
 
+    const [showResetConfirm, setShowResetConfirm] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+
     const handleReset = () => {
+        setShowResetConfirm(true);
+    };
+
+    const confirmReset = () => {
         setStep(1);
         setJobData(DEFAULT_JOB_DATA);
         setIsInstalled(false);
-        toast.info("Wizard Reset", { description: "All settings have been restored to defaults." });
+        setSaveStatus("idle");
+        setShowResetConfirm(false);
+        toast.success("Form reset to defaults");
+    };
+
+    const confirmDelete = async () => {
+        setIsDeleting(true);
+        try {
+            const result = await deleteAllJobPostings();
+            if (result.success) {
+                setStep(1);
+                setJobData(DEFAULT_JOB_DATA);
+                setIsInstalled(false);
+                setSaveStatus("idle");
+                localStorage.removeItem('jobs-careers-draft');
+                toast.success("All data permanently deleted");
+            } else {
+                toast.error(result.error || "Failed to delete data");
+            }
+        } catch (error) {
+            toast.error("Failed to delete data");
+        } finally {
+            setIsDeleting(false);
+            setShowDeleteConfirm(false);
+        }
     };
 
     const getStepInfo = () => {
@@ -260,139 +327,261 @@ export function JobsCareersWizard() {
 
     const stepInfo = getStepInfo();
 
+    // Standardized StepIndicator
+    const StepIndicator = () => (
+        <div className="flex gap-2 items-center overflow-x-auto pb-4 scrollbar-hide mask-fade-right">
+            {Array.from({ length: totalSteps }).map((_, idx) => {
+                const stepNum = idx + 1;
+                // Jobs uses dynamic step info logic
+                let label = "";
+                let description = "";
+                switch (stepNum) {
+                    case 1: label = "Role Basics"; description = "Title & Dept"; break;
+                    case 2: label = "Details"; description = "Requirements"; break;
+                    case 3: label = "Compensation"; description = "Salary & Benefits"; break;
+                    case 4: label = "Review"; description = "Finalize"; break;
+                }
+
+                return (
+                    <Tooltip key={idx}>
+                        <TooltipTrigger asChild>
+                            <button
+                                onClick={() => setStep(stepNum)}
+                                className={`flex flex-shrink-0 items-center justify-center w-8 h-8 rounded-full border text-sm font-medium transition-all ${stepNum === step
+                                    ? 'bg-primary text-primary-foreground border-primary shadow-md scale-110'
+                                    : stepNum < step
+                                        ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800'
+                                        : 'bg-background text-muted-foreground border-border hover:bg-muted hover:text-foreground'
+                                    }`}
+                            >
+                                {stepNum}
+                            </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom" className="text-center">
+                            <p className="font-semibold">{label}</p>
+                            <p className="text-xs text-muted-foreground">{description}</p>
+                        </TooltipContent>
+                    </Tooltip>
+                );
+            })}
+            <div className="h-px bg-border flex-1 ml-2 min-w-[20px]" />
+        </div>
+    );
+
+    if (!isMounted || isLoading) {
+        return <WizardSkeleton />;
+    }
+
     return (
         <ModuleErrorBoundary name="Jobs & Careers Module">
             <TooltipProvider>
-                <div className="space-y-6 max-w-7xl mx-auto pb-12 w-full">
+                <div className="w-full max-w-5xl mx-auto p-4 md:p-6 lg:p-8">
                     {/* Header */}
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                         <div>
                             <div className="flex items-center gap-3 mb-1">
                                 <h1 className="text-3xl font-bold font-display tracking-tight">Jobs & Careers</h1>
                                 <Badge variant="secondary">Growth</Badge>
                             </div>
-                            <p className="text-muted-foreground">Launch your careers page by creating your first job posting.</p>
+                            <p className="text-muted-foreground mt-1">Launch your careers page by creating your first job posting.</p>
                         </div>
-                    </div>
-
-                    {/* Grid Layout */}
-                    <div className={`grid gap-8 items-start transition-all duration-300 ${showPreview ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1 max-w-3xl mx-auto'}`}>
-                        {/* Left Column: Wizard */}
-                        <div className="space-y-6">
-                            {/* Progress */}
-                            <div className="space-y-2">
-                                <Progress value={progress} className="h-2" />
-                                <div className="flex justify-between text-xs text-muted-foreground">
-                                    <span className="flex items-center gap-1">
-                                        {stepInfo.icon}
-                                        Step {step} of {totalSteps}
-                                    </span>
-                                    <span>{stepInfo.label}</span>
-                                </div>
-                            </div>
-
-                            {/* Form Content */}
-                            <Card className="border-0 shadow-none bg-transparent sm:border sm:bg-card sm:shadow-sm">
-                                <CardHeader className="px-0 sm:px-6 flex flex-row items-start justify-between space-y-0">
-                                    <div className="space-y-1.5">
-                                        <CardTitle>{stepInfo.label}</CardTitle>
-                                        <CardDescription>
-                                            {step === 1 && "Define the core details of the position."}
-                                            {step === 2 && "Outline responsibilities and requirements."}
-                                            {step === 3 && "Set up compensation and benefits."}
-                                            {step === 4 && "Review your job posting and install."}
-                                        </CardDescription>
-                                    </div>
-                                    <div className="flex items-center gap-1 -mr-2">
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <Button variant="ghost" size="icon" onClick={() => setShowPreview(!showPreview)}>
-                                                    {showPreview ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                                                </Button>
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p>{showPreview ? "Hide Preview" : "Show Preview"}</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <Button variant="ghost" size="icon" onClick={handleReset}>
-                                                    <RotateCcw className="w-4 h-4" />
-                                                </Button>
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p>Reset Form</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </div>
-                                </CardHeader>
-                                <CardContent className="px-0 sm:px-6 overflow-hidden">
-                                    <AnimatePresence mode="wait">
-                                        <motion.div
-                                            key={step}
-                                            initial={{ opacity: 0, x: 20 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            exit={{ opacity: 0, x: -20 }}
-                                            transition={{ duration: 0.3, ease: "easeInOut" }}
-                                        >
-                                            {step === 1 && (
-                                                <Step1JobBasics data={jobData} onChange={setJobData} />
-                                            )}
-                                            {step === 2 && (
-                                                <Step2Details data={jobData} onChange={setJobData} />
-                                            )}
-                                            {step === 3 && (
-                                                <Step3Compensation data={jobData} onChange={setJobData} />
-                                            )}
-                                            {step === 4 && (
-                                                <Step4Review
-                                                    isInstalling={isInstalling}
-                                                    isInstalled={isInstalled}
-                                                    onInstall={handleInstall}
-                                                />
-                                            )}
-                                        </motion.div>
-                                    </AnimatePresence>
-                                </CardContent>
-                            </Card>
-
-                            {/* Navigation */}
-                            <div className="flex justify-between pt-4">
-                                <Button variant="ghost" onClick={handlePrev}>
-                                    <ArrowLeft className="w-4 h-4 mr-2" />
-                                    {step === 1 ? "Back to Marketplace" : "Back"}
+                        <div className="flex items-center gap-3">
+                            <div className="bg-muted p-1 rounded-lg flex items-center border">
+                                <Button
+                                    variant={!showPreview ? "secondary" : "ghost"}
+                                    size="sm"
+                                    onClick={() => setShowPreview(false)}
+                                    className="gap-2"
+                                >
+                                    <LayoutTemplate className="w-4 h-4" />
+                                    Edit
                                 </Button>
-                                <div className="flex gap-2">
-                                    {step < totalSteps && (
-                                        <Button onClick={handleNext}>
-                                            Next Step
-                                            <ArrowRight className="w-4 h-4 ml-2" />
+                                <Button
+                                    variant={showPreview ? "secondary" : "ghost"}
+                                    size="sm"
+                                    onClick={() => setShowPreview(true)}
+                                    className="gap-2"
+                                >
+                                    <Eye className="w-4 h-4" />
+                                    Preview
+                                </Button>
+                            </div>
+
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        className="text-muted-foreground hover:text-foreground"
+                                        title="Options"
+                                    >
+                                        <MoreVertical className="w-4 h-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={handleReset}>
+                                        <RotateCcw className="w-4 h-4 mr-2" />
+                                        Reset Form
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        onClick={() => setShowDeleteConfirm(true)}
+                                        className="text-destructive focus:text-destructive"
+                                    >
+                                        <Trash2 className="w-4 h-4 mr-2" />
+                                        Delete All Data
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    </div>
+
+                    {/* Content Area */}
+                    {showPreview ? (
+                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 h-[calc(100vh-200px)]">
+                            <JobPostingPreview
+                                data={jobData}
+                                partnerTypeName={previewPartnerName}
+                                startingSalary={previewStartingSalary}
+                            />
+                        </div>
+                    ) : (
+                        <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+                            <div className="space-y-8">
+                                <StepIndicator />
+
+                                {/* Main Wizard Form */}
+                                <div className="rounded-xl border bg-card text-card-foreground shadow-sm">
+                                    <div className="p-6 md:p-8">
+                                        <div className="mb-6 flex items-start justify-between gap-4">
+                                            <div>
+                                                <h2 className="text-2xl font-semibold tracking-tight">{stepInfo.label}</h2>
+                                                <p className="text-muted-foreground">
+                                                    {step === 1 && "Define the core details of the position."}
+                                                    {step === 2 && "Outline responsibilities and requirements."}
+                                                    {step === 3 && "Set up compensation and benefits."}
+                                                    {step === 4 && "Review your job posting and install."}
+                                                </p>
+                                            </div>
+                                            <div className="pt-1 flex items-center gap-2">
+                                                {saveStatus === "unsaved" && (
+                                                    <span className="text-xs text-amber-600">Unsaved changes</span>
+                                                )}
+                                                {saveStatus === "saved" && lastSaved && (
+                                                    <span className="text-xs text-muted-foreground">
+                                                        Saved {lastSaved.toLocaleTimeString()}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <AnimatePresence mode="wait">
+                                            <motion.div
+                                                key={step}
+                                                initial={{ opacity: 0, x: 10 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                exit={{ opacity: 0, x: -10 }}
+                                                transition={{ duration: 0.2 }}
+                                            >
+                                                {step === 1 && (
+                                                    <Step1JobBasics data={jobData} onChange={handleJobDataChange} />
+                                                )}
+                                                {step === 2 && (
+                                                    <Step2Details data={jobData} onChange={handleJobDataChange} />
+                                                )}
+                                                {step === 3 && (
+                                                    <Step3Compensation data={jobData} onChange={handleJobDataChange} />
+                                                )}
+                                                {step === 4 && (
+                                                    <Step4Review
+                                                        isInstalling={isInstalling}
+                                                        isInstalled={isInstalled}
+                                                        onInstall={handleInstall}
+                                                    />
+                                                )}
+                                            </motion.div>
+                                        </AnimatePresence>
+                                    </div>
+                                </div>
+
+                                {/* Sticky Footer Navigation */}
+                                <div className="flex justify-between items-center bg-background/80 backdrop-blur-lg p-4 rounded-xl border shadow-sm sticky bottom-4 z-20">
+                                    <Button variant="ghost" onClick={handlePrev} className="text-muted-foreground hover:text-foreground transition-colors">
+                                        <ArrowLeft className="w-4 h-4 mr-2" />
+                                        {step === 1 ? "Back to Marketplace" : "Back"}
+                                    </Button>
+
+                                    <div className="flex gap-2">
+                                        <Button
+                                            variant="outline"
+                                            onClick={handleSave}
+                                            disabled={saveStatus === "saving" || saveStatus === "saved"}
+                                            className="min-w-[100px]"
+                                        >
+                                            {saveStatus === "saving" ? (
+                                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                            ) : (
+                                                <Save className="w-4 h-4 mr-2" />
+                                            )}
+                                            {saveStatus === "saving" ? "Saving..." : saveStatus === "saved" ? "Saved" : "Save"}
                                         </Button>
-                                    )}
-                                    {step === totalSteps && isInstalled && (
-                                        <Button onClick={handleComplete}>
-                                            Go to Jobs Dashboard
-                                            <ArrowRight className="w-4 h-4 ml-2" />
-                                        </Button>
-                                    )}
+                                        {step < totalSteps && (
+                                            <Button onClick={handleNext} className="min-w-[120px] shadow-lg shadow-primary/20 transition-all hover:translate-x-1">
+                                                {step === totalSteps - 1 ? "Review" : "Next Step"}
+                                                <ArrowRight className="w-4 h-4 ml-2" />
+                                            </Button>
+                                        )}
+                                        {step === totalSteps && (
+                                            <Button onClick={isInstalled ? handleComplete : handleInstall} disabled={isInstalling} className="min-w-[120px] shadow-lg shadow-primary/20 transition-all hover:translate-x-1">
+                                                {isInstalling ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
+                                                {isInstalled ? "Go to Dashboard" : "Install Module"}
+                                            </Button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        {/* Right Column: Live Preview */}
-                        {showPreview && (
-                            <div className="hidden lg:block sticky top-8 h-[calc(100vh-100px)]">
-                                <JobPostingPreview
-                                    data={jobData}
-                                    partnerTypeName={previewPartnerName}
-                                    startingSalary={previewStartingSalary}
-                                />
-                            </div>
-                        )}
-                    </div>
+                    )}
                 </div>
             </TooltipProvider>
+
+            <AlertDialog open={showResetConfirm} onOpenChange={setShowResetConfirm}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Reset Form?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will clear the current form data. Your saved data in the database will not be affected.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmReset}>
+                            Reset Form
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+            <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Delete All Job Postings?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will permanently delete all job postings for your organization from the database. This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={confirmDelete}
+                            disabled={isDeleting}
+                            className="bg-destructive hover:bg-destructive/90"
+                        >
+                            {isDeleting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
+                            Delete All Data
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </ModuleErrorBoundary>
     );
 }

@@ -17,6 +17,7 @@ export type Address = z.infer<typeof AddressSchema>;
 export const AttorneySchema = z.object({
     id: z.string().optional(),
     name: z.string().min(1, "Name is required"),
+    firm_name: z.string().optional(),
     role: z.string().default('attorney'),
     attorney_type: z.string().optional(),
     email: z.string().email().optional().or(z.literal("")),
@@ -27,6 +28,8 @@ export const AttorneySchema = z.object({
     state: z.string().optional(),
     zip: z.string().optional(),
 });
+
+export type Attorney = z.infer<typeof AttorneySchema>;
 
 export const ContactSchema = z.object({
     id: z.string().optional(),
@@ -78,6 +81,7 @@ export const LegalVaultSchema = z.object({
     state_tax_id: z.string().default(""),
     state_tax_id_status: z.string().default("to_do"),
     duns_number: z.string().default(""),
+    comments: z.string().optional(),
 
     // Relations
     addresses: z.array(AddressSchema).default([]),

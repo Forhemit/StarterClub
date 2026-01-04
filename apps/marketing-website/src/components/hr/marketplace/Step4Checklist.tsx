@@ -9,22 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Plus, Trash2, ChevronDown, ChevronRight, FileText, UserCheck, Mail, Building, Shield, Coffee, Check, X, Clock } from "lucide-react";
 
 // Status options for sub-items
-type SubItemStatus = "request" | "completed" | "skip";
-
-interface SubItem {
-    id: string;
-    label: string;
-    status: SubItemStatus;
-}
-
-interface ChecklistItem {
-    id: string;
-    label: string;
-    description: string;
-    enabled: boolean;
-    icon: string;
-    subItems: SubItem[];
-}
+import { type ChecklistItem, type SubItem, type SubItemStatus } from "./types";
 
 const DEFAULT_CHECKLIST: ChecklistItem[] = [
     {

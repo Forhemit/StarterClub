@@ -13,4 +13,6 @@ export interface MarketplaceModule {
     features: string[];
     longDescription?: string;
     screenshots?: string[];
+    lastUpdated?: string;
+    createdDate?: string;
 }

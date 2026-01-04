@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown, ChevronUp, Plus, Sparkles } from "lucide-react";
-import { JobPostingData } from "./JobsCareersWizard";
+import { JobPostingData } from "./types";
 import { getCareerLevels, getStartingSalary, type CareerLevel } from "@/actions/jobs";
 
 interface Step1JobBasicsProps {

@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trash2, Plus, UserRound } from "lucide-react";
-import { EntityLegalContact, AttorneyType } from "@/actions/legal-contacts"; // Type imports only
+import { EntityLegalContact, AttorneyType } from "@/actions/legal-contacts";
+import { type Attorney } from "./types";
 import { toast } from "sonner";
 import { formatPhone } from "@/lib/utils";
 
@@ -46,15 +47,14 @@ const US_STATES = [
 
 interface AttorneyManagerProps {
     entityId: string;
-    attorneys?: EntityLegalContact[];
-    onLocalSave?: (contact: EntityLegalContact) => void;
+    attorneys?: Attorney[];
+    onLocalSave?: (contact: Attorney) => void;
     onLocalDelete?: (id: string) => void;
 }
 
 export function AttorneyManager({ entityId, attorneys = [], onLocalSave, onLocalDelete }: AttorneyManagerProps) {
     // Empty attorney template
-    const emptyAttorney: Omit<EntityLegalContact, 'id'> = {
-        entity_id: entityId,
+    const emptyAttorney: Attorney = {
         role: 'attorney',
         name: '',
         attorney_type: 'General',
@@ -78,7 +78,7 @@ export function AttorneyManager({ entityId, attorneys = [], onLocalSave, onLocal
         }
     }
 
-    function handleUpdateAttorney(attorney: EntityLegalContact) {
+    function handleUpdateAttorney(attorney: Attorney) {
         if (onLocalSave) {
             onLocalSave(attorney);
         }
@@ -93,7 +93,7 @@ export function AttorneyManager({ entityId, attorneys = [], onLocalSave, onLocal
         }
     }
 
-    function updateField(id: string, field: keyof EntityLegalContact, value: string) {
+    function updateField(id: string, field: keyof Attorney, value: string) {
         const attorney = attorneys.find(a => a.id === id);
         if (attorney) {
             handleUpdateAttorney({ ...attorney, [field]: value });

@@ -154,12 +154,51 @@ starter-club/
 - **Financial Controls**: Dual signature requirements, segregation of duties, access controls
 - **Compliance Review**: Profile completion tracking, review history, and audit log
 
-### 16. Module Architecture Standards (New)
-All marketplace modules adhere to the "Antigravity Stability Protocol":
-- **Crash Protection**: Wrapped in granular Error Boundaries to prevent dashboard-wide failures.
-- **Auto-Save**: Automatic data persistence with visual status indicators.
-- **Strict Typing**: Enforced TypeScript interfaces for reliable data handling.
-- **Skeleton Loading**: Smooth hydration states to prevent layout shifts.
+### 16. Compliance Tracking
+- **Regulatory Compliance**: Track federal, state, and local compliance requirements
+- **Tax Events**: Manage tax filing deadlines and status (e.g., W-2, 1099, Quarterly Filings)
+- **Business Registrations**: Track SOS filings, DBA renewals, and state registrations
+- **Licenses & Permits**: Manage professional licenses, permits, and certifications with expiry tracking
+- **Document Management**: Store and organize compliance-related documents
+- **Calendar Integration**: Due date tracking with visual status indicators
+
+### 17. SOP Generator
+- **Position-Based SOPs**: Create Standard Operating Procedures tied to specific roles
+- **Multi-Step Wizard**: 7-step wizard covering responsibilities, workflows, escalation, and tools
+- **Tools & Systems Catalog**: Document online tools, software, and systems used by each position
+- **Access Credentials**: Track login credentials and access requirements for each tool
+- **Department Integration**: Link SOPs to organizational departments
+- **Preview & Export**: Full-screen SOP preview with professional formatting
+
+### 18. Acquisition Readiness
+- **Data Room Builder**: Organize and prepare due diligence documents for M&A transactions
+- **Red Flag Scanner**: Identify potential issues and risks before acquisition conversations
+- **Document Categorization**: Structured organization of financials, legal, operations, and IP docs
+- **Readiness Score**: Visual assessment of acquisition preparedness
+
+### 19. Credit Command (Business & Personal)
+- **Business Credit Module**: Track business credit scores, tradelines, and credit-building progress
+- **Personal Credit Module**: Monitor personal credit profiles and improvement strategies
+- **Credit Score Tracking**: Historical score tracking with trend visualization
+- **Tradeline Management**: Document credit accounts, limits, utilization, and payment history
+- **Action Items**: Credit improvement recommendations and progress tracking
+
+### 20. Enterprise Repository Manager
+- **Document Taxonomy**: Structured categorization system for enterprise documents
+- **Version Control**: Track document versions and revision history
+- **Access Control**: Role-based document permissions and sharing
+- **Search & Discovery**: Full-text search across enterprise documents
+- **Retention Policies**: Automated retention and archival rules
+
+### 21. Module Architecture Standards
+All marketplace modules adhere to the **Antigravity Stability Protocol**:
+- **Crash Protection**: Wrapped in granular Error Boundaries to prevent dashboard-wide failures
+- **Manual Save Pattern**: Explicit "Save" button with visual status indicators ("Unsaved Changes", "Saving...", "Saved")
+- **Strict Typing**: Enforced TypeScript interfaces for reliable data handling
+- **Skeleton Loading**: Smooth hydration states to prevent layout shifts
+- **Standardized UX**: Horizontal pill-style step indicators, sticky footer navigation, full-screen preview mode
+- **Mobile-Friendly**: Responsive design with touch-friendly controls and collapsible sections
+- **Reset Functionality**: Header-based reset icon with confirmation dialog and toast notifications
 
 ---
 

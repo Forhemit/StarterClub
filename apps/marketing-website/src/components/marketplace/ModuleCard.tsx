@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
     Scale, Landmark, Users, CalendarCheck, Truck, ShieldCheck,
-    TrendingUp, Briefcase, DollarSign, Package, Check, ArrowRight
+    TrendingUp, Briefcase, DollarSign, Package, FolderLock, Check, ArrowRight
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 // Icon mapping
 const IconMap: { [key: string]: any } = {
     Scale, Landmark, Users, CalendarCheck, Truck, ShieldCheck,
-    TrendingUp, Briefcase, DollarSign, Package
+    TrendingUp, Briefcase, DollarSign, Package, FolderLock
 };
 
 interface ModuleCardProps {
@@ -72,7 +72,13 @@ export function ModuleCard({ module }: ModuleCardProps) {
                 </CardContent>
 
                 <CardFooter className="pt-2 border-t bg-muted/20 text-xs text-muted-foreground flex justify-between items-center">
-                    <span>v{module.version} • by {module.author}</span>
+                    {module.lastUpdated ? (
+                        <span>
+                            v{module.version} • {new Date(module.lastUpdated).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                        </span>
+                    ) : (
+                        <span>v{module.version}</span>
+                    )}
                     <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-primary" />
                 </CardFooter>
             </Card>

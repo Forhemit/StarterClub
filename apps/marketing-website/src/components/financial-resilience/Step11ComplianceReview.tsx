@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { format } from "date-fns";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -29,7 +30,7 @@ export function Step11ComplianceReview({ data, onSave }: StepProps) {
     const addLogEntry = () => {
         const newEntry = {
             id: crypto.randomUUID(),
-            date: new Date().toISOString().split('T')[0],
+            date: format(new Date(), "yyyy-MM-dd"),
             reviewer: "",
             status: "pending",
             notes: ""

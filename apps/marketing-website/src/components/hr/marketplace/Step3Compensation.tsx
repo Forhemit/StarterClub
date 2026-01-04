@@ -7,21 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { DollarSign, Calendar, Heart, Briefcase } from "lucide-react";
 
-export interface CompensationInfo {
-    salaryAmount: string;
-    salaryType: string;
-    payFrequency: string;
-    bonusEligible: boolean;
-    bonusDetails: string;
-    healthInsurance: boolean;
-    dentalInsurance: boolean;
-    visionInsurance: boolean;
-    retirement401k: boolean;
-    ptodays: string;
-    stockOptions: boolean;
-    signingBonus: string;
-    otherBenefits: string;
-}
+import { type CompensationInfo } from "./types";
 
 interface Step3CompensationProps {
     data: CompensationInfo;
@@ -89,14 +75,14 @@ export function Step3Compensation({ data, onChange }: Step3CompensationProps) {
                                     type="text"
                                     placeholder="75,000"
                                     className="pl-7"
-                                    value={data.salaryAmount}
+                                    value={data.salaryAmount || ""}
                                     onChange={(e) => updateField("salaryAmount", e.target.value)}
                                 />
                             </div>
                         </div>
                         <div className="space-y-2">
                             <Label>Type</Label>
-                            <Select value={data.salaryType} onValueChange={(v) => updateField("salaryType", v)}>
+                            <Select value={data.salaryType || "annual"} onValueChange={(v) => updateField("salaryType", v)}>
                                 <SelectTrigger>
                                     <SelectValue />
                                 </SelectTrigger>
@@ -111,7 +97,7 @@ export function Step3Compensation({ data, onChange }: Step3CompensationProps) {
                         </div>
                         <div className="space-y-2">
                             <Label>Pay Frequency</Label>
-                            <Select value={data.payFrequency} onValueChange={(v) => updateField("payFrequency", v)}>
+                            <Select value={data.payFrequency || "biweekly"} onValueChange={(v) => updateField("payFrequency", v)}>
                                 <SelectTrigger>
                                     <SelectValue />
                                 </SelectTrigger>
@@ -133,14 +119,14 @@ export function Step3Compensation({ data, onChange }: Step3CompensationProps) {
                                 <Label htmlFor="bonusEligible">Bonus Eligible</Label>
                                 <Switch
                                     id="bonusEligible"
-                                    checked={data.bonusEligible}
+                                    checked={data.bonusEligible || false}
                                     onCheckedChange={(v) => updateField("bonusEligible", v)}
                                 />
                             </div>
                             {data.bonusEligible && (
                                 <Input
                                     placeholder="e.g., Up to 15% annual"
-                                    value={data.bonusDetails}
+                                    value={data.bonusDetails || ""}
                                     onChange={(e) => updateField("bonusDetails", e.target.value)}
                                 />
                             )}
@@ -154,7 +140,7 @@ export function Step3Compensation({ data, onChange }: Step3CompensationProps) {
                                     type="text"
                                     placeholder="5,000"
                                     className="pl-7"
-                                    value={data.signingBonus}
+                                    value={data.signingBonus || ""}
                                     onChange={(e) => updateField("signingBonus", e.target.value)}
                                 />
                             </div>
@@ -173,7 +159,7 @@ export function Step3Compensation({ data, onChange }: Step3CompensationProps) {
                             <Label htmlFor="healthInsurance">Health Insurance</Label>
                             <Switch
                                 id="healthInsurance"
-                                checked={data.healthInsurance}
+                                checked={data.healthInsurance || false}
                                 onCheckedChange={(v) => updateField("healthInsurance", v)}
                             />
                         </div>
@@ -181,7 +167,7 @@ export function Step3Compensation({ data, onChange }: Step3CompensationProps) {
                             <Label htmlFor="dentalInsurance">Dental Insurance</Label>
                             <Switch
                                 id="dentalInsurance"
-                                checked={data.dentalInsurance}
+                                checked={data.dentalInsurance || false}
                                 onCheckedChange={(v) => updateField("dentalInsurance", v)}
                             />
                         </div>
@@ -189,7 +175,7 @@ export function Step3Compensation({ data, onChange }: Step3CompensationProps) {
                             <Label htmlFor="visionInsurance">Vision Insurance</Label>
                             <Switch
                                 id="visionInsurance"
-                                checked={data.visionInsurance}
+                                checked={data.visionInsurance || false}
                                 onCheckedChange={(v) => updateField("visionInsurance", v)}
                             />
                         </div>
@@ -197,7 +183,7 @@ export function Step3Compensation({ data, onChange }: Step3CompensationProps) {
                             <Label htmlFor="retirement401k">401(k) Retirement</Label>
                             <Switch
                                 id="retirement401k"
-                                checked={data.retirement401k}
+                                checked={data.retirement401k || false}
                                 onCheckedChange={(v) => updateField("retirement401k", v)}
                             />
                         </div>
@@ -205,7 +191,7 @@ export function Step3Compensation({ data, onChange }: Step3CompensationProps) {
                             <Label htmlFor="stockOptions">Stock Options/Equity</Label>
                             <Switch
                                 id="stockOptions"
-                                checked={data.stockOptions}
+                                checked={data.stockOptions || false}
                                 onCheckedChange={(v) => updateField("stockOptions", v)}
                             />
                         </div>
@@ -218,7 +204,7 @@ export function Step3Compensation({ data, onChange }: Step3CompensationProps) {
                                 id="ptodays"
                                 type="number"
                                 placeholder="15"
-                                value={data.ptodays}
+                                value={data.ptodays || "15"}
                                 onChange={(e) => updateField("ptodays", e.target.value)}
                             />
                         </div>

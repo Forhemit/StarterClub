@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -15,9 +16,14 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { ArrowLeft, ArrowRight, Save, RotateCcw, Eye, EyeOff, CheckCircle2, Loader2, LayoutTemplate } from "lucide-react";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ArrowLeft, ArrowRight, Save, RotateCcw, Eye, CheckCircle2, Loader2, LayoutTemplate, Trash2, MoreVertical } from "lucide-react";
 import { toast } from "sonner";
 import { Step1RoleMapping } from "./Step1RoleMapping";
 import { Step2ResponseProtocols } from "./Step2ResponseProtocols";
@@ -31,13 +37,12 @@ import { Step9Mentoring } from "./Step9Mentoring";
 import { Step10TwoPersonIntegrity } from "./Step10TwoPersonIntegrity";
 import { Step11ComplianceLog } from "./Step11ComplianceLog";
 import { LeadershipPreview } from "./LeadershipPreview";
-import { saveLeadershipProfile, getLeadershipProfile } from "@/actions/resilience";
+import { saveLeadershipProfile, getLeadershipProfile, deleteLeadershipProfile } from "@/actions/resilience";
 import { ModuleErrorBoundary } from "@/components/ui/module-error-boundary";
 import { WizardSkeleton } from "@/components/ui/wizard-skeleton";
-import { AutoSaveIndicator, type SaveStatus } from "@/components/ui/auto-save-indicator";
-import { useDebounce } from "@/hooks/use-debounce";
+import { type SaveStatus } from "@/components/ui/auto-save-indicator";
 import { LeadershipData } from "./types";
-import { useCallback, useRef } from "react";
+import { useCallback } from "react";
 
 const WIZARD_STEPS = [
     {
@@ -111,12 +116,13 @@ const WIZARD_STEPS = [
 export function LeadershipCapitalWizard() {
     const router = useRouter();
     const [currentStep, setCurrentStep] = useState(0);
-    const [showPreview, setShowPreview] = useState(true); // Default to true for desktop
+    const [showPreview, setShowPreview] = useState(false); // Default to Edit mode
     const [resetKey, setResetKey] = useState(0);
     const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
     const [lastSaved, setLastSaved] = useState<Date | undefined>(undefined);
     const [isLoading, setIsLoading] = useState(true);
     const [previewKey, setPreviewKey] = useState(0);
+    const [showResetConfirm, setShowResetConfirm] = useState(false);
 
     const [roleData, setRoleData] = useState<LeadershipData>({
         interimDays: "30",
@@ -124,37 +130,25 @@ export function LeadershipCapitalWizard() {
         busFactor: "medium"
     });
 
-    const debouncedData = useDebounce(roleData, 1500);
-    const isFirstMount = useRef(true);
-
-    // Auto-Save Effect
-    useEffect(() => {
-        if (isFirstMount.current) {
-            isFirstMount.current = false;
-            return;
-        }
-
-        async function autoSave() {
-            if (saveStatus === "unsaved") {
-                setSaveStatus("saving");
-                try {
-                    const result = await saveLeadershipProfile(debouncedData);
-                    if (result.error) {
-                        setSaveStatus("error");
-                        toast.error("Auto-save failed");
-                    } else {
-                        setSaveStatus("saved");
-                        setLastSaved(new Date());
-                        setPreviewKey(prev => prev + 1);
-                    }
-                } catch (error) {
-                    setSaveStatus("error");
-                }
+    // Manual Save Handler
+    const handleSave = useCallback(async () => {
+        setSaveStatus("saving");
+        try {
+            const result = await saveLeadershipProfile(roleData);
+            if (result.error) {
+                setSaveStatus("error");
+                toast.error(result.error || "Failed to save");
+            } else {
+                setSaveStatus("saved");
+                setLastSaved(new Date());
+                setPreviewKey(prev => prev + 1);
+                toast.success("Saved successfully!");
             }
+        } catch (error) {
+            setSaveStatus("error");
+            toast.error("Failed to save");
         }
-
-        autoSave();
-    }, [debouncedData]); // Only trigger when debounced data settles
+    }, [roleData]);
 
     // Load existing profile on mount
     useEffect(() => {
@@ -164,8 +158,7 @@ export function LeadershipCapitalWizard() {
                 const existingProfile = await getLeadershipProfile();
                 if (existingProfile) {
                     setRoleData(existingProfile as LeadershipData);
-                    // Don't trigger auto-save on initial load
-                    setSaveStatus("idle");
+                    setSaveStatus("saved");
                 }
             } catch (error) {
                 console.error("Failed to load profile:", error);
@@ -192,13 +185,17 @@ export function LeadershipCapitalWizard() {
 
     const handlePrev = () => {
         if (currentStep === 0) {
-            router.back();
+            router.push("/dashboard/marketplace");
         } else {
             setCurrentStep(currentStep - 1);
         }
     };
 
-    const handleReset = async () => {
+    const handleReset = () => {
+        setShowResetConfirm(true);
+    };
+
+    const confirmReset = async () => {
         setRoleData({
             interimDays: "30",
             requiresDualControl: false,
@@ -206,8 +203,37 @@ export function LeadershipCapitalWizard() {
         });
         setCurrentStep(0);
         setResetKey(prev => prev + 1);
-        setSaveStatus("unsaved"); // Mark as unsaved so autosave picks up the reset
+        setSaveStatus("idle");
+        setShowResetConfirm(false);
         toast.success("Form reset to defaults");
+    };
+
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const confirmDelete = async () => {
+        setIsDeleting(true);
+        try {
+            const result = await deleteLeadershipProfile();
+            if (result.success) {
+                setRoleData({
+                    interimDays: "30",
+                    requiresDualControl: false,
+                    busFactor: "medium"
+                });
+                setCurrentStep(0);
+                setResetKey(prev => prev + 1);
+                setSaveStatus("idle");
+                toast.success("All data permanently deleted");
+            } else {
+                toast.error(result.error || "Failed to delete data");
+            }
+        } catch (error) {
+            toast.error("Failed to delete data");
+        } finally {
+            setIsDeleting(false);
+            setShowDeleteConfirm(false);
+        }
     };
 
     const handleComplete = async () => {
@@ -262,26 +288,67 @@ export function LeadershipCapitalWizard() {
     }
 
     return (
-        <ModuleErrorBoundary name="Leadership Capital Module">
+        <ModuleErrorBoundary name="Leadership & Human Capital Module">
             <TooltipProvider>
                 <div className="absolute inset-0 bg-dot-pattern opacity-[0.02] pointer-events-none" />
-                <div className="space-y-8 max-w-[1200px] mx-auto pb-12 w-full px-6 sm:px-8 relative z-0">
+                <div className="space-y-8 max-w-5xl mx-auto pb-12 w-full px-6 sm:px-8 relative z-0">
                     {/* Context Header */}
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 animate-in fade-in slide-in-from-top-4 duration-500">
                         <div>
-                            <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight text-foreground">Leadership Continuity</h1>
+                            <div className="flex items-center gap-3 mb-1">
+                                <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight text-foreground">Leadership Continuity</h1>
+                                <Badge variant="secondary">Resilience</Badge>
+                            </div>
                             <p className="text-muted-foreground text-sm sm:text-base mt-1">Complete the 12-step protocol for deep resilience.</p>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Button
-                                variant={showPreview ? "secondary" : "outline"}
-                                size="sm"
-                                onClick={() => setShowPreview(!showPreview)}
-                                className="bg-background/50 backdrop-blur-sm transition-all hover:scale-105 active:scale-95"
-                            >
-                                <LayoutTemplate className="w-4 h-4 mr-2" />
-                                {showPreview ? "Back to Edit" : "Show Profile Preview"}
-                            </Button>
+                        <div className="flex items-center gap-3">
+                            <div className="bg-muted p-1 rounded-lg flex items-center border">
+                                <Button
+                                    variant={!showPreview ? "secondary" : "ghost"}
+                                    size="sm"
+                                    onClick={() => setShowPreview(false)}
+                                    className="gap-2"
+                                >
+                                    <LayoutTemplate className="w-4 h-4" />
+                                    Edit
+                                </Button>
+                                <Button
+                                    variant={showPreview ? "secondary" : "ghost"}
+                                    size="sm"
+                                    onClick={() => setShowPreview(true)}
+                                    className="gap-2"
+                                >
+                                    <Eye className="w-4 h-4" />
+                                    Preview
+                                </Button>
+                            </div>
+
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        className="text-muted-foreground hover:text-foreground"
+                                        title="Options"
+                                    >
+                                        <MoreVertical className="w-4 h-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={() => setShowResetConfirm(true)}>
+                                        <RotateCcw className="w-4 h-4 mr-2" />
+                                        Reset Form
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        onClick={() => setShowDeleteConfirm(true)}
+                                        className="text-destructive focus:text-destructive"
+                                    >
+                                        <Trash2 className="w-4 h-4 mr-2" />
+                                        Delete All Data
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </div>
                     </div>
 
@@ -314,8 +381,15 @@ export function LeadershipCapitalWizard() {
                                             </CardTitle>
                                             <CardDescription>{WIZARD_STEPS[currentStep].description}</CardDescription>
                                         </div>
-                                        <div className="flex items-center gap-1">
-                                            <AutoSaveIndicator status={saveStatus} lastSaved={lastSaved} />
+                                        <div className="flex items-center gap-2">
+                                            {saveStatus === "unsaved" && (
+                                                <span className="text-xs text-amber-600">Unsaved changes</span>
+                                            )}
+                                            {saveStatus === "saved" && lastSaved && (
+                                                <span className="text-xs text-muted-foreground">
+                                                    Saved {lastSaved.toLocaleTimeString()}
+                                                </span>
+                                            )}
                                         </div>
                                     </CardHeader>
                                     <CardContent className="p-6 sm:p-8 overflow-hidden">
@@ -340,10 +414,23 @@ export function LeadershipCapitalWizard() {
                                 <div className="flex justify-between items-center bg-background/80 backdrop-blur-lg p-4 rounded-xl border shadow-sm sticky bottom-4 z-20">
                                     <Button variant="ghost" onClick={handlePrev} className="text-muted-foreground hover:text-foreground transition-colors">
                                         <ArrowLeft className="w-4 h-4 mr-2" />
-                                        {currentStep === 0 ? "Back" : "Previous"}
+                                        {currentStep === 0 ? "Back to Marketplace" : "Back"}
                                     </Button>
 
                                     <div className="flex gap-2">
+                                        <Button
+                                            variant="outline"
+                                            onClick={handleSave}
+                                            disabled={saveStatus === "saving" || saveStatus === "saved"}
+                                            className="min-w-[100px]"
+                                        >
+                                            {saveStatus === "saving" ? (
+                                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                            ) : (
+                                                <Save className="w-4 h-4 mr-2" />
+                                            )}
+                                            {saveStatus === "saving" ? "Saving..." : saveStatus === "saved" ? "Saved" : "Save"}
+                                        </Button>
                                         {currentStep < totalSteps - 1 ? (
                                             <Button onClick={handleNext} className="min-w-[120px] shadow-lg shadow-primary/20 transition-all hover:translate-x-1">
                                                 Next Step
@@ -362,6 +449,44 @@ export function LeadershipCapitalWizard() {
                     )}
                 </div>
             </TooltipProvider>
+
+            <AlertDialog open={showResetConfirm} onOpenChange={setShowResetConfirm}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Reset Form?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will clear the current form data. Your saved data in the database will not be affected.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmReset}>
+                            Reset Form
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+            <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Delete All Leadership Data?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will permanently delete your leadership profile from the database. This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={confirmDelete}
+                            disabled={isDeleting}
+                            className="bg-destructive hover:bg-destructive/90"
+                        >
+                            {isDeleting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
+                            Delete All Data
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </ModuleErrorBoundary>
     );
 }

@@ -5,7 +5,7 @@ import { legalEntitySchema, LegalEntityInput } from "@/lib/validators/legal-vaul
 import { auth } from "@clerk/nextjs/server";
 import { createOrUpdateAddress } from "./addresses";
 import { createOrUpdateContact } from "./contacts";
-import { createOrUpdateLegalContact } from "./legal-contacts";
+import { createOrUpdateLegalContact, AttorneyType } from "./legal-contacts";
 import { LegalVaultData } from "@/components/dashboard/legal/types";
 
 export async function createOrUpdateLegalEntity(data: LegalEntityInput) {
@@ -63,7 +63,11 @@ export async function createOrUpdateLegalEntity(data: LegalEntityInput) {
     }
 
     if (validatedData.formation_date) {
-        payload.formation_date = validatedData.formation_date.toISOString().split('T')[0];
+        if (typeof validatedData.formation_date === 'string') {
+            payload.formation_date = validatedData.formation_date;
+        } else {
+            payload.formation_date = validatedData.formation_date.toISOString().split('T')[0];
+        }
     }
 
     if (validatedData.id) {
@@ -216,11 +220,7 @@ export async function saveLegalVaultProfile(data: LegalVaultData) {
                 entity_id: entityId,
                 role: 'attorney',
                 name: attorney.name,
-                firm_name: attorney.firm_name, // Schema mismatch? AttorneySchema has firm_name?
-                // AttorneySchema in types.ts: name, role, attorney_type, email, phone, website, address_line1, city, state, zip.
-                // It does NOT have firm_name. 
-                // Wait, I should check AttorneySchema in types.ts again.
-                // Assuming it has name, email, phone.
+                // firm_name removed as it is not in EntityLegalContact
                 email: attorney.email,
                 phone: attorney.phone,
                 website: attorney.website,
@@ -228,7 +228,7 @@ export async function saveLegalVaultProfile(data: LegalVaultData) {
                 city: attorney.city,
                 state: attorney.state,
                 zip: attorney.zip,
-                attorney_type: attorney.attorney_type
+                attorney_type: attorney.attorney_type as AttorneyType | undefined
             }).catch(e => console.error("Attorney save failed", e))
         ));
     }

@@ -8,7 +8,7 @@ export const legalEntitySchema = z.object({
     organization_type: z.string().max(50).optional().or(z.literal("")),
     formation_in_progress: z.boolean().optional(),
     nonprofit_type: z.string().optional().or(z.literal("")),
-    formation_date: z.date().optional(),
+    formation_date: z.union([z.string(), z.date()]).optional(),
     // State: Allow empty string during draft, otherwise suggest 2 chars
     primary_state: z.string().max(2).optional().or(z.literal("")),
     business_purpose: z.string().optional().or(z.literal("")),

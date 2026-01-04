@@ -229,3 +229,39 @@ export async function deleteJob(id: string) {
     revalidatePath("/dashboard/jobs");
     return { success: true };
 }
+
+export async function deleteAllJobPostings(): Promise<{ success?: boolean; error?: string }> {
+    const supabase = await createSupabaseServerClient();
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+        return { error: "Not authenticated" };
+    }
+
+    // Get user's org
+    const { data: roles } = await supabase
+        .from("user_roles")
+        .select("org_id")
+        .eq("user_id", user.id)
+        .limit(1);
+
+    if (!roles || roles.length === 0) {
+        return { error: "No organization found" };
+    }
+
+    const orgId = roles[0].org_id;
+
+    const { error } = await supabase
+        .from("job_postings")
+        .delete()
+        .eq("org_id", orgId);
+
+    if (error) {
+        console.error("Delete all job postings error:", error);
+        return { error: "Failed to delete job postings" };
+    }
+
+    revalidatePath("/dashboard/jobs");
+    revalidatePath("/dashboard/marketplace/jobs-careers");
+    return { success: true };
+}

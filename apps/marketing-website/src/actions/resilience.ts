@@ -955,3 +955,65 @@ export async function getFinancialResilienceProfile(): Promise<FinancialResilien
         expiryDate: data.expiry_date,
     };
 }
+
+export async function deleteFinancialResilienceProfile(): Promise<{ success?: boolean; error?: string }> {
+    const supabase = await createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return { error: "Not authenticated" };
+
+    const { data: business } = await supabase
+        .from("user_businesses")
+        .select("id")
+        .eq("user_id", user.id)
+        .single();
+
+    if (!business) return { error: "Business not found" };
+
+    const { error } = await supabase
+        .from("financial_resilience_profiles")
+        .delete()
+        .eq("user_business_id", business.id);
+
+    if (error) {
+        console.error("Delete financial resilience profile error:", error);
+        return { error: "Failed to delete profile" };
+    }
+
+    revalidatePath("/dashboard/marketplace/financial-resilience");
+    return { success: true };
+}
+
+export async function deleteLeadershipProfile(roleName?: string): Promise<{ success?: boolean; error?: string }> {
+    const supabase = await createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return { error: "Not authenticated" };
+
+    const { data: business } = await supabase
+        .from("user_businesses")
+        .select("id")
+        .eq("user_id", user.id)
+        .single();
+
+    if (!business) return { error: "Business not found" };
+
+    let query = supabase
+        .from("leadership_role_profiles")
+        .delete()
+        .eq("user_business_id", business.id);
+
+    if (roleName) {
+        query = query.eq("role", roleName);
+    }
+
+    const { error } = await query;
+
+    if (error) {
+        console.error("Delete leadership profile error:", error);
+        return { error: "Failed to delete profile" };
+    }
+
+    revalidatePath("/dashboard/resilience/leadership-human-capital");
+    return { success: true };
+}

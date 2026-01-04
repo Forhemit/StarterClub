@@ -7,18 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { User, Phone, MapPin, Calendar } from "lucide-react";
 import { formatPhone } from "@/lib/utils";
 
-export interface EmployeeInfo {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    addressLine1: string;
-    addressLine2: string;
-    city: string;
-    state: string;
-    zipCode: string;
-    startDate: string;
-}
+import { type EmployeeInfo } from "./types";
 
 interface Step1EmployeeInfoProps {
     data: EmployeeInfo;
@@ -141,7 +130,7 @@ export function Step1EmployeeInfo({ data, onChange }: Step1EmployeeInfoProps) {
                 {/* Contact Fields */}
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <Label htmlFor="email" className="flex items-center gap-2">
+                        <Label htmlFor="email">
                             Email Address *
                         </Label>
                         <Input
@@ -153,8 +142,7 @@ export function Step1EmployeeInfo({ data, onChange }: Step1EmployeeInfoProps) {
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="phone" className="flex items-center gap-2">
-                            <Phone className="w-4 h-4" />
+                        <Label htmlFor="phone">
                             Phone Number
                         </Label>
                         <Input
@@ -169,27 +157,26 @@ export function Step1EmployeeInfo({ data, onChange }: Step1EmployeeInfoProps) {
 
                 {/* Address Fields */}
                 <div className="space-y-4">
-                    <Label className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4" />
+                    <Label>
                         Mailing Address
                     </Label>
                     <Input
                         placeholder="Street Address"
-                        value={data.addressLine1}
+                        value={data.addressLine1 || ""}
                         onChange={(e) => updateField("addressLine1", e.target.value)}
                     />
                     <Input
                         placeholder="Apt, Suite, Unit (optional)"
-                        value={data.addressLine2}
+                        value={data.addressLine2 || ""}
                         onChange={(e) => updateField("addressLine2", e.target.value)}
                     />
                     <div className="grid grid-cols-3 gap-4">
                         <Input
                             placeholder="City"
-                            value={data.city}
+                            value={data.city || ""}
                             onChange={(e) => updateField("city", e.target.value)}
                         />
-                        <Select value={data.state} onValueChange={(v) => updateField("state", v)}>
+                        <Select value={data.state || ""} onValueChange={(v) => updateField("state", v)}>
                             <SelectTrigger>
                                 <SelectValue placeholder="State" />
                             </SelectTrigger>
@@ -203,7 +190,7 @@ export function Step1EmployeeInfo({ data, onChange }: Step1EmployeeInfoProps) {
                         </Select>
                         <Input
                             placeholder="ZIP Code"
-                            value={data.zipCode}
+                            value={data.zipCode || ""}
                             onChange={(e) => updateField("zipCode", e.target.value)}
                         />
                     </div>
@@ -211,8 +198,7 @@ export function Step1EmployeeInfo({ data, onChange }: Step1EmployeeInfoProps) {
 
                 {/* Start Date */}
                 <div className="space-y-2">
-                    <Label htmlFor="startDate" className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
+                    <Label htmlFor="startDate">
                         Expected Start Date *
                     </Label>
                     <Input

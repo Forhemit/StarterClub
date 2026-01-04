@@ -224,7 +224,7 @@ export function Step3FormationDetails({ data, onUpdate }: Step3Props) {
                                         <Calendar
                                             mode="single"
                                             selected={formation_date ? new Date(formation_date) : undefined}
-                                            onSelect={(date) => onUpdate({ formation_date: date })}
+                                            onSelect={(date) => onUpdate({ formation_date: date ? format(date, "yyyy-MM-dd") : undefined })}
                                             disabled={(date) =>
                                                 date > new Date() || date < new Date("1900-01-01")
                                             }

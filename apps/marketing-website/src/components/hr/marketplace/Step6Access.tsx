@@ -8,14 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2, Mail, MessageSquare, Cloud, Database, Video, Lock, Globe, FolderOpen } from "lucide-react";
 
-interface AccessItem {
-    id: string;
-    label: string;
-    category: string;
-    enabled: boolean;
-    icon: string;
-    autoProvision: boolean;
-}
+import { type AccessItem } from "./types";
 
 const DEFAULT_ACCESS: AccessItem[] = [
     { id: "email", label: "Email (Google/Microsoft)", category: "Communication", enabled: true, icon: "Mail", autoProvision: true },

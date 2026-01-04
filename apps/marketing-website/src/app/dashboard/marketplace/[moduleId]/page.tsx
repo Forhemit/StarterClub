@@ -10,12 +10,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Check, Download, Package, ShieldCheck, Zap } from "lucide-react";
-import { Scale, Landmark, Users, CalendarCheck, Truck, TrendingUp, Briefcase, DollarSign } from "lucide-react";
+import { Scale, Landmark, Users, CalendarCheck, Truck, TrendingUp, Briefcase, DollarSign, CreditCard, Building2, BriefcaseBusiness, ClipboardCheck, Siren } from "lucide-react";
 
 // Icon mapping (should ideally be shared)
 const IconMap: { [key: string]: any } = {
     Scale, Landmark, Users, CalendarCheck, Truck, ShieldCheck,
-    TrendingUp, Briefcase, DollarSign, Package
+    TrendingUp, Briefcase, DollarSign, Package, CreditCard, Building2,
+    BriefcaseBusiness, ClipboardCheck, Siren
 };
 
 export default function ModuleDetailPage({ params }: { params: Promise<{ moduleId: string }> }) {

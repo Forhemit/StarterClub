@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, X } from "lucide-react";
-import { JobPostingData } from "./JobsCareersWizard";
+import { JobPostingData } from "./types";
 
 interface Step3CompensationProps {
     data: JobPostingData;

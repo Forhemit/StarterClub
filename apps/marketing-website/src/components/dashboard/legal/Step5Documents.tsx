@@ -36,29 +36,25 @@ export function Step5Documents({ data, onUpdate }: Step5Props) {
         <div className="space-y-8 max-w-2xl">
             <div className="space-y-4">
                 {requiredDocs.map((doc, i) => {
-                    const existingDoc = documents.find(d => d.document_type === doc || d.type === doc);
+                    const existingDoc = documents.find(d => d.type === doc);
                     return (
                         <div key={i} className="flex items-center justify-between p-4 border rounded-lg bg-card animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: `${i * 100}ms` }}>
                             <div className="space-y-1">
                                 <span className="flex items-center gap-2">
-                                    <Label className="text-base">{existingDoc?.name || existingDoc?.display_name || doc}</Label>
+                                    <Label className="text-base">{existingDoc?.name || doc}</Label>
                                     {existingDoc && <CheckCircle className="w-4 h-4 text-green-500 fill-green-100" />}
                                 </span>
                                 {(existingDoc?.name && existingDoc.name !== doc) && (
                                     <p className="text-xs text-muted-foreground">Type: {doc}</p>
                                 )}
-                                {existingDoc?.expiration_date && (
-                                    <p className="text-xs text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-md inline-block border border-amber-100 mr-2">
-                                        Expires: {new Date(existingDoc.expiration_date).toLocaleDateString()}
-                                    </p>
-                                )}
+                                { /* Refactor Note: expiration_date removed as it is not in the schema currently */}
                                 <p className="text-sm text-muted-foreground">Required for compliance</p>
                             </div>
                             <DocumentUpload
                                 entityId={entityId || ""}
                                 documentType={doc}
                                 documentId={existingDoc?.id}
-                                existingPath={existingDoc?.file_path || existingDoc?.url}
+                                existingPath={existingDoc?.url}
                                 onUploadComplete={handleUploadComplete}
                             />
                         </div>

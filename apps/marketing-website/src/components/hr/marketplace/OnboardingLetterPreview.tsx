@@ -2,12 +2,14 @@
 
 import { Button } from "@/components/ui/button";
 import { Printer, FileText, Check, User, Briefcase, DollarSign, ClipboardList, Package, Globe, MapPin, Clock } from "lucide-react";
-import { EmployeeInfo } from "./Step1EmployeeInfo";
-import { PositionInfo } from "./Step2PositionInfo";
-import { CompensationInfo } from "./Step3Compensation";
-import { ChecklistItem } from "./Step4Checklist";
-import { EquipmentOption } from "./Step5Equipment";
-import { AccessItem } from "./Step6Access";
+import {
+    type EmployeeInfo,
+    type PositionInfo,
+    type CompensationInfo,
+    type ChecklistItem,
+    type EquipmentOption,
+    type AccessItem
+} from "./types";
 
 interface OnboardingLetterPreviewProps {
     employeeInfo: EmployeeInfo;

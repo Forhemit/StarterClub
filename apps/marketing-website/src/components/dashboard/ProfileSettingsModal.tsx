@@ -4,11 +4,13 @@ import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, Briefcase, Handshake, CreditCard } from "lucide-react";
+import { GeneralTab } from "./settings/GeneralTab";
+import { User, Briefcase, Handshake, CreditCard, Settings } from "lucide-react";
 import { PersonalInfoTab } from "./settings/PersonalInfoTab";
 import { EmploymentTab } from "./settings/EmploymentTab";
 import { PartnershipTab } from "./settings/PartnershipTab";
 import { SubscriptionTab } from "./settings/SubscriptionTab";
+
 
 interface ProfileSettingsModalProps {
     open: boolean;
@@ -26,7 +28,7 @@ export function ProfileSettingsModal({
     hasSubscription = false
 }: ProfileSettingsModalProps) {
     const { user } = useUser();
-    const [activeTab, setActiveTab] = useState("personal");
+    const [activeTab, setActiveTab] = useState("general");
 
     // Determine which tabs to show based on roles
     const employmentRoles = ['admin', 'employee', 'manager', 'super_admin'];
@@ -37,6 +39,7 @@ export function ProfileSettingsModal({
     const showSubscription = hasSubscription || userRoles.includes('member');
 
     const tabs = [
+        { id: 'general', label: 'General', icon: Settings, visible: true },
         { id: 'personal', label: 'Personal Info', icon: User, visible: true },
         { id: 'employment', label: 'Employment', icon: Briefcase, visible: showEmployment },
         { id: 'partnership', label: 'Partnership', icon: Handshake, visible: showPartnership },
@@ -72,6 +75,10 @@ export function ProfileSettingsModal({
                     </TabsList>
 
                     <div className="flex-1 overflow-y-auto mt-4 pr-1">
+                        <TabsContent value="general" className="mt-0">
+                            <GeneralTab />
+                        </TabsContent>
+
                         <TabsContent value="personal" className="mt-0">
                             <PersonalInfoTab user={user} profile={profile} />
                         </TabsContent>

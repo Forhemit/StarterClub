@@ -85,6 +85,7 @@ ON financial_resilience_profiles(user_business_id);
 ALTER TABLE financial_resilience_profiles ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policy: Users can only access their own business's profiles
+DROP POLICY IF EXISTS "Users can manage their own financial resilience profiles" ON financial_resilience_profiles;
 CREATE POLICY "Users can manage their own financial resilience profiles"
 ON financial_resilience_profiles
 FOR ALL
@@ -108,6 +109,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS financial_resilience_profile_updated ON financial_resilience_profiles;
 CREATE TRIGGER financial_resilience_profile_updated
     BEFORE UPDATE ON financial_resilience_profiles
     FOR EACH ROW

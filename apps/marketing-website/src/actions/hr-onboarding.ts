@@ -130,3 +130,30 @@ export async function getEquipmentRequests(employeeId: string) {
     if (error) console.error(error);
     return data || [];
 }
+
+export async function deleteHROnboardingData(): Promise<{ success?: boolean; error?: string }> {
+    const supabase = await createSupabaseServerClient();
+    const { userId } = await auth();
+
+    if (!userId) return { error: "Not authenticated" };
+
+    // Delete equipment requests for this user
+    await supabase
+        .from('hr_equipment_requests')
+        .delete()
+        .eq('employee_id', userId);
+
+    // Delete onboarding progress
+    const { error } = await supabase
+        .from('hr_onboarding_progress')
+        .delete()
+        .eq('employee_id', userId);
+
+    if (error) {
+        console.error("Delete HR onboarding data error:", error);
+        return { error: "Failed to delete data" };
+    }
+
+    revalidatePath('/dashboard/hr/onboarding');
+    return { success: true };
+}

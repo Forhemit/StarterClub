@@ -55,7 +55,7 @@ CREATE POLICY "Users can view their business signing rules"
     ON signing_authority_rules FOR SELECT
     USING (
         user_business_id IN (
-            SELECT id FROM user_businesses WHERE user_id = auth.uid()
+            SELECT id FROM user_businesses WHERE user_id = auth.uid()::text
         )
     );
 
@@ -63,7 +63,7 @@ CREATE POLICY "Users can insert signing rules for their business"
     ON signing_authority_rules FOR INSERT
     WITH CHECK (
         user_business_id IN (
-            SELECT id FROM user_businesses WHERE user_id = auth.uid()
+            SELECT id FROM user_businesses WHERE user_id = auth.uid()::text
         )
     );
 
@@ -71,7 +71,7 @@ CREATE POLICY "Users can update their business signing rules"
     ON signing_authority_rules FOR UPDATE
     USING (
         user_business_id IN (
-            SELECT id FROM user_businesses WHERE user_id = auth.uid()
+            SELECT id FROM user_businesses WHERE user_id = auth.uid()::text
         )
     );
 
@@ -79,7 +79,7 @@ CREATE POLICY "Users can delete their business signing rules"
     ON signing_authority_rules FOR DELETE
     USING (
         user_business_id IN (
-            SELECT id FROM user_businesses WHERE user_id = auth.uid()
+            SELECT id FROM user_businesses WHERE user_id = auth.uid()::text
         )
     );
 
@@ -88,7 +88,7 @@ CREATE POLICY "Users can view their business compliance log"
     ON leadership_compliance_log FOR SELECT
     USING (
         user_business_id IN (
-            SELECT id FROM user_businesses WHERE user_id = auth.uid()
+            SELECT id FROM user_businesses WHERE user_id = auth.uid()::text
         )
     );
 
@@ -96,7 +96,7 @@ CREATE POLICY "Users can insert compliance log for their business"
     ON leadership_compliance_log FOR INSERT
     WITH CHECK (
         user_business_id IN (
-            SELECT id FROM user_businesses WHERE user_id = auth.uid()
+            SELECT id FROM user_businesses WHERE user_id = auth.uid()::text
         )
     );
 
@@ -104,7 +104,7 @@ CREATE POLICY "Users can update their business compliance log"
     ON leadership_compliance_log FOR UPDATE
     USING (
         user_business_id IN (
-            SELECT id FROM user_businesses WHERE user_id = auth.uid()
+            SELECT id FROM user_businesses WHERE user_id = auth.uid()::text
         )
     );
 
