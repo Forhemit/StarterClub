@@ -1,217 +1,129 @@
 'use client';
 
-import { useState, useEffect, useTransition } from 'react';
-import { useUser, useAuth } from '@clerk/nextjs';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import RoleTimeline from '@/components/RoleTimeline';
+import { useState, useTransition, useEffect } from 'react';
+import { useUser } from '@clerk/nextjs';
+import { motion, AnimatePresence } from 'framer-motion';
 import { completeOnboarding, skipOnboarding } from './actions';
 import { toast } from '@/hooks/use-toast';
+import Image from 'next/image';
+import { ArrowRight, Check, Rocket, Users, Target, Briefcase, Eye, ChevronRight, ChevronLeft } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-// Available roles with descriptions
-const AVAILABLE_ROLES = [
-    { slug: 'member', name: 'Member', description: 'Regular platform member with access to community features' },
-    { slug: 'partner', name: 'Partner', description: 'Business partner with collaboration tools' },
-    { slug: 'sponsor', name: 'Sponsor', description: 'Sponsor with visibility and recognition' },
-    { slug: 'employee', name: 'Employee', description: 'Company employee with internal tools' },
-    { slug: 'super_admin', name: 'Super Admin', description: 'Full system access (restricted)' },
-    { slug: 'admin', name: 'Admin', description: 'System administration privileges' },
-    { slug: 'manager', name: 'Manager', description: 'Team management capabilities' },
-    { slug: 'guest', name: 'Guest', description: 'Limited access for visitors' },
+const TRACKS = [
+    {
+        id: 'builder',
+        title: 'Build Something',
+        description: 'You’re here to create, grow, or refine a real business. We’ll point you to tools, rooms, and people that help you move forward.',
+        image: '/onboarding/build_something.png',
+        icon: Rocket,
+        color: 'oklch(0.72 0.18 45)', // Racing Orange
+        suggestedRole: 'member',
+    },
+    {
+        id: 'partner',
+        title: 'Support Builders',
+        description: 'You want to contribute expertise, tools, or guidance to help members succeed. We’ll show you where you can plug in and make an impact.',
+        image: '/onboarding/support_builders.png',
+        icon: Users,
+        color: 'oklch(0.85 0.18 195)', // Cyan Telemetry
+        suggestedRole: 'partner',
+    },
+    {
+        id: 'sponsor',
+        title: 'Amplify a Brand',
+        description: 'You’re exploring ways to reach the Starter Club community through meaningful experiences. We’ll highlight visibility opportunities and real engagement.',
+        image: '/onboarding/amplify_brand.png',
+        icon: Target,
+        color: 'oklch(0.65 0.2 145)', // Success Green
+        suggestedRole: 'sponsor',
+    },
+    {
+        id: 'staff',
+        title: 'Work with Starter Club',
+        description: 'You’re part of the team helping run and grow the club. We’ll route you to the tools that keep everything moving smoothly.',
+        image: '/onboarding/work_with_club.png',
+        icon: Briefcase,
+        color: 'oklch(0.75 0.18 70)', // Warning/Gold
+        suggestedRole: 'employee',
+    },
+    {
+        id: 'explore',
+        title: 'Explore First',
+        description: 'You’re getting a feel for the community before diving in. Take a look around—you can choose a track anytime.',
+        image: '/onboarding/explore_first.png',
+        icon: Eye,
+        color: 'oklch(0.93 0 0)', // Neutral/White
+        suggestedRole: 'guest',
+    },
+];
+
+const PARTICIPATION_OPTIONS = [
+    { id: 'learn', label: 'Learn & attend' },
+    { id: 'build', label: 'Build & execute' },
+    { id: 'host', label: 'Host or partner' },
+    { id: 'observe', label: 'Observe for now' },
+];
+
+const ORG_OPTIONS = [
+    { id: 'yes', label: 'Yes' },
+    { id: 'no', label: 'No' },
+    { id: 'unsure', label: 'Not sure yet' },
 ];
 
 export default function OnboardingPage() {
     const { user, isLoaded } = useUser();
-    const { getToken, userId } = useAuth();
-    const [loading, setLoading] = useState(true);
+    const [step, setStep] = useState(1);
     const [isPending, startTransition] = useTransition();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [profile, setProfile] = useState<any>(null);
-    const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
-    const [primaryRole, setPrimaryRole] = useState<string>('');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [roleHistory, setRoleHistory] = useState<any>(null);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [departments, setDepartments] = useState<any[]>([]);
-    const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
+    const [primaryIntent, setPrimaryIntent] = useState<string>('');
+    const [participation, setParticipation] = useState<string>('');
+    const [orgAffiliation, setOrgAffiliation] = useState<string>('');
 
+    // Force racetrack theme properties for this page
     useEffect(() => {
-        if (!isLoaded || !userId) return;
-
-        const initAndLoad = async () => {
-            try {
-                const token = await getToken({ template: 'supabase' });
-
-                const supabase = createClient(
-                    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-                    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-                    {
-                        global: {
-                            headers: {
-                                Authorization: `Bearer ${token}`
-                            }
-                        }
-                    }
-                );
-
-                await Promise.all([
-                    loadDepartments(supabase),
-                    loadUserData(supabase, userId)
-                ]);
-
-            } catch (error) {
-                console.error("Failed to initialize data:", error);
-                toast({
-                    title: "Error loading data",
-                    description: "Please refresh the page.",
-                    variant: "destructive"
-                });
-            } finally {
-                setLoading(false);
-            }
+        document.documentElement.classList.add('racetrack');
+        return () => {
+            // We don't necessarily want to remove it if that's their chosen theme, 
+            // but for this flow we definitely want it.
         };
+    }, []);
 
-        initAndLoad();
-    }, [isLoaded, userId, getToken]);
-
-    const loadDepartments = async (supabase: SupabaseClient) => {
-        try {
-            const { data, error } = await supabase.from('departments').select('*').order('department_name');
-            if (error) throw error;
-            if (data) setDepartments(data);
-        } catch (e) {
-            console.error("Error loading departments", e);
-        }
+    const handleNext = () => {
+        if (step < 3) setStep(step + 1);
+        else handleSubmit();
     };
 
-    const loadUserData = async (supabase: SupabaseClient, uid: string) => {
-        try {
-            // Load profile
-            const { data: profileData } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', uid)
-                .single();
-
-            setProfile(profileData);
-
-            // Load current roles
-            // Replaces RoleService.getUserActiveRoles
-            const { data: rolesData, error: rolesError } = await supabase
-                .from('user_roles')
-                .select('role_slug')
-                .eq('clerk_user_id', uid)
-                .eq('is_active', true);
-
-            if (rolesError) throw rolesError;
-
-            const activeRoles = rolesData?.map((r: any) => r.role_slug) || [];
-            setSelectedRoles(activeRoles);
-
-            // Load current departments
-            const { data: userDepts } = await supabase
-                .from('user_departments')
-                .select('department_id')
-                .eq('user_id', uid);
-            // .eq('status', 'active'); // status might not exist on user_departments table based on schema check earlier? 
-            // Schema check: user_departments has is_primary, created_at. Migration `20251230000006_user_departments.sql` didn't show status.
-            // Migration `20251228000000_enhanced_rbac.sql` doesn't define it either.
-            // Assuming status column MIGHT NOT EXIST or is inferred.
-            // Warning: `status` column was used in previous code. I will check schema if possible, but safer to omit if unsure.
-            // The previous code used `.eq('status', 'active')`, suggesting it might exist or previous logic was wrong.
-            // Checking the migration 20251230000006_user_departments.sql content (Step 22):
-            // It has `id, user_id, department_id, is_primary, created_at`. NO STATUS COLUMN.
-            // So previous code was likely broken there too. I will remove `.eq('status', 'active')`.
-
-            if (userDepts) {
-                setSelectedDepartments(userDepts.map((d: any) => d.department_id));
-            }
-
-            // Set primary role
-            if (profileData?.primary_role) {
-                setPrimaryRole(profileData.primary_role);
-            } else if (activeRoles.length > 0) {
-                setPrimaryRole(activeRoles[0]);
-            }
-
-            // Load role history
-            // Replaces RoleService.getUserRolesTimeline
-            const { data: historyData, error: historyError } = await supabase
-                .from('user_roles')
-                .select('*, roles (*)')
-                .eq('clerk_user_id', uid)
-                .order('assigned_at', { ascending: false });
-
-            if (historyError) throw historyError;
-
-            // Group by role_slug to match expected format
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const timeline = (historyData || []).reduce((acc: Record<string, any[]>, roleAssignment: any) => {
-                const slug = roleAssignment.role_slug;
-                if (!acc[slug]) {
-                    acc[slug] = [];
-                }
-                acc[slug].push({
-                    assigned_at: roleAssignment.assigned_at,
-                    effective_until: roleAssignment.effective_until,
-                    revoked_at: roleAssignment.revoked_at,
-                    is_active: roleAssignment.is_active,
-                    assigned_by: roleAssignment.assigned_by,
-                    assigned_reason: roleAssignment.assigned_reason
-                });
-                return acc;
-            }, {});
-
-            setRoleHistory(timeline);
-
-        } catch (error) {
-            console.error('Error loading user data:', error);
-            toast({
-                title: "Error fetching profile",
-                description: "Could not load your profile data.",
-                variant: "destructive"
-            });
-        }
+    const handleBack = () => {
+        if (step > 1) setStep(step - 1);
     };
 
-    const handleDepartmentToggle = (deptId: string) => {
-        setSelectedDepartments(prev =>
-            prev.includes(deptId) ? prev.filter(id => id !== deptId) : [...prev, deptId]
-        );
-    };
-
-    const handleRoleToggle = (roleSlug: string) => {
-        setSelectedRoles(prev => {
-            if (prev.includes(roleSlug)) {
-                // If removing primary role, set new primary
-                if (primaryRole === roleSlug && prev.length > 1) {
-                    const otherRoles = prev.filter(r => r !== roleSlug);
-                    setPrimaryRole(otherRoles[0]);
-                }
-                return prev.filter(r => r !== roleSlug);
-            } else {
-                return [...prev, roleSlug];
-            }
-        });
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
+    const handleSubmit = async () => {
         startTransition(async () => {
             try {
-                await completeOnboarding(selectedRoles, primaryRole, selectedDepartments);
+                const selectedTrack = TRACKS.find(t => t.id === primaryIntent);
+                const suggestedRoles = selectedTrack?.suggestedRole ? [selectedTrack.suggestedRole] : ['guest'];
+                const primaryRole = selectedTrack?.suggestedRole || 'guest';
+
+                await completeOnboarding(
+                    suggestedRoles,
+                    primaryRole,
+                    [],
+                    primaryIntent,
+                    participation,
+                    orgAffiliation
+                );
+
                 toast({
-                    title: "Success",
-                    description: "Your roles have been updated.",
+                    title: "Welcome to Starter Club!",
+                    description: "Redirecting you to your personalized dashboard.",
                 });
-                // Redirect to dashboard after successful save
+
                 window.location.href = '/dashboard';
             } catch (error) {
                 console.error('Onboarding error:', error);
                 toast({
                     title: "Error",
-                    description: "Failed to save changes. Please try again.",
+                    description: "Failed to save your preferences. Please try again.",
                     variant: "destructive"
                 });
             }
@@ -221,218 +133,212 @@ export default function OnboardingPage() {
     const handleSkip = () => {
         startTransition(async () => {
             try {
+                // Skip onboarding means setting a default role (e.g., 'guest')
+                // and marking onboarding as complete without specific selections.
                 await skipOnboarding();
+                toast({
+                    title: "Skipped Onboarding",
+                    description: "You can set your preferences later.",
+                });
                 window.location.href = '/dashboard';
             } catch (error) {
                 console.error('Skip error:', error);
                 toast({
                     title: "Error",
-                    description: "Failed to skip.",
+                    description: "Failed to skip onboarding. Please try again.",
                     variant: "destructive"
                 });
             }
         });
     };
 
-    if (loading) return <div className="flex h-screen items-center justify-center">Loading info...</div>;
+    if (!isLoaded) return null;
 
     return (
-        <div className="container mx-auto p-6 max-w-4xl text-foreground">
-            <h1 className="text-3xl font-bold mb-2">Role Management</h1>
-            <p className="text-muted-foreground mb-8">
-                Select the roles that apply to you. You can have multiple roles simultaneously.
-            </p>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Left column: Role selection */}
-                <div className="lg:col-span-2">
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Role selection cards */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {AVAILABLE_ROLES.map((role) => {
-                                const isSelected = selectedRoles.includes(role.slug);
-                                const isPrimary = primaryRole === role.slug;
-
-                                return (
-                                    <div
-                                        key={role.slug}
-                                        className={`
-                      p-4 border rounded-lg cursor-pointer transition-all bg-card
-                      ${isSelected ? 'border-primary ring-1 ring-primary' : 'border-border hover:border-primary/50'}
-                    `}
-                                        onClick={() => handleRoleToggle(role.slug)}
-                                    >
-                                        <div className="flex items-center justify-between mb-2">
-                                            <div className="flex items-center space-x-2">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={isSelected}
-                                                    onChange={() => { }}
-                                                    className="h-4 w-4 text-primary rounded border-input"
-                                                />
-                                                <h3 className="font-semibold">{role.name}</h3>
-                                            </div>
-                                            {isPrimary && (
-                                                <span className="px-2 py-0.5 text-xs bg-primary/10 text-primary rounded-full">
-                                                    Primary
-                                                </span>
-                                            )}
-                                        </div>
-                                        <p className="text-sm text-muted-foreground mb-3">{role.description}</p>
-
-                                        {isSelected && (
-                                            <div className="flex items-center space-x-3">
-                                                <button
-                                                    type="button"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        setPrimaryRole(role.slug);
-                                                    }}
-                                                    className="text-xs text-primary hover:underline font-medium"
-                                                >
-                                                    {isPrimary ? '✓ Is Primary' : 'Make Primary'}
-                                                </button>
-
-                                                {role.slug === 'super_admin' && (
-                                                    <span className="text-[10px] text-destructive font-medium uppercase tracking-wider">
-                                                        Restricted
-                                                    </span>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            })}
-                        </div>
-
-                        {/* Primary role selector */}
-                        {selectedRoles.length > 1 && (
-                            <div className="p-4 bg-muted/50 rounded-lg border border-border">
-                                <label className="block text-sm font-medium mb-3">
-                                    Select Primary Role
-                                </label>
-                                <div className="flex flex-wrap gap-2">
-                                    {selectedRoles.map(roleSlug => {
-                                        const role = AVAILABLE_ROLES.find(r => r.slug === roleSlug);
-                                        return (
-                                            <button
-                                                key={roleSlug}
-                                                type="button"
-                                                onClick={() => setPrimaryRole(roleSlug)}
-                                                className={`
-                          px-3 py-1.5 rounded-full text-sm font-medium transition-colors
-                          ${primaryRole === roleSlug
-                                                        ? 'bg-primary text-primary-foreground'
-                                                        : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                                                    }
-                        `}
-                                            >
-                                                {role?.name || roleSlug}
-                                                {primaryRole === roleSlug && ' ✓'}
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                                <p className="text-xs text-muted-foreground mt-2">
-                                    Your primary role determines your default dashboard view.
-                                </p>
-                            </div>
-                        )}
-
-                        {/* Department Selection - Only for Internal Roles */}
-                        {selectedRoles.some(r => ['employee', 'manager', 'admin', 'super_admin'].includes(r)) && (
-                            <div className="pt-6 border-t border-border">
-                                <h2 className="text-xl font-semibold mb-4">Select Departments</h2>
-                                <p className="text-sm text-muted-foreground mb-4">
-                                    Choose the departments you belong to or are interested in.
-                                </p>
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                    {departments.map((dept) => {
-                                        const isSelected = selectedDepartments.includes(dept.id);
-                                        return (
-                                            <div
-                                                key={dept.id}
-                                                onClick={() => handleDepartmentToggle(dept.id)}
-                                                className={`
-                                                    p-3 border rounded-md cursor-pointer transition-all text-sm
-                                                    ${isSelected
-                                                        ? 'bg-primary/5 border-primary ring-1 ring-primary'
-                                                        : 'bg-card border-border hover:border-primary/50'}
-                                                `}
-                                            >
-                                                <div className="flex items-center space-x-2">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={isSelected}
-                                                        onChange={() => { }}
-                                                        className="h-4 w-4 text-primary rounded border-input"
-                                                    />
-                                                    <span className="font-medium">{dept.department_name}</span>
-                                                </div>
-                                                {dept.description && (
-                                                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                                                        {dept.description}
-                                                    </p>
-                                                )}
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Action buttons */}
-                        <div className="flex gap-4 pt-6 border-t border-border">
-                            <button
-                                type="submit"
-                                disabled={isPending || selectedRoles.length === 0}
-                                className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 disabled:opacity-50 flex-1 font-medium"
-                            >
-                                {isPending ? 'Saving...' : 'Save Roles & Continue'}
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={handleSkip}
-                                className="px-6 py-3 border border-input rounded-lg hover:bg-accent hover:text-accent-foreground font-medium"
-                            >
-                                Skip for Now
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                {/* Right column: Role timeline/history */}
-                <div className="lg:col-span-1">
-                    <div className="sticky top-6">
-                        <div className="p-4 bg-card border border-border rounded-lg shadow-sm">
-                            <h3 className="font-semibold mb-4">Your Role History</h3>
-
-                            {roleHistory ? (
-                                <RoleTimeline history={roleHistory} />
-                            ) : (
-                                <div className="text-center py-8 text-muted-foreground text-sm">
-                                    <p>No role history yet.</p>
-                                    <p className="mt-1 opacity-70">Assignments will appear here.</p>
-                                </div>
-                            )}
-
-                            <div className="mt-6 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded">
-                                <h4 className="font-medium text-yellow-600 text-sm mb-1">
-                                    💡 Tips
-                                </h4>
-                                <ul className="text-xs text-yellow-600/90 space-y-1 list-disc pl-3">
-                                    <li>You can have multiple roles</li>
-                                    <li>Each role grants specific permissions</li>
-                                    <li>Primary role sets default view</li>
-                                    <li>History is preserved for audit</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground font-sans overflow-hidden flex flex-col">
+            {/* Progress Bar */}
+            <div className="fixed top-0 left-0 w-full h-1 bg-muted overflow-hidden z-50">
+                <motion.div
+                    className="h-full bg-primary"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${(step / 3) * 100}%` }}
+                    transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                />
             </div>
+
+            <main className="flex-1 flex flex-col items-center justify-center p-6 relative">
+                {/* Background Glow */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] -z-10 pointer-events-none" />
+
+                <AnimatePresence mode="wait">
+                    {step === 1 && (
+                        <motion.div
+                            key="step1"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            className="w-full max-w-5xl"
+                        >
+                            <div className="text-center mb-12">
+                                <h1 className="text-6xl md:text-8xl font-bold uppercase tracking-tighter mb-4">
+                                    Choose Your Track
+                                </h1>
+                                <p className="text-xl md:text-2xl text-muted-foreground font-light max-w-2xl mx-auto">
+                                    Answer a few quick questions so we can point you in the right direction.
+                                    <span className="block mt-2 text-sm opacity-60">You can change this anytime.</span>
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                                {TRACKS.map((track) => (
+                                    <motion.button
+                                        key={track.id}
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        onClick={() => setPrimaryIntent(track.id)}
+                                        className={cn(
+                                            "relative aspect-[3/4] rounded-none border-2 transition-all p-6 text-left group overflow-hidden flex flex-col justify-end",
+                                            primaryIntent === track.id
+                                                ? "border-primary bg-primary/5"
+                                                : "border-border hover:border-primary/50 bg-card"
+                                        )}
+                                    >
+                                        <div className="absolute inset-0 opacity-40 group-hover:opacity-60 transition-opacity">
+                                            <Image
+                                                src={track.image}
+                                                alt={track.title}
+                                                fill
+                                                className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+                                        </div>
+
+                                        <div className="relative z-10">
+                                            <track.icon
+                                                className="w-8 h-8 mb-4 transition-colors"
+                                                style={{ color: primaryIntent === track.id ? track.color : 'inherit' }}
+                                            />
+                                            <h3 className="text-2xl font-bold uppercase tracking-tight mb-2 leading-none">
+                                                {track.title}
+                                            </h3>
+                                            <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">
+                                                {track.description}
+                                            </p>
+                                        </div>
+
+                                        {primaryIntent === track.id && (
+                                            <motion.div
+                                                layoutId="selected-check"
+                                                className="absolute top-4 right-4 bg-primary text-primary-foreground p-1"
+                                            >
+                                                <Check size={16} />
+                                            </motion.div>
+                                        )}
+                                    </motion.button>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {step === 2 && (
+                        <motion.div
+                            key="step2"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            className="w-full max-w-2xl text-center"
+                        >
+                            <h2 className="text-5xl md:text-7xl font-bold uppercase tracking-tighter mb-8 italic">
+                                How would you like to participate today?
+                            </h2>
+                            <div className="grid grid-cols-1 gap-4">
+                                {PARTICIPATION_OPTIONS.map((opt) => (
+                                    <button
+                                        key={opt.id}
+                                        onClick={() => setParticipation(opt.id)}
+                                        className={cn(
+                                            "py-6 px-8 text-2xl font-bold uppercase tracking-tight border-2 transition-all",
+                                            participation === opt.id
+                                                ? "border-accent bg-accent text-accent-foreground shadow-[4px_4px_0px_var(--primary)]"
+                                                : "border-border hover:border-accent/50 bg-card text-foreground"
+                                        )}
+                                    >
+                                        {opt.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {step === 3 && (
+                        <motion.div
+                            key="step3"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            className="w-full max-w-2xl text-center"
+                        >
+                            <h2 className="text-5xl md:text-7xl font-bold uppercase tracking-tighter mb-8 italic">
+                                Are you here as part of an organization?
+                            </h2>
+                            <div className="grid grid-cols-1 gap-4">
+                                {ORG_OPTIONS.map((opt) => (
+                                    <button
+                                        key={opt.id}
+                                        onClick={() => setOrgAffiliation(opt.id)}
+                                        className={cn(
+                                            "py-6 px-8 text-2xl font-bold uppercase tracking-tight border-2 transition-all",
+                                            orgAffiliation === opt.id
+                                                ? "border-primary bg-primary text-primary-foreground shadow-[4px_4px_0px_var(--accent)]"
+                                                : "border-border hover:border-primary/50 bg-card text-foreground"
+                                        )}
+                                    >
+                                        {opt.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </main>
+
+            {/* Sticky Navigation Footer */}
+            <footer className="p-8 flex flex-col sm:flex-row items-center justify-between border-t border-border bg-background/80 backdrop-blur-md z-40">
+                <button
+                    onClick={handleSkip}
+                    className="text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest text-xs font-bold mb-4 sm:mb-0"
+                >
+                    Explore first
+                </button>
+
+                <div className="flex items-center gap-4">
+                    {step > 1 && (
+                        <button
+                            onClick={handleBack}
+                            className="p-4 border border-border hover:bg-muted transition-colors flex items-center justify-center"
+                        >
+                            <ChevronLeft size={24} />
+                        </button>
+                    )}
+
+                    <button
+                        onClick={handleNext}
+                        disabled={
+                            isPending ||
+                            (step === 1 && !primaryIntent) ||
+                            (step === 2 && !participation) ||
+                            (step === 3 && !orgAffiliation)
+                        }
+                        className={cn(
+                            "group flex items-center gap-3 py-4 px-8 text-xl font-bold uppercase tracking-tighter transition-all",
+                            isPending ? "opacity-50 cursor-not-allowed" : "bg-primary text-primary-foreground hover:translate-x-1"
+                        )}
+                    >
+                        {step === 3 ? (isPending ? 'Unlocking...' : 'Continue') : 'Next'}
+                        <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+                    </button>
+                </div>
+            </footer>
         </div>
     );
 }
-

@@ -95,7 +95,8 @@ starter-club/
 
 ### 10. People & Culture (HR)
 - **Active Employee Management**: Full lifecycle tracking (Active, Inactive, On Leave)
-- **Gamified Onboarding**: "Add Employee" wizard with celebration effects and confetti
+- **Gamified Onboarding**: "Add Employee" wizard with celebration effects, confetti, and **Achievement Badges**.
+- **Progress Journey**: Visual roadmap of employee growth and milestones.
 - **Talent Acquisition**: Interview pipeline, candidate history, and hire/no-hire decision logic
 - **Wait Pool Management**: Track and manage candidates in the waiting pool for future openings
 - **Performance Management**: Reviews, goals, and feedback cycles
@@ -190,13 +191,25 @@ starter-club/
 - **Search & Discovery**: Full-text search across enterprise documents
 - **Retention Policies**: Automated retention and archival rules
 
-### 21. Module Architecture Standards
+### 21. Intent-Aware Onboarding
+- **Welcome Gate**: 3-question intake process to capture user intent and goals.
+- **Contextual Routing**: Automated dashboard configuration based on declared intent.
+- **Middleware Integration**: Personalized user journeys driven by Supabase-stored intent data.
+
+### 22. Vendor Management
+- **Vendor Lifecycle**: Tracking from onboarding to offboarding.
+- **Compliance Monitoring**: Automated tracking of vendor certificates and regulatory requirements.
+- **Contract Repository**: Secure storage and expiry tracking for vendor agreements.
+- **Performance Evaluation**: Systematic reviews of vendor service quality.
+
+### 23. Module Architecture Standards
 All marketplace modules adhere to the **Antigravity Stability Protocol**:
 - **Crash Protection**: Wrapped in granular Error Boundaries to prevent dashboard-wide failures
 - **Manual Save Pattern**: Explicit "Save" button with visual status indicators ("Unsaved Changes", "Saving...", "Saved")
 - **Strict Typing**: Enforced TypeScript interfaces for reliable data handling
 - **Skeleton Loading**: Smooth hydration states to prevent layout shifts
 - **Standardized UX**: Horizontal pill-style step indicators, sticky footer navigation, full-screen preview mode
+- **Testing Suite**: Enforced component and action coverage via **Vitest**.
 - **Mobile-Friendly**: Responsive design with touch-friendly controls and collapsible sections
 - **Reset Functionality**: Header-based reset icon with confirmation dialog and toast notifications
 
@@ -296,6 +309,22 @@ Shared utilities including date-fns helpers and common logic.
    Run the verification script to check your structure:
    ```bash
    ./scripts/verify.sh
+   ```
+
+5. **Testing**
+   
+   Run tests for the whole monorepo:
+   ```bash
+   npm test
+   ```
+
+   Run tests for specific apps:
+   ```bash
+   # Marketing Website
+   cd apps/marketing-website && npm test
+   
+   # Super Admin
+   cd apps/super-admin && npm test
    ```
 
 ---

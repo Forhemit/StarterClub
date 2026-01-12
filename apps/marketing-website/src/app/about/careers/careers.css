@@ -6,22 +6,22 @@
    ============================================================================ */
 :root {
     /* Corporate Theme Section Colors */
-    --careers-charcoal: #0a0a0f;
-    --careers-signal-blue: #00f0ff;
-    --careers-paper: #f5f1e8;
-    --careers-sepia: #3d2c1a;
-    --careers-concrete: #7d7d7d;
-    --careers-steel: #434343;
-    --careers-safety-orange: #ff6600;
-    --careers-frost: rgba(255, 255, 255, 0.08);
+    --careers-charcoal: oklch(0.08 0.02 280);
+    --careers-signal-blue: oklch(0.85 0.18 195);
+    --careers-paper: oklch(0.96 0.01 85);
+    --careers-sepia: oklch(0.25 0.04 70);
+    --careers-concrete: oklch(0.6 0 0);
+    --careers-steel: oklch(0.35 0 0);
+    --careers-safety-orange: oklch(0.65 0.2 40);
+    --careers-frost: oklch(1 0 0 / 0.08);
 
     /* Racing Theme Section Colors */
-    --careers-crt-green: #00ff9d;
-    --careers-crt-bg: #001a00;
-    --careers-gold: #ffd700;
-    --careers-silver: #c0c0c0;
-    --careers-burnout: #333333;
-    --careers-asphalt: #1a1a1a;
+    --careers-crt-green: oklch(0.87 0.23 160);
+    --careers-crt-bg: oklch(0.12 0.08 140);
+    --careers-gold: oklch(0.85 0.15 85);
+    --careers-silver: oklch(0.8 0 0);
+    --careers-burnout: oklch(0.3 0 0);
+    --careers-asphalt: oklch(0.18 0 0);
 
     /* Motion Physics (for Framer Motion springs) */
     --corporate-spring-stiffness: 100;
@@ -64,8 +64,8 @@
         linear-gradient(150deg, var(--careers-signal-blue) 12%, transparent 12.5%, transparent 87%, var(--careers-signal-blue) 87.5%, var(--careers-signal-blue)),
         linear-gradient(30deg, var(--careers-signal-blue) 12%, transparent 12.5%, transparent 87%, var(--careers-signal-blue) 87.5%, var(--careers-signal-blue)),
         linear-gradient(150deg, var(--careers-signal-blue) 12%, transparent 12.5%, transparent 87%, var(--careers-signal-blue) 87.5%, var(--careers-signal-blue)),
-        linear-gradient(60deg, rgba(0, 240, 255, 0.15) 25%, transparent 25.5%, transparent 75%, rgba(0, 240, 255, 0.15) 75%, rgba(0, 240, 255, 0.15)),
-        linear-gradient(60deg, rgba(0, 240, 255, 0.15) 25%, transparent 25.5%, transparent 75%, rgba(0, 240, 255, 0.15) 75%, rgba(0, 240, 255, 0.15));
+        linear-gradient(60deg, oklch(0.85 0.18 195 / 0.15) 25%, transparent 25.5%, transparent 75%, oklch(0.85 0.18 195 / 0.15) 75%, oklch(0.85 0.18 195 / 0.15)),
+        linear-gradient(60deg, oklch(0.85 0.18 195 / 0.15) 25%, transparent 25.5%, transparent 75%, oklch(0.85 0.18 195 / 0.15) 75%, oklch(0.85 0.18 195 / 0.15));
     background-size: 80px 140px;
     background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
     opacity: 0.08;
@@ -76,8 +76,8 @@
     background: repeating-linear-gradient(90deg,
             transparent,
             transparent 2px,
-            rgba(0, 255, 157, 0.1) 2px,
-            rgba(0, 255, 157, 0.1) 4px);
+            oklch(0.87 0.23 160 / 0.1) 2px,
+            oklch(0.87 0.23 160 / 0.1) 4px);
     animation: speed-blur 0.3s linear infinite;
 }
 
@@ -101,14 +101,14 @@
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: #333;
-    border: 1px solid #555;
+    background: oklch(0.3 0 0);
+    border: 1px solid oklch(0.4 0 0);
     transition: all 0.2s ease;
-}
 
-.pit-light.active {
-    background: var(--careers-crt-green);
-    box-shadow: 0 0 15px var(--careers-crt-green);
+    &.active {
+        background: var(--careers-crt-green);
+        box-shadow: 0 0 15px var(--careers-crt-green);
+    }
 }
 
 /* ============================================================================
@@ -125,8 +125,8 @@
 /* CRT Scanlines Effect */
 .crt-scanlines {
     background: repeating-linear-gradient(0deg,
-            rgba(0, 0, 0, 0.3),
-            rgba(0, 0, 0, 0.3) 1px,
+            oklch(0 0 0 / 0.3),
+            oklch(0 0 0 / 0.3) 1px,
             transparent 1px,
             transparent 2px);
     pointer-events: none;
@@ -148,14 +148,14 @@
     background: var(--careers-frost);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid oklch(1 0 0 / 0.1);
 }
 
 .glass-card-deep {
-    background: rgba(255, 255, 255, 0.04);
+    background: oklch(1 0 0 / 0.04);
     backdrop-filter: blur(32px);
     -webkit-backdrop-filter: blur(32px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid oklch(1 0 0 / 0.05);
 }
 
 /* Concentric Circles Animation */
@@ -176,14 +176,14 @@
 /* Racing Grid Pattern */
 .racing-grid {
     background-image:
-        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        linear-gradient(90deg, oklch(1 0 0 / 0.05) 1px, transparent 1px),
+        linear-gradient(oklch(1 0 0 / 0.05) 1px, transparent 1px);
     background-size: 20px 20px;
 }
 
 /* Tire Smoke Effect */
 .tire-smoke {
-    background: radial-gradient(ellipse at center, rgba(51, 51, 51, 0.8) 0%, transparent 70%);
+    background: radial-gradient(ellipse at center, oklch(0.3 0 0 / 0.8) 0%, transparent 70%);
 }
 
 /* ============================================================================
@@ -193,24 +193,24 @@
 /* Laser Etched Text Effect */
 .laser-etch {
     background: linear-gradient(180deg,
-            rgba(255, 255, 255, 0.9) 0%,
-            rgba(255, 255, 255, 1) 50%,
-            rgba(255, 255, 255, 0.8) 100%);
+            oklch(1 0 0 / 0.9) 0%,
+            oklch(1 0 0 / 1) 50%,
+            oklch(1 0 0 / 0.8) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     text-shadow:
-        0 1px 0 rgba(0, 0, 0, 0.1),
-        0 2px 0 rgba(0, 0, 0, 0.08),
-        0 3px 0 rgba(0, 0, 0, 0.06);
+        0 1px 0 oklch(0 0 0 / 0.1),
+        0 2px 0 oklch(0 0 0 / 0.08),
+        0 3px 0 oklch(0 0 0 / 0.06);
 }
 
 /* Checkered Flag Pattern */
 .checkered-flag {
     background-image:
-        linear-gradient(45deg, #000 25%, transparent 25%),
-        linear-gradient(-45deg, #000 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, #000 75%),
-        linear-gradient(-45deg, transparent 75%, #000 75%);
+        linear-gradient(45deg, oklch(0 0 0) 25%, transparent 25%),
+        linear-gradient(-45deg, oklch(0 0 0) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, oklch(0 0 0) 75%),
+        linear-gradient(-45deg, transparent 75%, oklch(0 0 0) 75%);
     background-size: 20px 20px;
     background-position: 0 0, 0 10px, 10px -10px, -10px 0;
 }
@@ -265,19 +265,19 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: #222;
-    border: 2px solid #444;
+    background: oklch(0.25 0 0);
+    border: 2px solid oklch(0.35 0 0);
     transition: all 0.15s ease;
-}
 
-.tree-light.staging {
-    background: #ffbf00;
-    box-shadow: 0 0 20px #ffbf00;
-}
+    &.staging {
+        background: oklch(0.85 0.18 85);
+        box-shadow: 0 0 20px oklch(0.85 0.18 85);
+    }
 
-.tree-light.go {
-    background: #00ff00;
-    box-shadow: 0 0 30px #00ff00;
+    &.go {
+        background: oklch(0.8 0.25 140);
+        box-shadow: 0 0 30px oklch(0.8 0.25 140);
+    }
 }
 
 /* Timing Beam */
@@ -285,7 +285,7 @@
     height: 2px;
     background: linear-gradient(90deg,
             transparent,
-            #ff0000,
+            oklch(0.63 0.25 25),
             transparent);
     animation: beam-pulse 1s ease-in-out infinite;
 }

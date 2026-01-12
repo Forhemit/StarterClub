@@ -15,7 +15,13 @@
         "dev": "turbo dev --filter=@starter-club/marketing-website --filter=@starter-club/onboard-app --filter=@starter-club/super-admin --filter=@starter-club/flight-deck",
         "build": "turbo run build",
         "db:generate-types": "npx supabase gen types typescript --project-id $PROJECT_ID > packages/shared-types/src/database.types.ts",
-        "check-safety": "./scripts/check-env-safety.sh"
+        "check-safety": "./scripts/check-env-safety.sh",
+        "test": "npm run test --workspace=@starter-club/marketing-website --workspace=@starter-club/onboard-app --workspace=@starter-club/super-admin --workspace=@starter-club/flight-deck",
+        "test:marketing": "npm run test --workspace=@starter-club/marketing-website",
+        "test:onboard": "npm run test --workspace=@starter-club/onboard-app",
+        "test:super-admin": "npm run test --workspace=@starter-club/super-admin",
+        "test:flight-deck": "npm run test --workspace=@starter-club/flight-deck",
+        "test:coverage": "npm run test:coverage --workspace=@starter-club/marketing-website --workspace=@starter-club/onboard-app --workspace=@starter-club/super-admin --workspace=@starter-club/flight-deck"
     },
     "devDependencies": {
         "concurrently": "^9.2.1",

@@ -1,6 +1,5 @@
 "use client";
 
-import { useHRTheme } from "@/themes/hrTheme";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 
@@ -16,10 +15,8 @@ interface ProgressJourneyProps {
 }
 
 export function ProgressJourney({ milestones }: ProgressJourneyProps) {
-    const { colors, isRacetrack } = useHRTheme();
-
     return (
-        <Card className={isRacetrack ? "border-orange-200 bg-gradient-to-br from-orange-50/50 to-teal-50/50" : ""}>
+        <Card>
             <CardHeader>
                 <CardTitle>Your Progress Journey</CardTitle>
             </CardHeader>
@@ -35,8 +32,7 @@ export function ProgressJourney({ milestones }: ProgressJourneyProps) {
                                 </div>
                                 <div className="relative h-3 w-full bg-muted rounded-full overflow-hidden">
                                     <motion.div
-                                        className="absolute top-0 left-0 h-full rounded-full"
-                                        style={{ background: isRacetrack ? `linear-gradient(90deg, ${colors.primary}, ${colors.secondary})` : colors.primary }}
+                                        className="absolute top-0 left-0 h-full rounded-full bg-primary"
                                         initial={{ width: 0 }}
                                         animate={{ width: `${percentage}%` }}
                                         transition={{ duration: 1, delay: idx * 0.1 }}

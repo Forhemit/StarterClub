@@ -1,6 +1,5 @@
 "use client";
 
-import { useHRTheme } from "@/themes/hrTheme";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -10,8 +9,6 @@ interface AchievementBadgesProps {
 }
 
 export function AchievementBadges({ badges }: AchievementBadgesProps) {
-    const { isRacetrack } = useHRTheme();
-
     if (!badges.length) return null;
 
     return (
@@ -21,8 +18,8 @@ export function AchievementBadges({ badges }: AchievementBadgesProps) {
                     <Tooltip key={idx}>
                         <TooltipTrigger>
                             <Badge
-                                variant={isRacetrack ? "default" : "secondary"}
-                                className={`text-lg p-2 ${isRacetrack ? 'bg-gradient-to-r from-orange-400 to-teal-400 border-none' : ''}`}
+                                variant="secondary"
+                                className="text-lg p-2"
                             >
                                 {getBadgeEmoji(badge)}
                             </Badge>

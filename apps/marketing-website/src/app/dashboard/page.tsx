@@ -10,10 +10,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
 import CompleteProfileNotice from '@/components/CompleteProfileNotice';
 
-import { PermissionGuard } from "@/components/auth/PermissionGuard";
-// import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
-// import { Button } from "@/components/ui/button";
-// import { ArrowRight, Sparkles, Building2, Hammer } from "lucide-react";
+import { ArrowRight, Sparkles, Building2, Hammer, Settings2 } from "lucide-react";
 
 import { RaceTrackDashboard } from "@/components/dashboard/RaceTrackDashboard";
 import { MemberDashboard } from "@/components/dashboard/MemberDashboard";
@@ -105,10 +102,30 @@ export default function DashboardPage() {
         profile?.active_roles?.[0] ||
         'guest';
 
+    const intent = profile?.primary_intent;
+
     const hasCompletedOnboarding = !!profile?.onboarding_completed_at;
 
     return (
         <div className="container mx-auto p-6 space-y-6">
+            <div className="flex justify-between items-center border-b border-border pb-4 mb-2">
+                <div>
+                    <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+                    {intent && (
+                        <p className="text-xs text-muted-foreground uppercase tracking-widest mt-1">
+                            Track: {intent.replace('_', ' ')}
+                        </p>
+                    )}
+                </div>
+                <Link
+                    href="/onboarding"
+                    className="text-xs font-semibold text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted/50 hover:bg-muted"
+                >
+                    <Settings2 size={14} />
+                    Update my journey
+                </Link>
+            </div>
+
             {/* Show notice if onboarding not completed */}
             {!hasCompletedOnboarding && userRole !== 'guest' && (
                 <CompleteProfileNotice
@@ -125,14 +142,46 @@ export default function DashboardPage() {
             {userRole === 'sponsor' && <SponsorDashboard />}
             {userRole === 'employee' && <EmployeeDashboard />}
 
-            {/* Fallbacks / Guest */}
+            {/* Fallbacks / Guest / Intent-Based Previews */}
             {userRole === 'guest' && (
-                <div className="text-center py-12">
-                    <h2 className="text-xl font-semibold mb-4">Welcome Guest</h2>
-                    <p className="text-muted-foreground mb-6">Please complete your onboarding to access the full platform.</p>
-                    <Link href="/onboarding" className="bg-primary text-primary-foreground px-4 py-2 rounded-md">
-                        Complete Onboarding
-                    </Link>
+                <div className="space-y-8">
+                    <div className="text-center py-12 bg-card border rounded-xl shadow-sm">
+                        <div className="bg-primary/10 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+                            <Sparkles className="w-8 h-8 text-primary" />
+                        </div>
+                        <h2 className="text-3xl font-bold mb-4 uppercase tracking-tighter">Welcome to the Club</h2>
+                        <p className="text-muted-foreground max-w-md mx-auto mb-8 font-light text-lg">
+                            {intent === 'explore'
+                                ? "You're currently exploring. Take a look at what's happening in the community below."
+                                : "Your journey is being prepared. Complete your full profile to unlock all features."}
+                        </p>
+                        <Link href="/onboarding" className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3 rounded-none font-bold uppercase tracking-tighter hover:translate-x-1 transition-all">
+                            Complete Onboarding <ArrowRight size={20} />
+                        </Link>
+                    </div>
+
+                    {/* Intent-Aware Widgets for Guests */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="p-6 bg-card border rounded-xl">
+                            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                                <Building2 size={24} className="text-primary" />
+                                Community Highlights
+                            </h3>
+                            <div className="space-y-4 opacity-70">
+                                <div className="h-20 bg-muted rounded animate-pulse" />
+                                <div className="h-20 bg-muted rounded animate-pulse" />
+                            </div>
+                        </div>
+                        <div className="p-6 bg-card border rounded-xl">
+                            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                                <Hammer size={24} className="text-primary" />
+                                Upcoming Events
+                            </h3>
+                            <div className="space-y-4 opacity-70">
+                                <div className="h-32 bg-muted rounded animate-pulse" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

@@ -11,15 +11,7 @@ function transformEvent(dbEvent: any): ComplianceEvent {
         id: dbEvent.id,
         title: dbEvent.title,
         description: dbEvent.description,
-        due_date: new Date(dbEvent.due_date), // Keep as Date for frontend consistency if needed, or better, return string to avoid confusion? The schema allows both now. Let's return the string from DB if possible, but DB returns string for date/timestamp? supabase-js returns string. new Date() matches old behavior for reading.
-        // Actually, if we want to fix the issue, we should probably return string if it's a date type column.
-        // But for now, let's stick to what the schema allows. Ideally we pass strings to frontend.
-        // Let's modify transformEvent to return string if we want "YYYY-MM-DD".
-        // BUT existing components expect Date object often (e.g. Calendar).
-        // Let's look at `transformEvent` line 14: `due_date: new Date(dbEvent.due_date)`.
-        // If we change this to string, we might break components expecting Date methods.
-        // We updated Schema to allow string OR date.
-        // Let's keep reading as Date for now to minimize breakage, but WRITING is the critical part.
+        // Return as Date for frontend consistency - components expect Date object for Calendar etc.
         due_date: new Date(dbEvent.due_date),
         status: dbEvent.status,
         category: dbEvent.category,
@@ -29,11 +21,12 @@ function transformEvent(dbEvent: any): ComplianceEvent {
     };
 }
 
+
 export async function getComplianceProfile(): Promise<ComplianceData> {
     const supabase = (await createSupabaseServerClient()) as any;
     const { userId } = await auth();
 
-    if (!userId) return { tax_events: [], registrations: [], licenses: [], documents: [] };
+    if (!userId) return { tax_events: [], registrations: [], licenses: [], other_documents: [], documents: [] };
 
     // Get Profile
     const { data: profile, error } = await supabase
@@ -43,7 +36,7 @@ export async function getComplianceProfile(): Promise<ComplianceData> {
         .single();
 
     if (error || !profile) {
-        return { tax_events: [], registrations: [], licenses: [], documents: [] };
+        return { tax_events: [], registrations: [], licenses: [], other_documents: [], documents: [] };
     }
 
     // Get Events
@@ -52,14 +45,14 @@ export async function getComplianceProfile(): Promise<ComplianceData> {
         .select('*')
         .eq('profile_id', profile.id);
 
-    const allEvents = (events || []).map(transformEvent);
+    const allEvents: ComplianceEvent[] = (events || []).map(transformEvent);
 
     return {
         id: profile.id,
-        tax_events: allEvents.filter(e => e.category === 'tax'),
-        registrations: allEvents.filter(e => e.category === 'registration'),
-        licenses: allEvents.filter(e => e.category === 'license'),
-        other_documents: allEvents.filter(e => e.category === 'other'),
+        tax_events: allEvents.filter((e: ComplianceEvent) => e.category === 'tax'),
+        registrations: allEvents.filter((e: ComplianceEvent) => e.category === 'registration'),
+        licenses: allEvents.filter((e: ComplianceEvent) => e.category === 'license'),
+        other_documents: allEvents.filter((e: ComplianceEvent) => e.category === 'other'),
         documents: []
     };
 }

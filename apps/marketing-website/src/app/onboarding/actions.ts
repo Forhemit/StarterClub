@@ -9,7 +9,14 @@ import { redirect } from 'next/navigation';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
-export async function completeOnboarding(selectedRoles: string[], primaryRole: string, departmentIds: string[] = []) {
+export async function completeOnboarding(
+    selectedRoles: string[],
+    primaryRole: string,
+    departmentIds: string[] = [],
+    primaryIntent?: string,
+    secondaryInterest?: string,
+    orgAffiliation?: string
+) {
     const { userId } = await auth();
 
     if (!userId) {
@@ -118,6 +125,9 @@ export async function completeOnboarding(selectedRoles: string[], primaryRole: s
             .from('profiles')
             .update({
                 onboarding_completed_at: new Date().toISOString(),
+                primary_intent: primaryIntent,
+                secondary_interest: secondaryInterest,
+                org_affiliation: orgAffiliation,
                 updated_at: new Date().toISOString()
             })
             .eq('id', userId);
@@ -154,7 +164,8 @@ export async function skipOnboarding() {
     await supabase
         .from('profiles')
         .update({
-            onboarding_completed_at: null, // Reset timestamp
+            onboarding_completed_at: new Date().toISOString(), // Use timestamp so they aren't stuck
+            primary_intent: 'explore', // Default intent for skips
             updated_at: new Date().toISOString()
         })
         .eq('id', userId);

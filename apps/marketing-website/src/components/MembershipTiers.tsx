@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown, MapPin, Hammer, Rocket, type LucideIcon } from "lucide-react";
 import { ComparisonModal } from "./ComparisonModal";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { FoundingMemberCTA } from "@/components/FoundingMemberCTA";
@@ -17,10 +17,8 @@ type TierFeature = {
 type PricingTier = {
     id: string;
     name: string;
-    icon: string;
-    color: string;
-    borderColor: string;
-    bgColor: string;
+    icon: LucideIcon;
+    variant: "default" | "secondary" | "accent"; // Semantic variants
     description: string;
     audience: string;
     features: TierFeature[];
@@ -32,10 +30,8 @@ const tiers: PricingTier[] = [
     {
         id: "starter-member",
         name: "Starter Member",
-        icon: "🟦",
-        color: "text-blue-600",
-        borderColor: "border-blue-100",
-        bgColor: "bg-blue-50/50",
+        icon: MapPin,
+        variant: "default",
         description: "For curious newcomers, early-stage dreamers, students, and locals exploring what’s possible.",
         audience: "Free",
         features: [
@@ -84,10 +80,8 @@ const tiers: PricingTier[] = [
     {
         id: "starter-builder",
         name: "Starter Builder",
-        icon: "🟩",
-        color: "text-green-600",
-        borderColor: "border-green-100",
-        bgColor: "bg-green-50/50",
+        icon: Hammer,
+        variant: "secondary",
         description: "For operators, freelancers, creatives, and founders who are actively building something and want structure, accountability, and real momentum.",
         audience: "Balanced",
         features: [
@@ -140,10 +134,8 @@ const tiers: PricingTier[] = [
     {
         id: "starter-founder",
         name: "Starter Founder",
-        icon: "🟥",
-        color: "text-red-600",
-        borderColor: "border-red-100",
-        bgColor: "bg-red-50/50",
+        icon: Rocket,
+        variant: "accent",
         description: "For serious builders ready for acceleration, deep support, and visibility. The “I’m building something real” tier.",
         audience: "Aspirational",
         features: [
@@ -228,59 +220,86 @@ export function MembershipTiers({ onWaitlistOpen }: MembershipTiersProps) {
                 {/* Accordion Layout */}
                 <div className="max-w-3xl mx-auto mb-32">
                     <Accordion type="single" collapsible defaultValue="starter-builder" className="space-y-4">
-                        {tiers.map((tier) => (
-                            <AccordionItem
-                                key={tier.id}
-                                value={tier.id}
-                                className={`rounded-2xl border overflow-hidden transition-all duration-300 border-black/5 bg-white data-[state=open]:shadow-lg data-[state=open]:ring-1 data-[state=open]:ring-black/5 ${tier.borderColor} data-[state=open]:${tier.bgColor} hover:border-black/10`}
-                            >
-                                <AccordionTrigger className="w-full flex items-center justify-between p-6 hover:no-underline [&[data-state=open]>div>svg]:rotate-180">
-                                    <div className="flex items-center gap-4 text-left">
-                                        <div className="text-3xl">{tier.icon}</div>
-                                        <div>
-                                            <h3 className="font-bebas text-2xl tracking-wide text-black">
-                                                {tier.name}
-                                            </h3>
-                                            <p className="font-sans text-xs font-bold uppercase tracking-wider text-black/40">
-                                                {tier.audience}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    {/* Chevron is handled by AccordionTrigger but getting custom styling right is tricky. 
-                                        Shadcn AccordionTrigger usually includes a Chevron. 
-                                        I should check accordion.tsx or bring my own Chevron and hide the default if needed.
-                                        But wait, standard simple AccordionTrigger usually contains the children AND the icon.
-                                        If I use the standard imports, I might get a default icon.
-                                        Let's assume I can compose the trigger content.
-                                    */}
-                                </AccordionTrigger>
-                                <AccordionContent className="px-6 pb-8 pt-0 border-t border-black/5">
-                                    <div className="pt-6">
-                                        <p className="font-sans text-black/70 leading-relaxed max-w-2xl mb-8 text-base">
-                                            {tier.description}
-                                        </p>
+                        {tiers.map((tier) => {
+                            const Icon = tier.icon;
+                            // Helper to get semantic colors based on variant
+                            const getVariantStyles = (variant: string) => {
+                                switch (variant) {
+                                    case 'secondary': return {
+                                        border: 'border-secondary',
+                                        bgOpen: 'data-[state=open]:bg-secondary/10',
+                                        iconColor: 'text-secondary-foreground',
+                                        checkColor: 'text-secondary-foreground'
+                                    };
+                                    case 'accent': return {
+                                        border: 'border-accent',
+                                        bgOpen: 'data-[state=open]:bg-accent/10',
+                                        iconColor: 'text-accent-foreground',
+                                        checkColor: 'text-accent-foreground'
+                                    };
+                                    default: return {
+                                        border: 'border-primary',
+                                        bgOpen: 'data-[state=open]:bg-primary/5',
+                                        iconColor: 'text-primary',
+                                        checkColor: 'text-primary'
+                                    };
+                                }
+                            };
 
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                            {tier.features.map((section, idx) => (
-                                                <div key={idx}>
-                                                    <h4 className={`font-sans font-bold text-xs uppercase tracking-widest mb-3 opacity-60`}>
-                                                        {section.category}
-                                                    </h4>
-                                                    <ul className="space-y-3">
-                                                        {section.items.map((item, i) => (
-                                                            <li key={i} className="flex items-start gap-3 text-sm text-black/80 leading-snug">
-                                                                <Check className={`w-4 h-4 mt-0.5 shrink-0 ${tier.color}`} />
-                                                                <span>{item}</span>
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            ))}
+                            const styles = getVariantStyles(tier.variant);
+
+                            return (
+                                <AccordionItem
+                                    key={tier.id}
+                                    value={tier.id}
+                                    className={`rounded-2xl border overflow-hidden transition-all duration-300 ${styles.border} bg-card data-[state=open]:shadow-lg data-[state=open]:ring-1 data-[state=open]:ring-ring/20 ${styles.bgOpen} hover:shadow-md`}
+                                >
+                                    <AccordionTrigger className="w-full flex items-center justify-between p-6 hover:no-underline [&[data-state=open]>div>div>svg]:rotate-180">
+                                        <div className="flex items-center gap-4 text-left">
+                                            <div className={`p-3 rounded-xl bg-muted ${styles.iconColor}`}>
+                                                <Icon className="w-6 h-6" />
+                                            </div>
+                                            <div>
+                                                <h3 className="font-bebas text-2xl tracking-wide text-foreground">
+                                                    {tier.name}
+                                                </h3>
+                                                <p className="font-sans text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                                                    {tier.audience}
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
-                                </AccordionContent>
-                            </AccordionItem>
-                        ))}
+                                        <div className="bg-muted rounded-full p-2 transition-transform duration-200">
+                                            <ChevronDown className="w-4 h-4 text-muted-foreground transition-transform duration-200" />
+                                        </div>
+                                    </AccordionTrigger>
+                                    <AccordionContent className="px-6 pb-8 pt-0 border-t border-border/50">
+                                        <div className="pt-6">
+                                            <p className="font-sans text-muted-foreground leading-relaxed max-w-2xl mb-8 text-base">
+                                                {tier.description}
+                                            </p>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                                {tier.features.map((section, idx) => (
+                                                    <div key={idx}>
+                                                        <h4 className={`font-sans font-bold text-xs uppercase tracking-widest mb-3 text-muted-foreground/80`}>
+                                                            {section.category}
+                                                        </h4>
+                                                        <ul className="space-y-3">
+                                                            {section.items.map((item, i) => (
+                                                                <li key={i} className="flex items-start gap-3 text-sm text-foreground/90 leading-snug">
+                                                                    <Check className={`w-4 h-4 mt-0.5 shrink-0 ${styles.checkColor}`} />
+                                                                    <span>{item}</span>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </AccordionContent>
+                                </AccordionItem>
+                            );
+                        })}
                     </Accordion>
                 </div>
 

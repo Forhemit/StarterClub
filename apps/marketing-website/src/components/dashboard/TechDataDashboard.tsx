@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import { CheckCircle2, Zap, BarChart3, ShieldCheck, Hammer, FileText, AlertOctagon, Rocket, Eye, ClipboardCheck } from 'lucide-react';
 import { Dashboard, Section, Row, MetricCard, ChartCard, TableCard, QuickActionPanel, SimpleChart } from './shared/DashboardComponents';
 
 const dataQualityIssues = [
@@ -18,7 +19,7 @@ export const TechDataDashboard = () => (
                     title="System Uptime"
                     value="99.95%"
                     trend="+0.02%"
-                    icon="✅"
+                    icon={CheckCircle2}
                     color="green"
                     detail="MTTR: 1.2 hours"
                 />
@@ -26,7 +27,7 @@ export const TechDataDashboard = () => (
                     title="API Response Time"
                     value="142ms"
                     trend="-8ms"
-                    icon="⚡"
+                    icon={Zap}
                     color="green"
                     detail="P95: 245ms"
                 />
@@ -34,7 +35,7 @@ export const TechDataDashboard = () => (
                     title="Data Freshness"
                     value="98.8%"
                     trend="+0.5%"
-                    icon="📊"
+                    icon={BarChart3}
                     color="green"
                     detail="Within SLA"
                 />
@@ -42,7 +43,7 @@ export const TechDataDashboard = () => (
                     title="Security Score"
                     value="A+"
                     trend="Stable"
-                    icon="🛡️"
+                    icon={ShieldCheck}
                     color="green"
                     detail="Last scan: 2 days ago"
                 />
@@ -106,7 +107,7 @@ export const TechDataDashboard = () => (
                     title="Active Projects"
                     value="8"
                     trend="On Track"
-                    icon="🔨"
+                    icon={Hammer}
                     color="blue"
                     detail="Next sprint starts Monday"
                 />
@@ -115,7 +116,7 @@ export const TechDataDashboard = () => (
                     title="Backlog Items"
                     value="24"
                     trend="+5"
-                    icon="📝"
+                    icon={FileText}
                     color="yellow"
                     detail="Prioritized by RICE"
                 />
@@ -124,7 +125,7 @@ export const TechDataDashboard = () => (
                     title="Incidents"
                     value="2"
                     trend="-1"
-                    icon="🚨"
+                    icon={AlertOctagon}
                     color="red"
                     detail="MTTR 1.8h"
                 />
@@ -139,25 +140,25 @@ export const TechDataDashboard = () => (
                         {
                             label: 'Deploy Updates',
                             pending: 3,
-                            icon: '🚀',
+                            icon: Rocket,
                             path: '/tech/deployments'
                         },
                         {
                             label: 'Monitor Systems',
                             alerts: 2,
-                            icon: '👁️',
+                            icon: Eye,
                             path: '/tech/monitoring'
                         },
                         {
                             label: 'Review Security',
                             scans: 1,
-                            icon: '🛡️',
+                            icon: ShieldCheck,
                             path: '/tech/security'
                         },
                         {
                             label: 'Data Governance',
                             policies: 4,
-                            icon: '📋',
+                            icon: ClipboardCheck,
                             path: '/tech/governance'
                         }
                     ]}
