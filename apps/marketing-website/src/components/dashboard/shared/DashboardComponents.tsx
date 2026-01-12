@@ -2,8 +2,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { LucideIcon, ArrowUp, ArrowDown, ExternalLink } from "lucide-react";
-import * as Icons from "lucide-react";
+import { LucideIcon, ArrowUp, ArrowDown, ExternalLink, TrendingUp, BarChart3, PieChart } from "lucide-react";
 import Link from "next/link";
 
 // --- Layout Components ---
@@ -77,16 +76,6 @@ const BaseCard = ({ title, width = 'full', children, className }: CardProps) => 
         twoThirds: "col-span-1 md:col-span-3",
     };
 
-    // Note: The Row component uses a simple grid. For more complex layouts (half/third), 
-    // we might need to adjust the Row to be a col-span-12 grid if we strictly follow width props in cards.
-    // For now, we'll treat cards as flexible items within the Grid.
-
-    // Actually, to support the complex layouts requested (1/3 + 2/3), Row needs to be a 12-col grid
-    // and children need col-span props. Let's adjust Row above if we want strict grid control, 
-    // or just let them stack.
-    // The USER's request implies specific widths. Let's make Row a flexible flex-wrap or 12-col grid.
-    // Let's go with a styling that allows resizing.
-
     return (
         <div className={cn(
             "rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900",
@@ -127,12 +116,12 @@ interface MetricCardProps {
     title: string;
     value: string | number;
     trend?: string;
-    icon?: string;
+    icon?: LucideIcon;
     color?: 'green' | 'yellow' | 'red' | 'blue';
     detail?: string;
 }
 
-export const MetricCard = ({ title, value, trend, icon, color = 'blue', detail }: MetricCardProps) => {
+export const MetricCard = ({ title, value, trend, icon: Icon, color = 'blue', detail }: MetricCardProps) => {
     const colorStyles = {
         green: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 ring-emerald-600/20",
         red: "text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 ring-rose-600/20",
@@ -166,7 +155,7 @@ export const MetricCard = ({ title, value, trend, icon, color = 'blue', detail }
                         </div>
                     </div>
                     <div className={cn("rounded-lg p-2 ring-1 ring-inset shrink-0", colorStyles[color])}>
-                        <span className="text-lg">{icon || "📊"}</span>
+                        {Icon ? <Icon className="w-5 h-5" /> : <BarChart3 className="w-5 h-5" />}
                     </div>
                 </div>
                 {detail && (
@@ -246,7 +235,7 @@ export const ActionList = ({ items }: { items: ActionItem[] }) => (
 
 interface QuickAction {
     label: string;
-    icon: string;
+    icon: LucideIcon;
     path: string;
     count?: number;
     amount?: string;
@@ -270,24 +259,29 @@ interface QuickAction {
 
 export const QuickActionPanel = ({ actions }: { actions: QuickAction[] }) => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
-        {actions.map((action, i) => (
-            <Link
-                key={i}
-                href={action.path}
-                className="group flex flex-col p-4 rounded-xl border border-zinc-200 bg-white hover:border-blue-500 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-blue-500 transition-all cursor-pointer"
-            >
-                <div className="flex items-center justify-between mb-3">
-                    <span className="text-2xl">{action.icon}</span>
-                    <ArrowUp className="w-4 h-4 text-zinc-400 group-hover:text-blue-500 rotate-45 transition-colors" />
-                </div>
-                <span className="font-semibold text-zinc-900 dark:text-white mb-1 group-hover:text-blue-500 transition-colors">
-                    {action.label}
-                </span>
-                <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                    {Object.entries(action).find(([key]) => !['label', 'icon', 'path'].includes(key))?.[1] || 'Action'} {Object.entries(action).find(([key]) => !['label', 'icon', 'path'].includes(key))?.[0]}
-                </span>
-            </Link>
-        ))}
+        {actions.map((action, i) => {
+            const Icon = action.icon;
+            return (
+                <Link
+                    key={i}
+                    href={action.path}
+                    className="group flex flex-col p-4 rounded-xl border border-zinc-200 bg-white hover:border-blue-500 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-blue-500 transition-all cursor-pointer"
+                >
+                    <div className="flex items-center justify-between mb-3">
+                        <span className="text-2xl text-blue-600/80 group-hover:text-blue-600 transition-colors">
+                            <Icon className="w-8 h-8" />
+                        </span>
+                        <ArrowUp className="w-4 h-4 text-zinc-400 group-hover:text-blue-500 rotate-45 transition-colors" />
+                    </div>
+                    <span className="font-semibold text-zinc-900 dark:text-white mb-1 group-hover:text-blue-500 transition-colors">
+                        {action.label}
+                    </span>
+                    <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                        {Object.entries(action).find(([key]) => !['label', 'icon', 'path'].includes(key))?.[1] || 'Action'} {Object.entries(action).find(([key]) => !['label', 'icon', 'path'].includes(key))?.[0]}
+                    </span>
+                </Link>
+            );
+        })}
     </div>
 );
 
@@ -334,10 +328,13 @@ export const AlertCard = ({ title, level, affected, trigger, action }: AlertCard
 
 export const SimpleChart = ({ data, type }: { data: any, type: string }) => (
     <div className="w-full h-full min-h-[250px] flex items-center justify-center flex-col p-4 text-center">
-        <span className="text-4xl mb-4 text-zinc-300 dark:text-zinc-700">{type === 'line' ? '📈' : type === 'bar' ? '📊' : '🥧'}</span>
+        <span className="mb-4 text-zinc-300 dark:text-zinc-700">
+            {type === 'line' ? <TrendingUp className="w-10 h-10" /> : type === 'bar' ? <BarChart3 className="w-10 h-10" /> : <PieChart className="w-10 h-10" />}
+        </span>
         <p className="text-sm font-mono text-zinc-500 dark:text-zinc-400 max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
             {JSON.stringify(data).substring(0, 100)}...
         </p>
         <p className="mt-2 text-xs text-zinc-400">(Visualization Placeholder)</p>
     </div>
 );
+

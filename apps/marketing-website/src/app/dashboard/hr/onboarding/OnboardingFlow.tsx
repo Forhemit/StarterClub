@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { CelebrationEffects } from '@/components/hr/Gamification/CelebrationEffects';
 import { AchievementBadges } from '@/components/hr/Gamification/AchievementBadges';
 import { EmployeeCard } from '@/components/hr/Interactive/EmployeeCard';
-import { useHRTheme } from '@/themes/hrTheme';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { updateOnboardingStep, getOnboardingProgress } from "@/actions/hr-onboarding";
@@ -40,7 +39,6 @@ export default function OnboardingFlow({ newHireId, initialProgress }: Onboardin
     const [completedSteps, setCompletedSteps] = useState<string[]>(initialProgress?.completed_steps || []);
     const [totalPoints, setTotalPoints] = useState(initialProgress?.total_points || 0);
     const [showCelebration, setShowCelebration] = useState(false);
-    const { colors, isRacetrack, classes } = useHRTheme();
 
     useEffect(() => {
         if (!initialProgress) {
@@ -139,7 +137,7 @@ export default function OnboardingFlow({ newHireId, initialProgress }: Onboardin
             {showCelebration && <CelebrationEffects type="badge" />}
 
             {/* Progress Header */}
-            <div className={`p - 6 rounded - xl shadow - lg relative overflow - hidden ${classes?.primaryGradient || 'bg-blue-600'} `}>
+            <div className="p-6 rounded-xl shadow-lg relative overflow-hidden bg-primary">
                 <div className="flex justify-between items-center relative z-10">
                     <div>
                         <h2 className="text-2xl font-bold text-white">Onboarding Adventure</h2>
@@ -174,7 +172,7 @@ export default function OnboardingFlow({ newHireId, initialProgress }: Onboardin
                             <p className="text-muted-foreground">{steps[currentStep].description}</p>
                         </div>
                         <div className="text-right">
-                            <div className="text-2xl font-bold" style={{ color: colors.primary }}>
+                            <div className="text-2xl font-bold text-primary">
                                 {steps[currentStep].points} pts
                             </div>
                             <div className="text-sm">Reward</div>
@@ -196,13 +194,8 @@ export default function OnboardingFlow({ newHireId, initialProgress }: Onboardin
 
                         <Button
                             onClick={() => completeStep(steps[currentStep].id, steps[currentStep].points)}
-                            className="px-6 text-white font-medium"
+                            className="px-6"
                             disabled={completedSteps.includes(steps[currentStep].id)}
-                            style={{
-                                background: isRacetrack
-                                    ? `linear - gradient(135deg, ${colors.primary}, ${colors.secondary})`
-                                    : `linear - gradient(135deg, ${colors.primary}, ${colors.secondary})`
-                            }}
                         >
                             {completedSteps.includes(steps[currentStep].id) ? "Completed" : `Complete Step & Earn ${steps[currentStep].points} Points`}
                         </Button>
@@ -227,10 +220,10 @@ export default function OnboardingFlow({ newHireId, initialProgress }: Onboardin
                             key={step.id}
                             onClick={() => setCurrentStep(index)}
                             className={`p - 3 rounded - lg text - center transition - all border ${isCompleted
-                                    ? 'bg-green-100 border-green-500 text-green-700 dark:bg-green-900/20'
-                                    : isActive
-                                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                                        : 'bg-muted border-transparent hover:bg-muted/80'
+                                ? 'bg-green-100 border-green-500 text-green-700 dark:bg-green-900/20'
+                                : isActive
+                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                    : 'bg-muted border-transparent hover:bg-muted/80'
                                 } `}
                         >
                             <div className="font-medium text-sm">{step.title.split(' ')[1]}</div>

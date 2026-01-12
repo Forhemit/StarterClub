@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,7 +27,7 @@ import { ArrowLeft, ArrowRight, Save, RotateCcw, Eye, CheckCircle2, Loader2, Lay
 import { toast } from "sonner";
 import { type SaveStatus } from "@/components/ui/auto-save-indicator";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCallback } from "react";
+
 import { Step1FinancialOverview } from "./Step1FinancialOverview";
 import { Step1bFinancialMetrics } from "./Step1bFinancialMetrics";
 import { Step2CashFlowAnalysis } from "./Step2CashFlowAnalysis";
@@ -44,6 +44,7 @@ import { FinancialResiliencePreview } from "./FinancialResiliencePreview";
 import { saveFinancialResilienceProfile, getFinancialResilienceProfile, deleteFinancialResilienceProfile, FinancialResilienceData } from "@/actions/resilience";
 import { ModuleErrorBoundary } from "@/components/ui/module-error-boundary";
 import { WizardSkeleton } from "@/components/ui/wizard-skeleton";
+import { useOrganization } from "@/hooks/useOrganization";
 
 const WIZARD_STEPS = [
     {
@@ -122,6 +123,8 @@ const WIZARD_STEPS = [
 
 export function FinancialResilienceWizard() {
     const router = useRouter();
+    const { organization, isLoading: isOrgLoading } = useOrganization();
+
     const [currentStep, setCurrentStep] = useState(0);
     const [showPreview, setShowPreview] = useState(false);
     const [resetKey, setResetKey] = useState(0);
@@ -143,9 +146,14 @@ export function FinancialResilienceWizard() {
 
     // Manual Save Handler
     const handleSave = useCallback(async () => {
+        if (!organization?.id) {
+            toast.error("No organization selected");
+            return;
+        }
+
         setSaveStatus("saving");
         try {
-            const result = await saveFinancialResilienceProfile(profileData);
+            const result = await saveFinancialResilienceProfile(profileData, organization.id);
             if (result.error) {
                 setSaveStatus("error");
                 toast.error(result.error || "Failed to save");
@@ -159,17 +167,23 @@ export function FinancialResilienceWizard() {
             setSaveStatus("error");
             toast.error("Failed to save");
         }
-    }, [profileData]);
+    }, [profileData, organization?.id]);
 
     // Load existing profile on mount
     useEffect(() => {
         async function loadProfile() {
+            if (isOrgLoading) return;
+
             setIsLoading(true);
             try {
-                const existingProfile = await getFinancialResilienceProfile();
-                if (existingProfile) {
-                    setProfileData(existingProfile);
-                    setSaveStatus("saved");
+                // Infer org if not available or pass it explicitly
+                // If isOrgLoading is false but organization is null, we can't fetch.
+                if (organization?.id) {
+                    const existingProfile = await getFinancialResilienceProfile(organization.id);
+                    if (existingProfile) {
+                        setProfileData(existingProfile);
+                        setSaveStatus("saved");
+                    }
                 }
             } catch (error) {
                 console.error("Failed to load profile:", error);
@@ -178,7 +192,7 @@ export function FinancialResilienceWizard() {
             }
         }
         loadProfile();
-    }, []);
+    }, [organization?.id, isOrgLoading]);
 
     const updateData = useCallback((newData: Partial<FinancialResilienceData>) => {
         setProfileData(prev => ({ ...prev, ...newData }));
@@ -222,9 +236,11 @@ export function FinancialResilienceWizard() {
     };
 
     const confirmDelete = async () => {
+        if (!organization?.id) return;
+
         setIsDeleting(true);
         try {
-            const result = await deleteFinancialResilienceProfile();
+            const result = await deleteFinancialResilienceProfile(organization.id);
             if (result.success) {
                 setProfileData({
                     targetMonthsCoverage: 6,
@@ -236,6 +252,7 @@ export function FinancialResilienceWizard() {
                 setCurrentStep(0);
                 setResetKey(prev => prev + 1);
                 setSaveStatus("idle");
+                setShowResetConfirm(false);
                 toast.success("All data permanently deleted");
             } else {
                 toast.error(result.error || "Failed to delete data");
@@ -249,12 +266,17 @@ export function FinancialResilienceWizard() {
     };
 
     const handleComplete = async () => {
+        if (!organization?.id) {
+            toast.error("No organization selected");
+            return;
+        }
+
         setSaveStatus("saving");
         try {
             const result = await saveFinancialResilienceProfile({
                 ...profileData,
                 completedAt: new Date().toISOString()
-            });
+            }, organization.id);
             if (result.error) {
                 toast.error(result.error);
                 setSaveStatus("error");
@@ -262,7 +284,7 @@ export function FinancialResilienceWizard() {
                 setSaveStatus("saved");
                 setLastSaved(new Date());
                 toast.success("Financial Resilience profile completed!");
-                router.push("/dashboard/resilience");
+                router.push("/dashboard/marketplace/financial-resilience");
             }
         } catch (error) {
             toast.error("Failed to save profile");
@@ -298,7 +320,7 @@ export function FinancialResilienceWizard() {
         </div>
     );
 
-    if (isLoading) {
+    if (isLoading || isOrgLoading) {
         return <WizardSkeleton />;
     }
 

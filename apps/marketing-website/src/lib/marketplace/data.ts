@@ -153,8 +153,8 @@ export const MARKETPLACE_MODULES: MarketplaceModule[] = [
             "Vendor contact directory"
         ],
         longDescription: "Stop paying for unused software and missing renewal dates. The Vendor Management System gives you a centralized view of all external relationships and their associated costs.",
-        lastUpdated: "2025-11-15T00:00:00Z",
-        createdDate: "2025-11-15T00:00:00Z"
+        lastUpdated: "2026-01-04T12:00:00Z",
+        createdDate: "2026-01-04T12:00:00Z"
     },
     {
         id: "compliance-tracking",

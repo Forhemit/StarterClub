@@ -6,82 +6,40 @@ import {
   Bebas_Neue,
   Inter,
   Syne,
-  Space_Mono,
-  Chakra_Petch,
-  Orbitron,
-  DM_Serif_Display,
-  JetBrains_Mono,
-  Fira_Code,
 } from "next/font/google";
 import "./globals.css";
+import { OrganizationProvider } from "@/contexts/OrganizationContext";
 import { ToastProvider } from "@/context/ToastContext";
 import { Toaster } from "@/components/ui/Toaster";
 import { GlobalFormListener } from "@/components/GlobalFormListener";
 import { EnvironmentBanner, ThemeProvider } from "@starter-club/ui";
 
+// Primary body font - clean, professional, highly legible
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+});
+
+// Headline font - distinctive, modern, brand personality
+const syne = Syne({
+  variable: "--font-syne",
+  subsets: ["latin"],
+});
+
+// Racetrack mode font - kept for locked legacy theme
 const bebasNeue = Bebas_Neue({
   variable: "--font-bebas-neue",
   weight: "400",
   subsets: ["latin"],
 });
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
-
-const syne = Syne({
-  variable: "--font-syne",
-  subsets: ["latin"],
-});
-
-const spaceMono = Space_Mono({
-  variable: "--font-space-mono",
-  weight: ["400", "700"],
-  subsets: ["latin"],
-});
-
-// Careers Page Fonts - Corporate Theme
-const chakraPetch = Chakra_Petch({
-  variable: "--font-chakra-petch",
-  weight: ["400", "600", "700"],
-  subsets: ["latin"],
-});
-
-const dmSerifDisplay = DM_Serif_Display({
-  variable: "--font-dm-serif",
-  weight: "400",
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-});
-
-// Careers Page Fonts - Racing Theme
-const orbitron = Orbitron({
-  variable: "--font-orbitron",
-  weight: ["400", "700", "900"],
-  subsets: ["latin"],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains",
-  subsets: ["latin"],
-});
-
-const firaCode = Fira_Code({
-  variable: "--font-fira-code",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
   title: "Starter Club SF - Coming Soon",
-  description: "San Francisco is Done Waiting. It’s Time to Start. A workshop for founders, creators, and organizers.",
+  description: "San Francisco is Done Waiting. It's Time to Start. A workshop for founders, creators, and organizers.",
   icons: {
     icon: '/favicon.ico',
   },
 };
-
-
-
 
 export default function RootLayout({
   children,
@@ -92,7 +50,7 @@ export default function RootLayout({
     <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`${bebasNeue.variable} ${inter.variable} ${syne.variable} ${spaceMono.variable} ${chakraPetch.variable} ${dmSerifDisplay.variable} ${orbitron.variable} ${jetbrainsMono.variable} ${firaCode.variable} antialiased bg-background text-foreground`}
+          className={`${inter.variable} ${syne.variable} ${bebasNeue.variable} antialiased bg-background text-foreground`}
         >
           <ThemeProvider
             attribute="class"

@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import { BarChart3, CheckCircle2, DollarSign, Star, Leaf, Calendar, AlertOctagon, Package, CreditCard } from 'lucide-react';
 import { Dashboard, Section, Row, MetricCard, ChartCard, TableCard, ActionList, QuickActionPanel, SimpleChart, AlertCard } from './shared/DashboardComponents';
 
 const vendorPerformance = [
@@ -18,7 +19,7 @@ export const OperationsDashboard = () => (
                     title="Overall Utilization"
                     value="72.4%"
                     trend="+3.8%"
-                    icon="📊"
+                    icon={BarChart3}
                     color="green"
                     detail="Peak: 89% at 2 PM"
                 />
@@ -26,7 +27,7 @@ export const OperationsDashboard = () => (
                     title="Facility Up-Time"
                     value="99.8%"
                     trend="+0.1%"
-                    icon="✅"
+                    icon={CheckCircle2}
                     color="green"
                     detail="Last incident: 14 days ago"
                 />
@@ -34,7 +35,7 @@ export const OperationsDashboard = () => (
                     title="Cost per Member Hour"
                     value="$4.82"
                     trend="-$0.15"
-                    icon="💰"
+                    icon={DollarSign}
                     color="green"
                     detail="Below target of $5.20"
                 />
@@ -42,7 +43,7 @@ export const OperationsDashboard = () => (
                     title="Member Satisfaction"
                     value="4.6/5"
                     trend="+0.1"
-                    icon="⭐"
+                    icon={Star}
                     color="green"
                     detail="Facility-related feedback"
                 />
@@ -122,7 +123,7 @@ export const OperationsDashboard = () => (
                     title="Sustainability"
                     value="LEED Gold"
                     trend="Improving"
-                    icon="🌿"
+                    icon={Leaf}
                     color="green"
                     detail="Energy down 12%"
                 />
@@ -147,25 +148,25 @@ export const OperationsDashboard = () => (
                         {
                             label: 'Manage Bookings',
                             conflicts: 2,
-                            icon: '📅',
+                            icon: Calendar,
                             path: '/operations/bookings'
                         },
                         {
                             label: 'Review Incidents',
                             open: 3,
-                            icon: '🚨',
+                            icon: AlertOctagon,
                             path: '/operations/incidents'
                         },
                         {
                             label: 'Order Supplies',
                             lowStock: 5,
-                            icon: '📦',
+                            icon: Package,
                             path: '/operations/inventory'
                         },
                         {
                             label: 'Vendor Payments',
                             pending: '$8,450',
-                            icon: '💳',
+                            icon: CreditCard,
                             path: '/operations/vendors'
                         }
                     ]}

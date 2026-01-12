@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import { Target, Users, TrendingUp, ScrollText, BarChart3, Heart } from 'lucide-react';
 import { Dashboard, Section, Row, MetricCard, ChartCard, TableCard, ActionList, QuickActionPanel, SimpleChart, AlertCard } from './shared/DashboardComponents';
 
 const departmentStrategicPerformance = [
@@ -18,7 +19,7 @@ export const StrategyDashboard = () => (
                     title="Mission Alignment Score"
                     value="92%"
                     trend="+3%"
-                    icon="🎯"
+                    icon={Target}
                     color="green"
                     detail="Based on strategic initiatives"
                 />
@@ -26,7 +27,7 @@ export const StrategyDashboard = () => (
                     title="Stakeholder Trust Index"
                     value="4.8/5"
                     trend="+0.2"
-                    icon="🤝"
+                    icon={Users}
                     color="green"
                     detail="Partners, members, community"
                 />
@@ -34,7 +35,7 @@ export const StrategyDashboard = () => (
                     title="Long-Term Value Creation"
                     value="A+"
                     trend="Stable"
-                    icon="📈"
+                    icon={TrendingUp}
                     color="green"
                     detail="5-year projection"
                 />
@@ -42,7 +43,7 @@ export const StrategyDashboard = () => (
                     title="Benefit Charter Progress"
                     value="78%"
                     trend="+8%"
-                    icon="📜"
+                    icon={ScrollText}
                     color="blue"
                     detail="Annual goals achievement"
                 />
@@ -138,25 +139,25 @@ export const StrategyDashboard = () => (
                         {
                             label: 'Review Strategy',
                             period: 'quarterly',
-                            icon: '🎯',
+                            icon: Target,
                             path: '/strategy/review'
                         },
                         {
                             label: 'Meet Dept Heads',
                             scheduled: 4,
-                            icon: '👥',
+                            icon: Users,
                             path: '/strategy/meetings'
                         },
                         {
                             label: 'Assess Impact',
                             metrics: 28,
-                            icon: '📊',
+                            icon: BarChart3,
                             path: '/strategy/impact'
                         },
                         {
                             label: 'Steward Culture',
                             initiatives: 3,
-                            icon: '❤️',
+                            icon: Heart,
                             path: '/strategy/culture'
                         }
                     ]}

@@ -43,9 +43,8 @@ export default clerkMiddleware(async (auth, req) => {
             // Check Supabase profile for role and onboarding status
             const { data: profile } = await supabase
                 .from('profiles')
-                .select('active_roles, primary_role, onboarding_completed_at')
+                .select('active_roles, primary_role, onboarding_completed_at, primary_intent')
                 .eq('id', userId)
-                .maybeSingle();
 
             const hasRoles = profile?.active_roles && profile.active_roles.length > 0;
             const onboardingCompleted = !!profile?.onboarding_completed_at;
@@ -72,15 +71,32 @@ export default clerkMiddleware(async (auth, req) => {
                 }
             }
 
-            // 3. Fallback to existing metadata checks if DB check fails or is skipped?
-            // Existing metadata logic works for context onboarding, can keep it as secondary
-            // Or remove it if database is source of truth.
-            // Let's keep it for now as it handles specific "Context" steps which might be separate from "Role" setup.
+            // 3. Smart Routing Outcomes
+            // Everyone lands in Home Base, but Home Base is contextualized.
+            // Some intents might require extra orientation.
+
+            const hasCompletedOnboarding = !!profile?.onboarding_completed_at;
+            const intent = profile?.primary_intent;
+
+            // Handle additional orientation steps based on intent
+            if (hasCompletedOnboarding) {
+                if (intent === 'builder' && !isMemberOnboardingRoute(req)) {
+                    // Check if member context is needed
+                    // (For now, let's assume it's still tracked in metadata or needs a DB check)
+                    // If we want to be safe, we can check if they've seen it.
+                }
+
+                if (intent === 'partner' && !isPartnerOnboardingRoute(req)) {
+                    // Use the existing partner onboarding check
+                }
+            }
+
+            // Fallback to existing metadata checks if DB check fails or is skipped?
             const { sessionClaims } = await auth();
             const metadata = sessionClaims?.publicMetadata as { onboardingComplete?: boolean; userTrack?: string; memberContextComplete?: boolean; partnerContextComplete?: boolean };
 
-            if (metadata?.onboardingComplete &&
-                metadata?.userTrack === 'build_something' &&
+            if (hasCompletedOnboarding &&
+                (intent === 'builder' || metadata?.userTrack === 'build_something') &&
                 !metadata?.memberContextComplete &&
                 !isMemberOnboardingRoute(req)) {
 
@@ -88,8 +104,8 @@ export default clerkMiddleware(async (auth, req) => {
                 return NextResponse.redirect(contextUrl);
             }
 
-            if (metadata?.onboardingComplete &&
-                metadata?.userTrack === 'support_builders' &&
+            if (hasCompletedOnboarding &&
+                (intent === 'partner' || metadata?.userTrack === 'support_builders') &&
                 !metadata?.partnerContextComplete &&
                 !isPartnerOnboardingRoute(req)) {
 

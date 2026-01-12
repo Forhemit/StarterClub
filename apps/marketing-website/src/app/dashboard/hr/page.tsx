@@ -6,60 +6,77 @@ import { ProgressJourney } from '@/components/hr/Gamification/ProgressJourney';
 import { HRMetricsOverview } from '@/components/hr/analytics/HRMetricsOverview';
 import { RecentActivityFeed } from '@/components/hr/Shared/ActivityFeed';
 import { ModuleGrid } from '@/components/hr/Shared/ModuleGrid';
-import { useHRTheme } from '@/themes/hrTheme';
+import {
+    User,
+    Star,
+    TrendingUp,
+    Clock,
+    Heart,
+    PieChart,
+    Plus,
+    Target,
+    CheckCircle,
+    ClipboardList
+} from 'lucide-react';
 
 export default function HRDashboard() {
-    const { theme, isRacetrack, colors } = useHRTheme();
-
+    // Using Lucide icons instead of emojis
     const modules = [
         {
             title: 'Employee Onboarding',
-            icon: '👤',
+            icon: User,
             description: 'Streamline new hire experience',
             progress: 85,
-            color: colors.primary,
+            color: 'hsl(var(--primary))',
             href: '/dashboard/hr/onboarding'
         },
         {
             title: 'Talent Management',
-            icon: '⭐',
+            icon: Star,
             description: 'Interview to offer workflows',
             progress: 60,
-            color: colors.secondary,
+            color: 'hsl(var(--accent))',
             href: '/dashboard/hr/talent'
         },
         {
             title: 'Performance Reviews',
-            icon: '📈',
+            icon: TrendingUp,
             description: 'Goal setting & feedback',
             progress: 45,
-            color: colors.accent,
+            color: 'hsl(var(--info))',
             href: '/dashboard/hr/performance'
         },
         {
             title: 'Time & Attendance',
-            icon: '⏰',
+            icon: Clock,
             description: 'Schedule & time tracking',
             progress: 90,
-            color: colors.success,
+            color: 'hsl(var(--success))',
             href: '/dashboard/hr/time'
         },
         {
             title: 'Benefits Hub',
-            icon: '🏥',
+            icon: Heart,
             description: 'Health, wellness, insurance',
             progress: 30,
-            color: colors.info,
+            color: 'hsl(var(--info))',
             href: '/dashboard/hr/benefits'
         },
         {
             title: 'HR Analytics',
-            icon: '📊',
+            icon: PieChart,
             description: 'Reports & insights',
             progress: 75,
-            color: colors.warning,
+            color: 'hsl(var(--warning))',
             href: '/dashboard/hr/analytics'
         }
+    ];
+
+    const quickActions = [
+        { label: 'Add New Employee', icon: Plus, action: 'createEmployee' },
+        { label: 'Start Interview', icon: Target, action: 'startInterview' },
+        { label: 'Approve Time Off', icon: CheckCircle, action: 'approveLeave' },
+        { label: 'Generate Reports', icon: ClipboardList, action: 'generateReport' }
     ];
 
     return (
@@ -87,14 +104,7 @@ export default function HRDashboard() {
 
                 {/* Right Column: Quick Actions & Activity */}
                 <div className="space-y-6">
-                    <QuickActionsPanel
-                        actions={[
-                            { label: 'Add New Employee', icon: '➕', action: 'createEmployee' },
-                            { label: 'Start Interview', icon: '🎯', action: 'startInterview' },
-                            { label: 'Approve Time Off', icon: '✅', action: 'approveLeave' },
-                            { label: 'Generate Reports', icon: '📋', action: 'generateReport' }
-                        ]}
-                    />
+                    <QuickActionsPanel actions={quickActions} />
 
                     <HRMetricsOverview />
                     <RecentActivityFeed limit={5} />
@@ -103,3 +113,4 @@ export default function HRDashboard() {
         </div>
     );
 }
+

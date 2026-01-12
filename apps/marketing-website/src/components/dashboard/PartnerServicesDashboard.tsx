@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import { Users, Heart, DollarSign, Target, Trophy, Lock, Calendar, Banknote, CheckCircle2, BookOpen } from 'lucide-react';
 import { Dashboard, Section, Row, MetricCard, ChartCard, TableCard, QuickActionPanel, SimpleChart, AlertCard } from './shared/DashboardComponents';
 
 const partnerReviews = [
@@ -18,7 +19,7 @@ export const PartnerServicesDashboard = () => (
                     title="Active Partners"
                     value="76"
                     trend="+8"
-                    icon="👥"
+                    icon={Users}
                     color="green"
                     detail="Including 12 new this quarter"
                 />
@@ -26,7 +27,7 @@ export const PartnerServicesDashboard = () => (
                     title="Avg Partner Satisfaction"
                     value="4.6/5"
                     trend="+0.3"
-                    icon="❤️"
+                    icon={Heart}
                     color="green"
                     detail="From quarterly reviews"
                 />
@@ -34,7 +35,7 @@ export const PartnerServicesDashboard = () => (
                     title="Profit Share Pool"
                     value="$124,850"
                     trend="+12.5%"
-                    icon="💰"
+                    icon={DollarSign}
                     color="green"
                     detail="Q2 distribution pool"
                 />
@@ -42,7 +43,7 @@ export const PartnerServicesDashboard = () => (
                     title="Enablement Completion"
                     value="78%"
                     trend="+15%"
-                    icon="🎯"
+                    icon={Target}
                     color="blue"
                     detail="Required training & certifications"
                 />
@@ -118,7 +119,7 @@ export const PartnerServicesDashboard = () => (
                     title="Perf Bonuses Awarded"
                     value="$28.5k"
                     trend="May 15"
-                    icon="🏆"
+                    icon={Trophy}
                     color="yellow"
                     detail="15 recipients"
                 />
@@ -127,7 +128,7 @@ export const PartnerServicesDashboard = () => (
                     title="Retention Locked"
                     value="$156k"
                     trend="4 Yr Vest"
-                    icon="🔒"
+                    icon={Lock}
                     color="blue"
                     detail="Next cliff: Dec 2024"
                 />
@@ -142,25 +143,25 @@ export const PartnerServicesDashboard = () => (
                         {
                             label: 'Schedule Reviews',
                             overdue: 5,
-                            icon: '📅',
+                            icon: Calendar,
                             path: '/partners/reviews'
                         },
                         {
                             label: 'Process Profit Share',
                             pending: '$124,850',
-                            icon: '💸',
+                            icon: Banknote,
                             path: '/partners/profit-share'
                         },
                         {
                             label: 'Approve Requests',
                             count: 8,
-                            icon: '✅',
+                            icon: CheckCircle2,
                             path: '/partners/requests'
                         },
                         {
                             label: 'Update Enablement',
                             modules: 3,
-                            icon: '📚',
+                            icon: BookOpen,
                             path: '/partners/enablement'
                         }
                     ]}
