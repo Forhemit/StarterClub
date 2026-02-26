@@ -3,7 +3,7 @@ import { useAuth } from '@clerk/nextjs';
 import { useMemo } from 'react';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 export function useSupabase() {
     const { getToken } = useAuth();

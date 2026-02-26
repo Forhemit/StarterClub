@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import { Building2, DollarSign, Heart, Shield, BarChart3, Search, Lock, Rocket } from 'lucide-react';
 import { Dashboard, Section, Row, GridRow, ColWrapper, MetricCard, ChartCard, TableCard, QuickActionPanel, SimpleChart, AlertCard, ActionList } from './shared/DashboardComponents';
 import { RoleSwitcher } from './RoleSwitcher';
 import { MemberDashboardView } from './MemberDashboardView';
@@ -53,7 +54,7 @@ export const SuperAdminDashboard = () => {
                                     title="Total Enterprise Value"
                                     value="$8.2M"
                                     trend="+12.8%"
-                                    icon="🏢"
+                                    icon={Building2}
                                     color="green"
                                     detail="Multiple: 8.5x EBITDA"
                                 />
@@ -61,7 +62,7 @@ export const SuperAdminDashboard = () => {
                                     title="Recurring Revenue (MRR)"
                                     value="$428,500"
                                     trend="+8.2%"
-                                    icon="💰"
+                                    icon={DollarSign}
                                     color="green"
                                     detail="Annualized: $5.14M"
                                 />
@@ -69,7 +70,7 @@ export const SuperAdminDashboard = () => {
                                     title="Enterprise Health"
                                     value="92/100"
                                     trend="+4"
-                                    icon="❤️"
+                                    icon={Heart}
                                     color="green"
                                     detail="Ops, Fin, Culture"
                                 />
@@ -77,7 +78,7 @@ export const SuperAdminDashboard = () => {
                                     title="System Security"
                                     value="A+"
                                     trend="Stable"
-                                    icon="🛡️"
+                                    icon={Shield}
                                     color="green"
                                     detail="0 Breaches"
                                 />
@@ -261,10 +262,10 @@ export const SuperAdminDashboard = () => {
                             {/* Quick Actions Grid */}
                             <QuickActionPanel
                                 actions={[
-                                    { label: 'Generate Exec Report', icon: '📊', path: '/superadmin/reports' },
-                                    { label: 'Audit System', icon: '🔍', path: '/superadmin/audit' },
-                                    { label: 'Manage Permissions', icon: '🔐', path: '/superadmin/permissions' },
-                                    { label: 'Deploy Update', icon: '🚀', path: '/superadmin/deploy' }
+                                    { label: 'Generate Exec Report', icon: BarChart3, path: '/superadmin/reports' },
+                                    { label: 'Audit System', icon: Search, path: '/superadmin/audit' },
+                                    { label: 'Manage Permissions', icon: Lock, path: '/superadmin/permissions' },
+                                    { label: 'Deploy Update', icon: Rocket, path: '/superadmin/deploy' }
                                 ]}
                             />
                         </Section>

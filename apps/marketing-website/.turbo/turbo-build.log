@@ -1,41 +1,124 @@
 
-
 > @starter-club/marketing-website@0.1.0 build
 > next build
 
- [33m[1m⚠[22m[39m Warning: Next.js inferred your workspace root, but it may not be correct.
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
  We detected multiple lockfiles and selected the directory of /Users/stephenstokes/package-lock.json as the root directory.
  To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
    See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
  Detected additional lockfiles: 
-   * /Users/stephenstokes/Downloads/Projects/12 December 2025/Starter Club/package-lock.json
+   * /Users/stephenstokes/Downloads/StarterClub/package-lock.json
 
-   [1m[38;2;173;127;168m▲ Next.js 16.0.10[39m[22m (Turbopack)
-   - Environments: .env.local, .env
-   - Experiments (use with caution):
-     · optimizePackageImports
+▲ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local, .env
+- Experiments (use with caution):
+  · optimizePackageImports
 
- [33m[1m⚠[22m[39m The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
- [37m[1m [22m[39m Creating an optimized production build ...
- [32m[1m✓[22m[39m Compiled successfully in 12.8s
-[?25l [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G [37m[1m [22m[39m Running TypeScript  [36m..[39m[31mFailed to compile.
-[39m
-[36m./src/actions/compliance.ts[39m:[33m27[39m:[33m18[39m
-[31m[1mType error[22m[39m: Property 'other_documents' is missing in type '{ tax_events: never[]; registrations: never[]; licenses: never[]; documents: never[]; }' but required in type 'ComplianceData'.
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 14.8s
+  Running TypeScript ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/81) ...
+  Generating static pages using 7 workers (20/81) 
+  Generating static pages using 7 workers (40/81) 
+  Generating static pages using 7 workers (60/81) 
+✓ Generating static pages using 7 workers (81/81) in 407.8ms
+  Finalizing page optimization ...
 
-[0m [90m 25 |[39m     [36mconst[39m { userId } [33m=[39m [36mawait[39m auth()[33m;[39m
- [90m 26 |[39m
-[31m[1m>[22m[39m[90m 27 |[39m     [36mif[39m ([33m![39muserId) [36mreturn[39m { tax_events[33m:[39m [][33m,[39m registrations[33m:[39m [][33m,[39m licenses[33m:[39m [][33m,[39m documents[33m:[39m [] }[33m;[39m
- [90m    |[39m                  [31m[1m^[22m[39m
- [90m 28 |[39m
- [90m 29 |[39m     [90m// Get Profile[39m
- [90m 30 |[39m     [36mconst[39m { data[33m:[39m profile[33m,[39m error } [33m=[39m [36mawait[39m supabase[0m
-[2K[1G[?25hNext.js build worker exited with code: 1 and signal: null
-[?25l [36m.[39m [?25h⠙[1G[0K[1mnpm[22m [31merror[39m Lifecycle script `build` failed with error:
-⠙[1G[0K[1mnpm[22m [31merror[39m [94mcode[39m [33m1[39m
-⠙[1G[0K[1mnpm[22m [31merror[39m [94mpath[39m /Users/stephenstokes/Downloads/Projects/12 December 2025/Starter Club/apps/marketing-website
-⠙[1G[0K[1mnpm[22m [31merror[39m [94mworkspace[39m @starter-club/marketing-website@0.1.0
-⠙[1G[0K[1mnpm[22m [31merror[39m [94mlocation[39m /Users/stephenstokes/Downloads/Projects/12 December 2025/Starter Club/apps/marketing-website
-⠙[1G[0K[1mnpm[22m [31merror[39m command failed
-⠙[1G[0K[1mnpm[22m [31merror[39m [94mcommand[39m sh -c next build
-⠙[1G[0K
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /about/careers
+├ ○ /about/impact
+├ ○ /about/public-benefit
+├ ○ /about/story
+├ ƒ /admin/finance
+├ ƒ /admin/finance/journal/new
+├ ƒ /api/admin/finance/export
+├ ƒ /api/webhooks/clerk
+├ ƒ /api/webhooks/stripe
+├ ○ /archive/home-refactor-2025-12-26/racetrack
+├ ○ /archive/home-refactor-2025-12-26/standard
+├ ○ /cockpit
+├ ○ /contact
+├ ƒ /dashboard
+├ ƒ /dashboard/admin/test-member
+├ ƒ /dashboard/debug-org
+├ ƒ /dashboard/finance
+├ ƒ /dashboard/hr
+├ ƒ /dashboard/hr/analytics
+├ ƒ /dashboard/hr/benefits
+├ ƒ /dashboard/hr/interview-history
+├ ƒ /dashboard/hr/interview-history/[id]
+├ ƒ /dashboard/hr/onboarding
+├ ƒ /dashboard/hr/pay-tables
+├ ƒ /dashboard/hr/pay-tables/manage
+├ ƒ /dashboard/hr/people-culture
+├ ƒ /dashboard/hr/people-culture/add-employee
+├ ƒ /dashboard/hr/people-culture/employee/[id]
+├ ƒ /dashboard/hr/performance
+├ ƒ /dashboard/hr/talent
+├ ƒ /dashboard/hr/time
+├ ƒ /dashboard/hr/wait-pool
+├ ƒ /dashboard/jobs
+├ ƒ /dashboard/jobs/new
+├ ƒ /dashboard/marketplace
+├ ƒ /dashboard/marketplace/[moduleId]
+├ ƒ /dashboard/marketplace/acquisition-readiness
+├ ƒ /dashboard/marketplace/business-credit
+├ ƒ /dashboard/marketplace/compliance-tracking
+├ ƒ /dashboard/marketplace/enterprise-repository-manager
+├ ƒ /dashboard/marketplace/financial-controls
+├ ƒ /dashboard/marketplace/financial-resilience
+├ ƒ /dashboard/marketplace/hr-onboarding
+├ ƒ /dashboard/marketplace/jobs-careers
+├ ƒ /dashboard/marketplace/leadership-human-capital
+├ ƒ /dashboard/marketplace/legal-vault
+├ ƒ /dashboard/marketplace/personal-credit
+├ ƒ /dashboard/marketplace/sop-generator
+├ ƒ /dashboard/marketplace/vendor-management
+├ ƒ /dashboard/partner/clients
+├ ƒ /dashboard/partner/foundation
+├ ƒ /dashboard/partner/marketplace
+├ ƒ /dashboard/partner/resources
+├ ƒ /dashboard/resilience
+├ ƒ /dashboard/resilience/[moduleSlug]
+├ ƒ /dashboard/vault-builder
+├ ○ /employee-login
+├ ○ /employee-portal
+├ ƒ /employee-portal/dashboard/[role]
+├ ○ /employee-portal/selection
+├ ○ /events/calendar
+├ ○ /events/create
+├ ○ /events/host
+├ ○ /events/past
+├ ○ /events/upcoming
+├ ○ /grid-access
+├ ƒ /jobs/embed/[id]
+├ ○ /legal/california-privacy-rights
+├ ○ /legal/cookies
+├ ○ /legal/privacy
+├ ○ /legal/terms
+├ ○ /member-dashboard
+├ ○ /member-login
+├ ○ /member-onboarding
+├ ○ /membership/benefits
+├ ○ /onboarding
+├ ○ /partner-login
+├ ○ /partner-onboarding
+├ ○ /partner-portal
+├ ƒ /sign-in/[[...sign-in]]
+├ ƒ /sign-up/[[...sign-up]]
+├ ○ /sponsor-onboarding
+├ ○ /stories
+├ ○ /summit
+├ ○ /support
+└ ○ /test-users
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

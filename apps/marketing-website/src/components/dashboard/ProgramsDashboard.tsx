@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import { BookOpen, Star, Target, DollarSign, MessageSquare, CheckCircle, GraduationCap, Rocket } from 'lucide-react';
 import { Dashboard, Section, Row, MetricCard, ChartCard, TableCard, QuickActionPanel, SimpleChart, AlertCard } from './shared/DashboardComponents';
 
 const curriculumPipeline = [
@@ -18,7 +19,7 @@ export const ProgramsDashboard = () => (
                     title="Active Programs"
                     value="24"
                     trend="+3"
-                    icon="📚"
+                    icon={BookOpen}
                     color="green"
                     detail="8 new this quarter"
                 />
@@ -26,7 +27,7 @@ export const ProgramsDashboard = () => (
                     title="Avg Program Rating"
                     value="4.8/5"
                     trend="+0.1"
-                    icon="⭐"
+                    icon={Star}
                     color="green"
                     detail="From 342 reviews"
                 />
@@ -34,7 +35,7 @@ export const ProgramsDashboard = () => (
                     title="Completion Rate"
                     value="78%"
                     trend="+4%"
-                    icon="🎯"
+                    icon={Target}
                     color="green"
                     detail="Of enrolled participants"
                 />
@@ -42,7 +43,7 @@ export const ProgramsDashboard = () => (
                     title="Revenue per Program"
                     value="$8,450"
                     trend="+12%"
-                    icon="💰"
+                    icon={DollarSign}
                     color="green"
                     detail="Average across programs"
                 />
@@ -138,25 +139,25 @@ export const ProgramsDashboard = () => (
                         {
                             label: 'Review Feedback',
                             new: 45,
-                            icon: '💬',
+                            icon: MessageSquare,
                             path: '/programs/feedback'
                         },
                         {
                             label: 'Approve Curriculum',
                             pending: 3,
-                            icon: '✅',
+                            icon: CheckCircle,
                             path: '/programs/approvals'
                         },
                         {
                             label: 'Instructor Training',
                             upcoming: 2,
-                            icon: '👨‍🏫',
+                            icon: GraduationCap,
                             path: '/programs/training'
                         },
                         {
                             label: 'Launch Program',
                             ready: 1,
-                            icon: '🚀',
+                            icon: Rocket,
                             path: '/programs/launch'
                         }
                     ]}

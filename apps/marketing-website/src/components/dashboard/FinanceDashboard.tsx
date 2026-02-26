@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Dashboard, Section, Row, MetricCard, ChartCard, TableCard, QuickActionPanel, SimpleChart } from './shared/DashboardComponents';
+import { DollarSign, TrendingUp, Clock, AlertTriangle, Calendar, Calculator, ClipboardList, CheckCircle, BarChart3, Banknote } from 'lucide-react';
 
 // Mock Data
 const topEntities = [
@@ -19,7 +20,7 @@ export const FinanceDashboard = () => (
                     title="Monthly Recurring Revenue"
                     value="$142,850"
                     trend="+8.2%"
-                    icon="💰"
+                    icon={DollarSign}
                     color="green"
                     detail="vs. target $135,000"
                 />
@@ -27,7 +28,7 @@ export const FinanceDashboard = () => (
                     title="Gross Margin"
                     value="38.2%"
                     trend="+1.5%"
-                    icon="📈"
+                    icon={TrendingUp}
                     color="green"
                     detail="+2.1% from last quarter"
                 />
@@ -35,7 +36,7 @@ export const FinanceDashboard = () => (
                     title="Cash Runway"
                     value="14.2 months"
                     trend="-0.8"
-                    icon="⏳"
+                    icon={Clock}
                     color="yellow"
                     detail="Based on current burn"
                 />
@@ -43,7 +44,7 @@ export const FinanceDashboard = () => (
                     title="AR Aging > 30 days"
                     value="$8,450"
                     trend="+$1,200"
-                    icon="⚠️"
+                    icon={AlertTriangle}
                     color="red"
                     detail="3 clients, follow-up needed"
                 />
@@ -111,7 +112,7 @@ export const FinanceDashboard = () => (
                     title="Month-End Close"
                     value="65%"
                     trend="In Progress"
-                    icon="📅"
+                    icon={Calendar}
                     color="blue"
                     detail="Due in 2 days"
                 />
@@ -120,7 +121,7 @@ export const FinanceDashboard = () => (
                     title="Profit Sharing Calc"
                     value="Pending"
                     trend="Starts in 5 days"
-                    icon="➗"
+                    icon={Calculator}
                     color="yellow"
                     detail="Q2 Review"
                 />
@@ -129,7 +130,7 @@ export const FinanceDashboard = () => (
                     title="Audit Prep"
                     value="30%"
                     trend="On Track"
-                    icon="📋"
+                    icon={ClipboardList}
                     color="green"
                     detail="Due in 45 days"
                 />
@@ -144,25 +145,25 @@ export const FinanceDashboard = () => (
                         {
                             label: 'Approve Invoices',
                             count: 12,
-                            icon: '✅',
+                            icon: CheckCircle,
                             path: '/finance/approvals'
                         },
                         {
                             label: 'Run Financial Report',
                             type: 'revenue',
-                            icon: '📊',
+                            icon: BarChart3,
                             path: '/finance/reports'
                         },
                         {
                             label: 'Review Budget Variances',
                             departments: 3,
-                            icon: '📋',
+                            icon: ClipboardList,
                             path: '/finance/budget'
                         },
                         {
                             label: 'Process Distributions',
                             amount: '$42,850',
-                            icon: '💸',
+                            icon: Banknote,
                             path: '/finance/distributions'
                         }
                     ]}

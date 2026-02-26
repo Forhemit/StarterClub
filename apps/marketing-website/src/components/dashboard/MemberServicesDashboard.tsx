@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import { Users, Star, TrendingUp, Clock, MessageSquare, FileText, PartyPopper, Rocket } from 'lucide-react';
 import { Dashboard, Section, Row, MetricCard, ChartCard, TableCard, ActionList, QuickActionPanel, SimpleChart, AlertCard } from './shared/DashboardComponents';
 
 const recentFeedback = [
@@ -18,7 +19,7 @@ export const MemberServicesDashboard = () => (
                     title="Active Members"
                     value="342"
                     trend="+18"
-                    icon="👥"
+                    icon={Users}
                     color="green"
                     detail="Capacity: 85%"
                 />
@@ -26,7 +27,7 @@ export const MemberServicesDashboard = () => (
                     title="Member Satisfaction"
                     value="4.7/5"
                     trend="+0.2"
-                    icon="⭐"
+                    icon={Star}
                     color="green"
                     detail="From 128 surveys"
                 />
@@ -34,7 +35,7 @@ export const MemberServicesDashboard = () => (
                     title="Monthly Retention"
                     value="96.2%"
                     trend="+0.8%"
-                    icon="📈"
+                    icon={TrendingUp}
                     color="green"
                     detail="Churn: 3.8%"
                 />
@@ -42,7 +43,7 @@ export const MemberServicesDashboard = () => (
                     title="Response Time"
                     value="1.8 hrs"
                     trend="-0.3"
-                    icon="⏱️"
+                    icon={Clock}
                     color="blue"
                     detail="Average to member inquiries"
                 />
@@ -136,25 +137,25 @@ export const MemberServicesDashboard = () => (
                         {
                             label: 'Respond to Feedback',
                             count: 8,
-                            icon: '💬',
+                            icon: MessageSquare,
                             path: '/members/feedback'
                         },
                         {
                             label: 'Process Applications',
                             pending: 14,
-                            icon: '📝',
+                            icon: FileText,
                             path: '/members/applications'
                         },
                         {
                             label: 'Plan Member Events',
                             upcoming: 3,
-                            icon: '🎉',
+                            icon: PartyPopper,
                             path: '/members/events'
                         },
                         {
                             label: 'Review Onboarding',
                             inProgress: 12,
-                            icon: '🚀',
+                            icon: Rocket,
                             path: '/members/onboarding'
                         }
                     ]}

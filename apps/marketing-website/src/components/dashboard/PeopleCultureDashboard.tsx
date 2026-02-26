@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import { Heart, BarChart3, Clock, Handshake } from 'lucide-react';
 import { Dashboard, Section, Row, MetricCard, ChartCard, TableCard, ActionList, AlertCard, SimpleChart } from './shared/DashboardComponents';
 
 // Mock Data
@@ -22,7 +23,7 @@ export const PeopleCultureDashboard = () => (
                     title="Partner Satisfaction"
                     value="4.8/5"
                     trend="+0.2"
-                    icon="❤️"
+                    icon={Heart}
                     color="green"
                     detail="Based on 45 surveys this month"
                 />
@@ -30,7 +31,7 @@ export const PeopleCultureDashboard = () => (
                     title="Retention Rate"
                     value="94%"
                     trend="+3%"
-                    icon="📊"
+                    icon={BarChart3}
                     color="green"
                     detail="12-month rolling"
                 />
@@ -38,7 +39,7 @@ export const PeopleCultureDashboard = () => (
                     title="Progression Pace"
                     value="8.2 months"
                     trend="-0.5"
-                    icon="⏱️"
+                    icon={Clock}
                     color="blue"
                     detail="Avg time to promotion"
                 />
@@ -46,7 +47,7 @@ export const PeopleCultureDashboard = () => (
                     title="Mentorship Index"
                     value="82%"
                     trend="+5%"
-                    icon="🤝"
+                    icon={Handshake}
                     color="blue"
                     detail="Active mentor-mentee pairs"
                 />

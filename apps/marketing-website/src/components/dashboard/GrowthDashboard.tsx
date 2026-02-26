@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import { Download, DollarSign, TrendingUp, Scale, Globe, Rocket, BarChart3, Target, Calendar } from 'lucide-react';
 import { Dashboard, Section, Row, MetricCard, ChartCard, TableCard, QuickActionPanel, SimpleChart, AlertCard } from './shared/DashboardComponents';
 
 const activeCampaigns = [
@@ -18,7 +19,7 @@ export const GrowthDashboard = () => (
                     title="MQLs This Month"
                     value="142"
                     trend="+18%"
-                    icon="📥"
+                    icon={Download}
                     color="green"
                     detail="35% from content"
                 />
@@ -26,7 +27,7 @@ export const GrowthDashboard = () => (
                     title="CAC"
                     value="$425"
                     trend="-$15"
-                    icon="💰"
+                    icon={DollarSign}
                     color="green"
                     detail="Below target of $450"
                 />
@@ -34,7 +35,7 @@ export const GrowthDashboard = () => (
                     title="Conversion Rate"
                     value="8.2%"
                     trend="+0.8%"
-                    icon="📈"
+                    icon={TrendingUp}
                     color="green"
                     detail="MQL to Member"
                 />
@@ -42,7 +43,7 @@ export const GrowthDashboard = () => (
                     title="LTV:CAC Ratio"
                     value="4.2:1"
                     trend="+0.3"
-                    icon="⚖️"
+                    icon={Scale}
                     color="green"
                     detail="Healthy (>3:1)"
                 />
@@ -126,7 +127,7 @@ export const GrowthDashboard = () => (
                     title="Market Trends"
                     value="Positive"
                     trend="Up"
-                    icon="🌍"
+                    icon={Globe}
                     color="blue"
                     detail="Competitor activity low"
                 />
@@ -141,25 +142,25 @@ export const GrowthDashboard = () => (
                         {
                             label: 'Launch Campaign',
                             scheduled: 2,
-                            icon: '🚀',
+                            icon: Rocket,
                             path: '/growth/campaigns'
                         },
                         {
                             label: 'Review Performance',
                             period: 'weekly',
-                            icon: '📊',
+                            icon: BarChart3,
                             path: '/growth/performance'
                         },
                         {
                             label: 'Optimize Channels',
                             opportunities: 5,
-                            icon: '🎯',
+                            icon: Target,
                             path: '/growth/optimization'
                         },
                         {
                             label: 'Plan Content',
                             calendar: 'August',
-                            icon: '📅',
+                            icon: Calendar,
                             path: '/growth/content'
                         }
                     ]}
