@@ -29,32 +29,45 @@ export default function EventsList({ type = 'upcoming' }: { type?: 'upcoming' | 
 
     useEffect(() => {
         const fetchEvents = async () => {
-            const startOfMonth = new Date();
-            startOfMonth.setDate(1);
-            startOfMonth.setHours(0, 0, 0, 0);
+            try {
+                // Check if supabase client is properly initialized
+                if (!supabase) {
+                    console.warn('Supabase client not initialized');
+                    setLoading(false);
+                    return;
+                }
 
-            const endOfMonth = new Date(startOfMonth);
-            endOfMonth.setMonth(endOfMonth.getMonth() + 1);
+                const startOfMonth = new Date();
+                startOfMonth.setDate(1);
+                startOfMonth.setHours(0, 0, 0, 0);
 
-            let query = supabase.from('events').select('*');
+                const endOfMonth = new Date(startOfMonth);
+                endOfMonth.setMonth(endOfMonth.getMonth() + 1);
 
-            // "Only show events list for the month"
-            query = query.gte('event_date', startOfMonth.toISOString())
-                .lt('event_date', endOfMonth.toISOString());
+                let query = supabase.from('events').select('*');
 
-            if (type === 'upcoming') {
-                query = query.order('event_date', { ascending: true });
-            } else {
-                query = query.order('event_date', { ascending: false });
+                // "Only show events list for the month"
+                query = query.gte('event_date', startOfMonth.toISOString())
+                    .lt('event_date', endOfMonth.toISOString());
+
+                if (type === 'upcoming') {
+                    query = query.order('event_date', { ascending: true });
+                } else {
+                    query = query.order('event_date', { ascending: false });
+                }
+
+                const { data, error } = await query;
+                if (error) {
+                    console.error('Error fetching events:', error.message);
+                } else {
+                    setEvents(data || []);
+                }
+            } catch (err) {
+                // Silently fail - don't crash the UI for event fetching
+                console.warn('Failed to fetch events:', err instanceof Error ? err.message : 'Unknown error');
+            } finally {
+                setLoading(false);
             }
-
-            const { data, error } = await query;
-            if (error) {
-                console.error('Error fetching events:', JSON.stringify(error, null, 2));
-            } else {
-                setEvents(data || []);
-            }
-            setLoading(false);
         };
 
         fetchEvents();
