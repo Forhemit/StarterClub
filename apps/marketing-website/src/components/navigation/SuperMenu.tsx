@@ -177,9 +177,9 @@ export function SuperMenu({ isOpen, onClose }: SuperMenuProps) {
         <AnimatePresence>
             {isOpen && (
                 <>
-                    {/* Backdrop */}
+                    {/* Backdrop - Semi-transparent overlay behind menu */}
                     <motion.div
-                        className="fixed inset-0 z-40 bg-background"
+                        className="fixed inset-0 z-40 bg-black/20"
                         variants={backdropVariants}
                         initial="hidden"
                         animate="visible"
@@ -204,6 +204,7 @@ export function SuperMenu({ isOpen, onClose }: SuperMenuProps) {
                                 ? "top-16 left-0 right-0 bottom-0 overflow-y-auto border-t-0"
                                 : "top-16 left-4 right-4 mx-auto max-w-[1400px] rounded-lg"
                             }`}
+                        style={{ backgroundColor: 'hsl(var(--background))' }}
                         variants={menuVariants}
                         initial="hidden"
                         animate="visible"
