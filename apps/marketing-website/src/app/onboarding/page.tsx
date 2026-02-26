@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useTransition, useEffect } from 'react';
-import { useUser } from '@clerk/nextjs';
+import { useUser, useClerk } from '@clerk/nextjs';
 import { motion, AnimatePresence } from 'framer-motion';
 import { completeOnboarding, skipOnboarding } from './actions';
 import { toast } from '@/hooks/use-toast';
 import Image from 'next/image';
-import { ArrowRight, Check, Rocket, Users, Target, Briefcase, Eye, ChevronRight, ChevronLeft } from 'lucide-react';
+import { ArrowRight, Check, Rocket, Users, Target, Briefcase, Eye, ChevronRight, ChevronLeft, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const TRACKS = [
@@ -72,6 +72,7 @@ const ORG_OPTIONS = [
 
 export default function OnboardingPage() {
     const { user, isLoaded } = useUser();
+    const { signOut } = useClerk();
     const [step, setStep] = useState(1);
     const [isPending, startTransition] = useTransition();
 
@@ -304,12 +305,21 @@ export default function OnboardingPage() {
 
             {/* Sticky Navigation Footer */}
             <footer className="p-8 flex flex-col sm:flex-row items-center justify-between border-t border-border bg-background/80 backdrop-blur-md z-40">
-                <button
-                    onClick={handleSkip}
-                    className="text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest text-xs font-bold mb-4 sm:mb-0"
-                >
-                    Explore first
-                </button>
+                <div className="flex items-center gap-6 mb-4 sm:mb-0">
+                    <button
+                        onClick={handleSkip}
+                        className="text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest text-xs font-bold"
+                    >
+                        Explore first
+                    </button>
+                    <button
+                        onClick={() => signOut({ redirectUrl: '/' })}
+                        className="flex items-center gap-2 text-muted-foreground hover:text-destructive transition-colors uppercase tracking-widest text-xs font-bold"
+                    >
+                        <LogOut size={14} />
+                        Sign Out
+                    </button>
+                </div>
 
                 <div className="flex items-center gap-4">
                     {step > 1 && (
