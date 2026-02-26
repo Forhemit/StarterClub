@@ -45,6 +45,7 @@ export default clerkMiddleware(async (auth, req) => {
                 .from('profiles')
                 .select('active_roles, primary_role, onboarding_completed_at, primary_intent')
                 .eq('id', userId)
+                .single()
 
             const hasRoles = profile?.active_roles && profile.active_roles.length > 0;
             const onboardingCompleted = !!profile?.onboarding_completed_at;

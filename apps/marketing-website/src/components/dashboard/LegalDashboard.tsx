@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import { FileText, CheckCircle, AlertTriangle, ClipboardList } from 'lucide-react';
 import { Dashboard, Section, Row, MetricCard, ChartCard, TableCard, QuickActionPanel, SimpleChart, AlertCard } from './shared/DashboardComponents';
 
 const activeRisks = [
@@ -18,7 +19,7 @@ export const LegalDashboard = () => (
                     title="Active Contracts"
                     value="142"
                     trend="+8"
-                    icon="📝"
+                    icon={FileText}
                     color="blue"
                     detail="12 expiring in 30 days"
                 />
@@ -26,7 +27,7 @@ export const LegalDashboard = () => (
                     title="Compliance Score"
                     value="96%"
                     trend="+2%"
-                    icon="✅"
+                    icon={CheckCircle}
                     color="green"
                     detail="Based on 28 requirements"
                 />
@@ -34,7 +35,7 @@ export const LegalDashboard = () => (
                     title="Open Risks"
                     value="8"
                     trend="-2"
-                    icon="⚠️"
+                    icon={AlertTriangle}
                     color="yellow"
                     detail="3 high priority"
                 />
@@ -42,7 +43,7 @@ export const LegalDashboard = () => (
                     title="Audit Readiness"
                     value="88%"
                     trend="+5%"
-                    icon="📋"
+                    icon={ClipboardList}
                     color="green"
                     detail="Next audit: Q4 2024"
                 />
@@ -136,25 +137,25 @@ export const LegalDashboard = () => (
                         {
                             label: 'Review Contracts',
                             pending: 8,
-                            icon: '📝',
+                            icon: FileText,
                             path: '/legal/contracts'
                         },
                         {
                             label: 'Update Policies',
                             outdated: 3,
-                            icon: '📋',
+                            icon: ClipboardList,
                             path: '/legal/policies'
                         },
                         {
                             label: 'Assess Compliance',
                             areas: 5,
-                            icon: '✅',
+                            icon: CheckCircle,
                             path: '/legal/compliance'
                         },
                         {
                             label: 'Manage Risks',
                             new: 2,
-                            icon: '⚠️',
+                            icon: AlertTriangle,
                             path: '/legal/risks'
                         }
                     ]}

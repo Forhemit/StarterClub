@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Building2, Users, Handshake, Calendar, ArrowRight } from "lucide-react";
+import { Calendar, Users, Handshake, Star, ArrowRight } from "lucide-react";
 import { MetricCard, ChartCard, SimpleChart, TableCard } from './shared/DashboardComponents';
 
 export function PartnerDashboard() {
@@ -17,10 +17,10 @@ export function PartnerDashboard() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <MetricCard title="Events Hosted" value="8" trend="+2" icon="📅" color="blue" />
-                <MetricCard title="Avg Attendance" value="42" trend="+10%" icon="👥" color="green" />
-                <MetricCard title="Intros Made" value="15" trend="New" icon="🤝" color="yellow" />
-                <MetricCard title="Partner Score" value="98/100" trend="Top 5%" icon="⭐" color="green" />
+                <MetricCard title="Events Hosted" value="8" trend="+2" icon={Calendar} color="blue" />
+                <MetricCard title="Avg Attendance" value="42" trend="+10%" icon={Users} color="green" />
+                <MetricCard title="Intros Made" value="15" trend="New" icon={Handshake} color="yellow" />
+                <MetricCard title="Partner Score" value="98/100" trend="Top 5%" icon={Star} color="green" />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
