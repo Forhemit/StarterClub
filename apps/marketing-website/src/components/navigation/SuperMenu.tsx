@@ -199,10 +199,10 @@ export function SuperMenu({ isOpen, onClose }: SuperMenuProps) {
                         role="dialog"
                         aria-modal="true"
                         aria-label="Navigation menu"
-                        className={`fixed z-50 bg-card/98 backdrop-blur-xl border border-border shadow-2xl shadow-black/20 dark:shadow-black/50
+                        className={`fixed z-50 bg-background border-b border-border shadow-2xl shadow-black/20 dark:shadow-black/50
                        ${isMobile
                                 ? "top-16 left-0 right-0 bottom-0 overflow-y-auto"
-                                : "top-16 left-0 right-0 mx-auto max-w-[1400px] rounded-b-lg"
+                                : "top-16 left-0 right-0 mx-auto max-w-[1400px] rounded-b-lg border-x"
                             }`}
                         variants={menuVariants}
                         initial="hidden"
