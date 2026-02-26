@@ -179,7 +179,7 @@ export function SuperMenu({ isOpen, onClose }: SuperMenuProps) {
                 <>
                     {/* Backdrop */}
                     <motion.div
-                        className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm"
+                        className="fixed inset-0 z-40 bg-background"
                         variants={backdropVariants}
                         initial="hidden"
                         animate="visible"
@@ -199,10 +199,10 @@ export function SuperMenu({ isOpen, onClose }: SuperMenuProps) {
                         role="dialog"
                         aria-modal="true"
                         aria-label="Navigation menu"
-                        className={`fixed z-50 bg-background border-b border-border shadow-2xl shadow-black/20 dark:shadow-black/50
+                        className={`fixed z-50 bg-background border border-border shadow-2xl
                        ${isMobile
-                                ? "top-16 left-0 right-0 bottom-0 overflow-y-auto"
-                                : "top-16 left-0 right-0 mx-auto max-w-[1400px] rounded-b-lg border-x"
+                                ? "top-16 left-0 right-0 bottom-0 overflow-y-auto border-t-0"
+                                : "top-16 left-4 right-4 mx-auto max-w-[1400px] rounded-lg"
                             }`}
                         variants={menuVariants}
                         initial="hidden"
