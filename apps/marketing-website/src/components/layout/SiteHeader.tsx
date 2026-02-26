@@ -14,7 +14,7 @@ export function SiteHeader() {
 
     return (
         <>
-            <header className="fixed top-0 left-0 w-full z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+            <header className="fixed top-0 left-0 w-full z-50 bg-background border-b border-border">
                 <div className="container mx-auto px-4 h-16 flex items-center justify-between">
 
                     {/* Left Side - Logo */}
