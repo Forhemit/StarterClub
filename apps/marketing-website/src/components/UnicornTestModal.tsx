@@ -152,7 +152,7 @@ export function UnicornTestModal({ isOpen, onClose }: UnicornTestModalProps) {
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-            <DialogContent className="max-w-2xl bg-background/95 backdrop-blur-xl border-primary/20 p-0 overflow-hidden">
+            <DialogContent className="max-w-2xl bg-background border-primary/20 p-0 overflow-hidden shadow-2xl">
                 <DialogHeader className="sr-only">
                     <DialogTitle>Free Unicorn Ready Test</DialogTitle>
                     <DialogDescription>Discover if your business is built to survive, thrive, and sell.</DialogDescription>
@@ -204,7 +204,7 @@ export function UnicornTestModal({ isOpen, onClose }: UnicornTestModalProps) {
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: 0.4 + i * 0.1 }}
-                                        className="px-3 py-1.5 bg-muted/50 rounded-full text-sm text-muted-foreground flex items-center gap-2"
+                                        className="px-3 py-1.5 bg-muted rounded-full text-sm text-muted-foreground flex items-center gap-2"
                                     >
                                         <span>{pillar.icon}</span>
                                         <span className="hidden sm:inline">{pillar.name}</span>
@@ -273,7 +273,7 @@ export function UnicornTestModal({ isOpen, onClose }: UnicornTestModalProps) {
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: -50 }}
                                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                    className="bg-card/50 backdrop-blur border border-border/50 rounded-xl p-6 space-y-6"
+                                    className="bg-muted border border-border rounded-xl p-6 space-y-6"
                                 >
                                     <p className="text-lg md:text-xl text-foreground leading-relaxed">
                                         {QUESTIONS[currentQuestion].text}
@@ -407,7 +407,7 @@ export function UnicornTestModal({ isOpen, onClose }: UnicornTestModalProps) {
                                                 key={pillar.id}
                                                 initial={{ opacity: 0, x: -20 }}
                                                 animate={{ opacity: 1, x: 0 }}
-                                                className="flex items-center justify-between p-3 bg-muted/30 rounded-lg"
+                                                className="flex items-center justify-between p-3 bg-muted rounded-lg"
                                             >
                                                 <div className="flex items-center gap-3">
                                                     <span className="text-xl">{pillar.icon}</span>
@@ -450,7 +450,7 @@ export function UnicornTestModal({ isOpen, onClose }: UnicornTestModalProps) {
                             )}
 
                             {/* Progress Indicator */}
-                            <div className="bg-muted/30 rounded-lg p-4 space-y-2">
+                            <div className="bg-muted rounded-lg p-4 space-y-2">
                                 <div className="flex items-center justify-between text-sm">
                                     <span className="text-muted-foreground">Progress to Sellable Business</span>
                                     <span className="text-foreground font-bold">

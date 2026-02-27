@@ -2,14 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Activity, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, Activity, ShieldCheck, Zap, Play } from "lucide-react";
 
 import { VisualStoryboard } from "@/components/racetrack/VisualStoryboard";
-import { UnicornTestModal } from "@/components/UnicornTestModal";
 
 export function TelemetryHero() {
     const [mounted, setMounted] = useState(false);
-    const [isTestOpen, setIsTestOpen] = useState(false);
 
     useEffect(() => {
         setMounted(true);
@@ -67,7 +65,7 @@ export function TelemetryHero() {
 
                 <div className="relative z-30 container mx-auto px-4 min-h-[90vh] flex flex-col items-center justify-center text-center space-y-12">
 
-                    {/* Elegant Status Pilli */}
+                    {/* Elegant Status Pill */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -111,11 +109,12 @@ export function TelemetryHero() {
                         className="flex flex-col items-center gap-4 pt-8"
                     >
                         <div className="flex flex-col sm:flex-row items-center gap-6">
+                            {/* Swapped: Now Run Simulation Demo */}
                             <button
-                                onClick={() => setIsTestOpen(true)}
-                                className="group relative px-8 py-4 bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-500 overflow-hidden"
+                                className="group flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-500"
                             >
-                                <span className="relative z-10 font-sans text-xs uppercase tracking-[0.25em] font-semibold">Free Unicorn Ready Test</span>
+                                <Play className="w-4 h-4 fill-primary-foreground" />
+                                <span className="relative z-10 font-sans text-xs uppercase tracking-[0.25em] font-semibold">Run Simulation Demo</span>
                                 <div className="absolute inset-0 bg-white/10 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
                             </button>
                             <button className="group relative px-8 py-4 bg-transparent text-foreground border border-primary/30 hover:border-primary transition-all duration-500">
@@ -141,7 +140,7 @@ export function TelemetryHero() {
                     <div
                         className="w-full h-full"
                         style={{
-                            backgroundImage: `linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)`,
+                            backgroundImage: `linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px)`,
                             backgroundSize: '40px 40px'
                         }}
                     />
@@ -164,11 +163,12 @@ export function TelemetryHero() {
                         <VisualStoryboard />
 
                         <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start pt-4">
+                            {/* Swapped: Now Run Simulation Demo */}
                             <button
-                                onClick={() => setIsTestOpen(true)}
                                 className="w-full sm:w-auto px-8 py-4 bg-signal-green text-carbon font-bold uppercase tracking-widest hover:bg-signal-green/90 transition-all flex items-center justify-center gap-2 clip-corner-button"
                             >
-                                Free Unicorn Ready Test
+                                <Play className="w-4 h-4" />
+                                Run Simulation Demo
                                 <ArrowRight className="w-4 h-4" />
                             </button>
                             <button className="w-full sm:w-auto px-8 py-4 border border-border text-foreground font-mono uppercase tracking-widest hover:bg-secondary/50 transition-all">
@@ -248,9 +248,6 @@ export function TelemetryHero() {
                     </div>
                 </div>
             </div>
-
-            {/* Unicorn Test Modal */}
-            <UnicornTestModal isOpen={isTestOpen} onClose={() => setIsTestOpen(false)} />
         </section>
     );
 }
