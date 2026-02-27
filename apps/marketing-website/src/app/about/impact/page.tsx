@@ -1,6 +1,4 @@
 import React from "react";
-import { RaceTrackNav } from "@/components/racetrack/RaceTrackNav";
-import { RaceTrackFooter } from "@/components/racetrack/RaceTrackFooter";
 import { ImpactMetrics } from "@/components/impact/ImpactMetrics";
 
 export const metadata = {
@@ -11,11 +9,7 @@ export const metadata = {
 export default function ImpactPage() {
     return (
         <main className="min-h-screen bg-background text-foreground selection:bg-signal-green selection:text-white">
-            <RaceTrackNav />
-            <div className="pt-16">
-                <ImpactMetrics />
-            </div>
-            <RaceTrackFooter />
+            <ImpactMetrics />
         </main>
     );
 }

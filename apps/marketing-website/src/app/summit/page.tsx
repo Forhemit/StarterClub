@@ -5,16 +5,11 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { RaceTrackNav } from "@/components/racetrack/RaceTrackNav";
-import { RaceTrackFooter } from "@/components/racetrack/RaceTrackFooter";
 
 export default function SummitPage() {
     return (
         <main className="min-h-screen flex flex-col bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
-            <RaceTrackNav />
-            {/* Spacer for fixed nav handled by pt-16 in container or here */}
-
-            <div className="flex-1 relative flex flex-col items-center justify-center w-full overflow-hidden pt-16">
+            <div className="flex-1 relative flex flex-col items-center justify-center w-full overflow-hidden">
                 {/* Background Ambience - Theme Aware */}
                 <div className="absolute inset-0 pointer-events-none z-0">
                     <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--primary)_0%,_transparent_60%)] opacity-5 blur-[100px]" />
@@ -71,8 +66,6 @@ export default function SummitPage() {
                     </motion.div>
                 </div>
             </div>
-
-            <RaceTrackFooter />
         </main>
     );
 }

@@ -4,16 +4,11 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Construction, Sparkles } from "lucide-react";
 
-import { RaceTrackNav } from "@/components/racetrack/RaceTrackNav";
-import { RaceTrackFooter } from "@/components/racetrack/RaceTrackFooter";
-
 export default function SuccessStoriesPage() {
     return (
         <main className="min-h-screen bg-background text-foreground selection:bg-signal-green selection:text-white flex flex-col">
-            <RaceTrackNav />
-
             {/* Content Wrapper */}
-            <div className="flex-grow pt-20 flex items-center justify-center relative overflow-hidden">
+            <div className="flex-grow flex items-center justify-center relative overflow-hidden">
 
                 {/* 
                 ========================================================================
@@ -98,8 +93,6 @@ export default function SuccessStoriesPage() {
                 </div>
 
             </div>
-
-            <RaceTrackFooter />
         </main>
     );
 }

@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { SiteHeader } from "@/components/layout/SiteHeader";
-import { Footer } from "@/components/Footer";
 import { Loader2 } from "lucide-react";
 
 interface PlaceholderPageProps {
@@ -57,9 +55,7 @@ export function PlaceholderPage({
   }, [imageQuery, imageUrl]);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <SiteHeader />
-      
+    <div className="min-h-screen flex flex-col -mt-16">
       <main className="flex-1 relative">
         {/* Full-screen background image container */}
         <div className="absolute inset-0 w-full h-full">
@@ -178,7 +174,6 @@ export function PlaceholderPage({
         </div>
       </main>
 
-      <Footer />
     </div>
   );
 }
