@@ -67,6 +67,8 @@ export function ThreeLittlePigsModal({ isOpen, onClose }: ThreeLittlePigsModalPr
     const [answers, setAnswers] = useState<Answer[]>([null, null, null]);
 
     const handleAnswer = (answer: "YES" | "NO") => {
+        if (currentStep === "result") return;
+        
         const newAnswers = [...answers];
         newAnswers[currentStep - 1] = answer;
         setAnswers(newAnswers);
