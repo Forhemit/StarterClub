@@ -6,19 +6,8 @@ import { Player, PlayerRef } from "@remotion/player";
 import { ResilienceVideo, VIDEO_CONFIG } from "./ResilienceVideo";
 import { AssessmentModal } from "./AssessmentModal";
 
-// Fallback poster frame component (Frame 210 - Brick House victory)
-const VideoPoster = () => (
-    <div className="absolute inset-0 bg-slate-900 flex items-center justify-center">
-        <div className="text-center">
-            <span className="text-6xl">🏰</span>
-            <p className="text-signal-green font-bold mt-4">SYSTEMATIZED</p>
-        </div>
-    </div>
-);
-
 export function ResilienceEngineHero() {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isVideoLoaded, setIsVideoLoaded] = useState(false);
     const [isInView, setIsInView] = useState(true);
     const playerRef = useRef<PlayerRef>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -75,25 +64,7 @@ export function ResilienceEngineHero() {
                                     autoPlay={false}
                                     loop
                                     acknowledgeRemotionLicense
-                                    renderLoading={() => <VideoPoster />}
-                                    onLoaded={() => setIsVideoLoaded(true)}
                                 />
-
-                                {/* Loading overlay */}
-                                {!isVideoLoaded && (
-                                    <div className="absolute inset-0 flex items-center justify-center bg-background">
-                                        <motion.div
-                                            animate={{ rotate: 360 }}
-                                            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                                            className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full"
-                                        />
-                                    </div>
-                                )}
-
-                                {/* Reduced motion fallback */}
-                                <noscript>
-                                    <VideoPoster />
-                                </noscript>
                             </div>
 
                             {/* Labels below video */}
