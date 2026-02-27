@@ -1,77 +1,144 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Player, PlayerRef } from "@remotion/player";
-import { ResilienceVideo, VIDEO_CONFIG } from "./ResilienceVideo";
+import React, { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import { AssessmentModal } from "./AssessmentModal";
+
+const IMAGES = [
+    {
+        src: "/images/hero/StrawBusiness.png",
+        alt: "Straw Business - The Hustle",
+        label: "THE HUSTLE",
+        color: "text-amber-500",
+        description: "Built on hustle. Collapses when chaos hits.",
+    },
+    {
+        src: "/images/hero/WoodBusiness.png",
+        alt: "Wood Business - Typical SMB",
+        label: "TYPICAL SMB",
+        color: "text-amber-700",
+        description: "Some structure. Survives minor blows, needs repairs.",
+    },
+    {
+        src: "/images/hero/BrickBusiness.png",
+        alt: "Brick Business - Systematized Enterprise",
+        label: "SYSTEMATIZED",
+        color: "text-emerald-500",
+        description: "Built to last. Chaos-proof. Transferable.",
+    },
+];
+
+const GALLERY_INTERVAL = 5000; // 5 seconds per image
 
 export function ResilienceEngineHero() {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isInView, setIsInView] = useState(true);
-    const playerRef = useRef<PlayerRef>(null);
-    const containerRef = useRef<HTMLDivElement>(null);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [isPaused, setIsPaused] = useState(false);
 
-    // Intersection Observer for performance (pause when < 20% visible)
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                setIsInView(entry.isIntersecting && entry.intersectionRatio >= 0.2);
-            },
-            { threshold: [0, 0.2, 0.5, 1] }
-        );
-
-        if (containerRef.current) {
-            observer.observe(containerRef.current);
-        }
-
-        return () => observer.disconnect();
+    // Auto-advance gallery
+    const nextImage = useCallback(() => {
+        setCurrentIndex((prev) => (prev + 1) % IMAGES.length);
     }, []);
 
-    // Control video playback based on visibility
     useEffect(() => {
-        if (!playerRef.current) return;
+        if (isPaused) return;
+        
+        const timer = setInterval(nextImage, GALLERY_INTERVAL);
+        return () => clearInterval(timer);
+    }, [isPaused, nextImage]);
 
-        if (isInView) {
-            playerRef.current.play();
-        } else {
-            playerRef.current.pause();
-        }
-    }, [isInView]);
+    const currentImage = IMAGES[currentIndex];
 
     return (
         <>
-            <section
-                ref={containerRef}
-                className="relative w-full min-h-screen bg-background overflow-hidden"
-            >
+            <section className="relative w-full min-h-screen bg-background overflow-hidden">
                 <div className="container mx-auto px-4 py-12 lg:py-20">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center min-h-[80vh]">
                         
-                        {/* Left: Video (7 cols) */}
+                        {/* Left: Image Gallery (7 cols) */}
                         <div className="lg:col-span-7 relative">
-                            <div className="relative aspect-video rounded-2xl overflow-hidden bg-muted shadow-2xl">
-                                {/* Remotion Player */}
-                                <Player
-                                    ref={playerRef}
-                                    component={ResilienceVideo}
-                                    durationInFrames={VIDEO_CONFIG.durationInFrames}
-                                    fps={VIDEO_CONFIG.fps}
-                                    compositionWidth={VIDEO_CONFIG.width}
-                                    compositionHeight={VIDEO_CONFIG.height}
-                                    style={{ width: "100%", height: "100%" }}
-                                    controls={false}
-                                    autoPlay={false}
-                                    loop
-                                    acknowledgeRemotionLicense
-                                />
+                            <div 
+                                className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-muted shadow-2xl"
+                                onMouseEnter={() => setIsPaused(true)}
+                                onMouseLeave={() => setIsPaused(false)}
+                            >
+                                <AnimatePresence mode="wait">
+                                    <motion.div
+                                        key={currentIndex}
+                                        initial={{ opacity: 0, scale: 1.05 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.95 }}
+                                        transition={{ duration: 0.6, ease: "easeInOut" }}
+                                        className="absolute inset-0"
+                                    >
+                                        <Image
+                                            src={currentImage.src}
+                                            alt={currentImage.alt}
+                                            fill
+                                            className="object-cover"
+                                            priority={currentIndex === 0}
+                                        />
+                                    </motion.div>
+                                </AnimatePresence>
+
+                                {/* Progress bar */}
+                                <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20">
+                                    <motion.div
+                                        className="h-full bg-primary"
+                                        initial={{ width: "0%" }}
+                                        animate={{ width: isPaused ? "0%" : "100%" }}
+                                        transition={{ 
+                                            duration: isPaused ? 0.3 : GALLERY_INTERVAL / 1000, 
+                                            ease: "linear" 
+                                        }}
+                                        key={currentIndex}
+                                    />
+                                </div>
+
+                                {/* Pause indicator */}
+                                {isPaused && (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-xs"
+                                    >
+                                        Paused
+                                    </motion.div>
+                                )}
                             </div>
 
-                            {/* Labels below video */}
-                            <div className="flex justify-between mt-4 px-4 text-xs font-bold uppercase tracking-wider">
-                                <span className="text-amber-500">The Hustle</span>
-                                <span className="text-amber-700">Typical SMB</span>
-                                <span className="text-emerald-500">Systematized</span>
+                            {/* Labels below gallery */}
+                            <div className="flex justify-between mt-4 px-4">
+                                {IMAGES.map((img, idx) => (
+                                    <button
+                                        key={img.label}
+                                        onClick={() => setCurrentIndex(idx)}
+                                        className={`text-xs font-bold uppercase tracking-wider transition-all ${
+                                            idx === currentIndex 
+                                                ? img.color 
+                                                : "text-muted-foreground hover:text-foreground"
+                                        }`}
+                                    >
+                                        {img.label}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Dot indicators */}
+                            <div className="flex justify-center gap-2 mt-4">
+                                {IMAGES.map((_, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => setCurrentIndex(idx)}
+                                        className={`w-2 h-2 rounded-full transition-all ${
+                                            idx === currentIndex 
+                                                ? "bg-primary w-6" 
+                                                : "bg-muted hover:bg-muted-foreground"
+                                        }`}
+                                        aria-label={`Go to image ${idx + 1}`}
+                                    />
+                                ))}
                             </div>
                         </div>
 
@@ -99,6 +166,21 @@ export function ResilienceEngineHero() {
                                 Most businesses are built on hustle and heroics—they look okay until the wind blows. 
                                 True resilience requires systems that can survive without you.
                             </motion.p>
+
+                            {/* Current image description */}
+                            <motion.div
+                                key={currentIndex}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                className="flex items-center gap-3 p-4 bg-muted rounded-xl"
+                            >
+                                <span className="text-2xl">
+                                    {currentIndex === 0 ? "🌾" : currentIndex === 1 ? "🪵" : "🧱"}
+                                </span>
+                                <p className="text-sm text-muted-foreground">
+                                    {currentImage.description}
+                                </p>
+                            </motion.div>
 
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
