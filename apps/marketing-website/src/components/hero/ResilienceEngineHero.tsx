@@ -10,23 +10,20 @@ const IMAGES = [
         src: "/images/hero/StrawBusiness.png",
         alt: "Straw Business",
         label: "Business Made of Straw",
-        shortLabel: "Straw",
         color: "text-amber-500",
         description: "Built on hustle. Collapses when chaos hits.",
     },
     {
         src: "/images/hero/WoodBusiness.png",
         alt: "Wood Business",
-        label: "Wood",
-        shortLabel: "Wood",
+        label: "Business Made of Wood",
         color: "text-amber-700",
         description: "Some structure. Survives minor blows, needs repairs.",
     },
     {
         src: "/images/hero/BrickBusiness.png",
         alt: "Brick Business",
-        label: "Brick",
-        shortLabel: "Brick",
+        label: "Business Made of Brick",
         color: "text-emerald-500",
         description: "Built to last. Chaos-proof. Transferable.",
     },
@@ -126,25 +123,23 @@ export function ResilienceEngineHero() {
                                 </AnimatePresence>
                             </div>
 
-                            {/* Dot indicators with labels */}
-                            <div className="flex justify-center gap-4 mt-4">
+                            {/* Dot indicators with full labels */}
+                            <div className="flex flex-wrap justify-center gap-2 mt-4">
                                 {IMAGES.map((img, idx) => (
                                     <button
                                         key={idx}
                                         onClick={() => setCurrentIndex(idx)}
-                                        className={`flex items-center gap-2 px-3 py-1 rounded-full transition-all ${
+                                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all text-xs font-bold uppercase tracking-wider ${
                                             idx === currentIndex 
                                                 ? `${img.color} bg-muted` 
-                                                : "text-muted-foreground hover:text-foreground"
+                                                : "text-muted-foreground hover:text-foreground bg-muted/50"
                                         }`}
                                         aria-label={`Go to ${img.label}`}
                                     >
                                         <span className={`w-2 h-2 rounded-full transition-all ${
                                             idx === currentIndex ? "bg-current" : "bg-current opacity-50"
                                         }`} />
-                                        <span className="text-xs font-bold uppercase tracking-wider">
-                                            {img.shortLabel}
-                                        </span>
+                                        <span>{img.label}</span>
                                     </button>
                                 ))}
                             </div>
