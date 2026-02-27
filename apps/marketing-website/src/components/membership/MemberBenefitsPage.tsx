@@ -3,7 +3,6 @@
 import React from "react";
 import { BackgroundLayer } from "@/components/BackgroundLayer";
 import { Footer } from "@/components/Footer";
-import { RaceTrackNav } from "@/components/racetrack/RaceTrackNav";
 import { BenefitsHero } from "./sections/BenefitsHero";
 import { EcosystemPillars } from "./sections/EcosystemPillars";
 import { MembershipTiers } from "./sections/MembershipTiers";
@@ -29,7 +28,6 @@ export default function MemberBenefitsPage() {
     return (
         <main className="relative min-h-screen text-foreground selection:bg-primary selection:text-primary-foreground flex flex-col">
             <BackgroundLayer />
-            <RaceTrackNav />
 
             {/* SECTION 1: Hero - ATTENTION */}
             {/* "Your Foundation, Accelerated" - Present membership as a unified operating system */}
