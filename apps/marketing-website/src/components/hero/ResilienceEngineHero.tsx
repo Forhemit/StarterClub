@@ -29,7 +29,7 @@ const IMAGES = [
     },
 ];
 
-const GALLERY_INTERVAL = 5000; // 5 seconds per image
+const GALLERY_INTERVAL = 10000; // 10 seconds per image
 
 export function ResilienceEngineHero() {
     const [isModalOpen, setIsModalOpen] = useState(false);
