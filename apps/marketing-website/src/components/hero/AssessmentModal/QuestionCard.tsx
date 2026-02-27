@@ -32,7 +32,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             animate="center"
             exit="exit"
             transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="bg-card rounded-2xl shadow-2xl p-8 max-w-2xl w-full mx-4 border border-border"
+            className="bg-background rounded-2xl shadow-2xl p-8 max-w-2xl w-full mx-4 border border-border"
             role="region"
             aria-label={`Question ${questionNumber} of ${totalQuestions}`}
         >
