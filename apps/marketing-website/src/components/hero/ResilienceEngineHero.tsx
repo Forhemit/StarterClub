@@ -18,7 +18,7 @@ const IMAGES = [
         alt: "Wood Business",
         label: "Business Made of Wood",
         color: "text-amber-700",
-        description: "Success during the good times. Sure, you survived the hump, but you're one compound disaster away from collapse.",
+        description: "Sure, you survived the hump, but you're one compound disaster away from collapse.",
     },
     {
         src: "/images/hero/BrickBusiness.png",
