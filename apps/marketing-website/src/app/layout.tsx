@@ -13,6 +13,7 @@ import { ToastProvider } from "@/context/ToastContext";
 import { Toaster } from "@/components/ui/Toaster";
 import { GlobalFormListener } from "@/components/GlobalFormListener";
 import { EnvironmentBanner, ThemeProvider } from "@starter-club/ui";
+import { SiteHeader } from "@/components/layout/SiteHeader";
 
 // Primary body font - clean, professional, highly legible
 const inter = Inter({
@@ -60,8 +61,11 @@ export default function RootLayout({
             themes={["light", "dark", "racetrack"]}
           >
             <EnvironmentBanner />
+            <SiteHeader />
             <ToastProvider>
-              {children}
+              <main className="pt-16">
+                {children}
+              </main>
               <Toaster />
               <GlobalFormListener />
             </ToastProvider>

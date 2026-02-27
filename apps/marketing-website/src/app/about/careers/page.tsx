@@ -1,6 +1,4 @@
 import React from "react";
-import { RaceTrackNav } from "@/components/racetrack/RaceTrackNav";
-import { RaceTrackFooter } from "@/components/racetrack/RaceTrackFooter";
 import { CareersPage } from "@/components/careers/CareersPage";
 
 export const metadata = {
@@ -11,11 +9,7 @@ export const metadata = {
 export default function Careers() {
     return (
         <main className="min-h-screen bg-background text-foreground selection:bg-signal-green selection:text-white">
-            <RaceTrackNav />
-            <div className="pt-16">
-                <CareersPage />
-            </div>
-            <RaceTrackFooter />
+            <CareersPage />
         </main>
     );
 }
