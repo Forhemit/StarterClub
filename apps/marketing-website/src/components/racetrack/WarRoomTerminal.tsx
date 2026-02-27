@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Terminal, Play } from "lucide-react";
+import { Terminal, Sparkles } from "lucide-react";
+import { UnicornTestModal } from "@/components/UnicornTestModal";
 
 export function WarRoomTerminal() {
     const [lines, setLines] = useState<string[]>([
@@ -9,6 +10,7 @@ export function WarRoomTerminal() {
         "> LOADING SCENARIO: FOUNDER_DISPUTE_PROTOCOL...",
         "> CHECKING ASSET PROTECTION...",
     ]);
+    const [isTestOpen, setIsTestOpen] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -42,21 +44,25 @@ export function WarRoomTerminal() {
                         We don't just store documents. We stress-test them. <br />
                         Run scenarios to see if your business survives a dispute or audit.
                     </p>
-                    <button className="flex items-center gap-3 text-signal-green font-mono uppercase tracking-widest text-sm hover:text-foreground transition-colors group">
-                        <Play className="w-4 h-4 fill-signal-green group-hover:fill-foreground" />
-                        Run Simulation Demo
+                    {/* Swapped: Now Free Unicorn Ready Test with modal */}
+                    <button 
+                        onClick={() => setIsTestOpen(true)}
+                        className="flex items-center gap-3 text-signal-green font-mono uppercase tracking-widest text-sm hover:text-foreground transition-colors group"
+                    >
+                        <Sparkles className="w-4 h-4" />
+                        Free Unicorn Ready Test
                     </button>
                 </div>
 
-                {/* Right: Terminal Visual */}
-                <div className="order-1 lg:order-2 bg-black rounded-lg border border-carbon-border p-2 shadow-2xl">
-                    <div className="bg-carbon-light px-4 py-2 rounded-t flex items-center gap-2 border-b border-carbon-border">
+                {/* Right: Terminal Visual - Updated to use theme variables */}
+                <div className="order-1 lg:order-2 bg-background rounded-lg border border-border p-2 shadow-2xl">
+                    <div className="bg-muted px-4 py-2 rounded-t flex items-center gap-2 border-b border-border">
                         <div className="w-3 h-3 rounded-full bg-signal-red/20" />
                         <div className="w-3 h-3 rounded-full bg-signal-yellow/20" />
                         <div className="w-3 h-3 rounded-full bg-signal-green/20" />
-                        <div className="ml-auto text-xs font-mono text-white/20">admin@starterclub:~/sim</div>
+                        <div className="ml-auto text-xs font-mono text-muted-foreground">admin@starterclub:~/sim</div>
                     </div>
-                    <div className="p-6 font-mono text-sm md:text-base min-h-[300px] text-signal-green/80 space-y-2">
+                    <div className="p-6 font-mono text-sm md:text-base min-h-[300px] text-signal-green/80 space-y-2 bg-background rounded-b">
                         {lines.map((line, i) => (
                             <div key={i} className={`${line.includes("ERROR") || line.includes("FAILURE") ? "text-signal-red" : ""} ${line.includes("IMPACT") ? "text-signal-yellow" : ""}`}>
                                 {line}
@@ -67,6 +73,9 @@ export function WarRoomTerminal() {
                 </div>
 
             </div>
+
+            {/* Unicorn Test Modal */}
+            <UnicornTestModal isOpen={isTestOpen} onClose={() => setIsTestOpen(false)} />
         </section>
     );
 }
