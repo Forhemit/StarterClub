@@ -199,12 +199,12 @@ export function SuperMenu({ isOpen, onClose }: SuperMenuProps) {
                         role="dialog"
                         aria-modal="true"
                         aria-label="Navigation menu"
-                        className={`fixed z-50 bg-background border border-border shadow-2xl
+                        className={`fixed z-50 border border-border shadow-2xl
                        ${isMobile
-                                ? "top-16 left-0 right-0 bottom-0 overflow-y-auto border-t-0"
-                                : "top-16 left-4 right-4 mx-auto max-w-[1400px] rounded-lg"
+                                ? "top-16 left-0 right-0 bottom-0 overflow-y-auto border-t-0 bg-background"
+                                : "top-16 left-4 right-4 mx-auto max-w-[1400px] rounded-lg bg-background"
                             }`}
-                        style={{ backgroundColor: 'hsl(var(--background))' }}
+                        style={{ backgroundColor: 'var(--background)' }}
                         variants={menuVariants}
                         initial="hidden"
                         animate="visible"
