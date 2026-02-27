@@ -7,8 +7,8 @@ import { WarRoomTerminal } from "@/components/racetrack/WarRoomTerminal";
 import { TierGarage } from "@/components/racetrack/TierGarage";
 import { RaceTrackFooter } from "@/components/racetrack/RaceTrackFooter";
 
-// NEW HERO: Three Little Pigs
-import { ThreeLittlePigsHero } from "@/components/hero";
+// NEW HERO: Resilience Engine (Remotion-based)
+import { ResilienceEngineHero } from "@/components/hero";
 
 // Content Injection
 import { ProblemAgitation } from "@/components/content-injection/ProblemAgitation";
@@ -17,15 +17,16 @@ import { PBCTrust } from "@/components/content-injection/PBCTrust";
 import { FreeOffer } from "@/components/content-injection/FreeOffer";
 import { SocialProof } from "@/components/content-injection/SocialProof";
 
-// ARCHIVE: For A/B Testing - Original TelemetryHero
+// ARCHIVE: For A/B Testing
+// import { ThreeLittlePigsHero } from "@/components/hero";
 // import { TelemetryHero } from "@/components/racetrack/TelemetryHero";
 
 export default function RaceTrackHome() {
   return (
     <main className="min-h-screen bg-background text-foreground selection:bg-signal-green selection:text-white">
 
-      {/* NEW HERO: Three Little Pigs (full viewport, no padding needed) */}
-      <ThreeLittlePigsHero />
+      {/* NEW HERO: Resilience Engine with Remotion Video */}
+      <ResilienceEngineHero />
 
       <LiveTicker />
 
