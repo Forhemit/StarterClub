@@ -187,13 +187,56 @@ export function ResilienceEngineHero() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6, delay: 0.4 }}
                             >
-                                <button
+                                <motion.button
                                     onClick={() => setIsModalOpen(true)}
-                                    className="group relative px-8 py-4 bg-slate-900 dark:bg-primary text-white dark:text-primary-foreground font-bold uppercase tracking-wider hover:bg-slate-800 dark:hover:bg-primary/90 transition-all transform hover:scale-105 flex items-center gap-3 overflow-hidden rounded-xl"
+                                    className="group relative px-8 py-4 bg-signal-green text-carbon font-bold uppercase tracking-wider hover:bg-signal-green/90 transition-all flex items-center gap-3 overflow-hidden rounded-xl shadow-[0_0_30px_rgba(0,255,157,0.3)] hover:shadow-[0_0_50px_rgba(0,255,157,0.5)]"
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    animate={{
+                                        boxShadow: [
+                                            "0 0 20px rgba(0,255,157,0.3)",
+                                            "0 0 40px rgba(0,255,157,0.5)",
+                                            "0 0 20px rgba(0,255,157,0.3)",
+                                        ],
+                                    }}
+                                    transition={{
+                                        boxShadow: {
+                                            duration: 2,
+                                            repeat: Infinity,
+                                            ease: "easeInOut",
+                                        },
+                                    }}
                                 >
-                                    <span className="relative z-10">Take the "Real World" Readiness Test</span>
-                                    <div className="absolute inset-0 bg-white/10 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
-                                </button>
+                                    {/* Pulse ring effect */}
+                                    <span className="absolute inset-0 rounded-xl bg-signal-green/30 animate-ping" style={{ animationDuration: '2s' }} />
+                                    
+                                    <span className="relative z-10 flex items-center gap-3">
+                                        <motion.span
+                                            animate={{ rotate: [0, 15, -15, 0] }}
+                                            transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 3 }}
+                                        >
+                                            🎯
+                                        </motion.span>
+                                        Take the "Real World" Readiness Test
+                                        <motion.svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="20"
+                                            height="20"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            className="group-hover:translate-x-1 transition-transform"
+                                            animate={{ x: [0, 4, 0] }}
+                                            transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
+                                        >
+                                            <path d="M5 12h14" />
+                                            <path d="m12 5 7 7-7 7" />
+                                        </motion.svg>
+                                    </span>
+                                </motion.button>
                             </motion.div>
 
                             {/* Trust indicators */}
