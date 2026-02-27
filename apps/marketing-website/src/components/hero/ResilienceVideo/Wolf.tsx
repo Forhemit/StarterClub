@@ -14,7 +14,7 @@ export const Wolf: React.FC<WolfProps> = ({ state }) => {
         frame,
         [TIMING.WOLF_ENTER.start, TIMING.WOLF_ENTER.end],
         [-200, 400],
-        { easing: Easing.outBack }
+        { easing: Easing.out(Easing.back(1.5)) }
     );
 
     // Breathing/blinking animation
