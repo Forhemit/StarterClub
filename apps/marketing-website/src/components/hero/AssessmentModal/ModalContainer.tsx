@@ -70,7 +70,7 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({ isOpen, onClose 
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-            <DialogContent className="max-w-3xl bg-background border-border p-0 overflow-hidden shadow-2xl min-h-[500px]">
+            <DialogContent className="max-w-3xl bg-background border-border p-0 overflow-hidden shadow-2xl min-h-[500px] [&>div]:bg-background">
                 <DialogHeader className="sr-only">
                     <DialogTitle>Real World Readiness Test</DialogTitle>
                     <DialogDescription>3 questions to assess your business resilience</DialogDescription>
@@ -112,7 +112,7 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({ isOpen, onClose 
                                         initial={{ scale: 0 }}
                                         animate={{ scale: 1 }}
                                         transition={{ type: "spring", stiffness: 300, damping: 20, delay: 0.2 }}
-                                        className="w-20 h-20 mx-auto bg-primary/10 rounded-full flex items-center justify-center"
+                                        className="w-20 h-20 mx-auto bg-primary/20 rounded-full flex items-center justify-center"
                                     >
                                         <Target className="w-10 h-10 text-primary" />
                                     </motion.div>
@@ -136,7 +136,7 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({ isOpen, onClose 
                                             initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: 0.4 + i * 0.1 }}
-                                            className="px-3 py-1.5 bg-muted rounded-full text-sm text-muted-foreground flex items-center gap-2"
+                                            className="px-3 py-1.5 bg-muted/80 rounded-full text-sm text-muted-foreground flex items-center gap-2"
                                         >
                                             <span>{pillar.icon}</span>
                                             <span className="hidden sm:inline">{pillar.name}</span>
