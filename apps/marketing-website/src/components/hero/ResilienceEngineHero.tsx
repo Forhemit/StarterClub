@@ -11,21 +11,21 @@ const IMAGES = [
         alt: "Straw Business",
         label: "Business Made of Straw",
         color: "text-amber-500",
-        description: "Built on hustle. Collapses when chaos hits.",
+        description: "Your Straw Business is operating on speed and hope. Experienced competitors will blow your doors off.",
     },
     {
         src: "/images/hero/WoodBusiness.png",
         alt: "Wood Business",
         label: "Business Made of Wood",
         color: "text-amber-700",
-        description: "Some structure. Survives minor blows, needs repairs.",
+        description: "Success during the good times. Sure, you survived the hump, but you're one compound disaster away from collapse.",
     },
     {
         src: "/images/hero/BrickBusiness.png",
         alt: "Brick Business",
         label: "Business Made of Brick",
         color: "text-emerald-500",
-        description: "Built to last. Chaos-proof. Transferable.",
+        description: "You're ready for Prime Time! Your business is built for longevity and has institutional value.",
     },
 ];
 
