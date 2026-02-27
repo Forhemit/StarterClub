@@ -23,6 +23,9 @@ export default function RaceTrackHome() {
       <div className="pt-16"> {/* Spacer for fixed nav */}
         <TelemetryHero />
 
+        {/* Active Simulation - Moved under hero */}
+        <WarRoomTerminal />
+
         <LiveTicker />
 
         <ProblemAgitation className="dark bg-background text-foreground" />
@@ -34,8 +37,6 @@ export default function RaceTrackHome() {
         <DecayVisualizer />
 
         <TierGarage />
-
-        <WarRoomTerminal />
       </div>
 
       <RaceTrackFooter />
