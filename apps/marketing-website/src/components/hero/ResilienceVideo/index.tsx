@@ -117,3 +117,6 @@ export const ResilienceVideo: React.FC = () => {
 export const ResilienceVideoComposition: React.FC = () => {
     return <ResilienceVideo />;
 };
+
+// Export video configuration
+export { VIDEO_CONFIG, SCENES, TIMING, COLORS } from "./compositions";
