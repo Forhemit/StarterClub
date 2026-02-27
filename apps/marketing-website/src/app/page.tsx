@@ -23,10 +23,10 @@ export default function RaceTrackHome() {
       <div className="pt-16"> {/* Spacer for fixed nav */}
         <TelemetryHero />
 
-        {/* Active Simulation - Moved under hero */}
-        <WarRoomTerminal />
-
         <LiveTicker />
+
+        {/* Active Simulation - Under LiveTicker */}
+        <WarRoomTerminal />
 
         <ProblemAgitation className="dark bg-background text-foreground" />
         <SolutionStack className="dark bg-background text-foreground" />
