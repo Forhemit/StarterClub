@@ -22,7 +22,7 @@ export const Wolf: React.FC<WolfProps> = ({ state }) => {
         frame % 60,
         [0, 30, 60],
         [1, 1.05, 1],
-        { easing: Easing.inOut(Easing.sine) }
+        { easing: Easing.inOut(Easing.sin) }
     );
 
     // Exhaustion effects
