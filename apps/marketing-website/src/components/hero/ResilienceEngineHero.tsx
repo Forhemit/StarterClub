@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Player } from "@remotion/player";
+import { Player, PlayerRef } from "@remotion/player";
 import { ResilienceVideo, VIDEO_CONFIG } from "./ResilienceVideo";
 import { AssessmentModal } from "./AssessmentModal";
 
@@ -20,7 +20,7 @@ export function ResilienceEngineHero() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isVideoLoaded, setIsVideoLoaded] = useState(false);
     const [isInView, setIsInView] = useState(true);
-    const playerRef = useRef<Player>(null);
+    const playerRef = useRef<PlayerRef>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
     // Intersection Observer for performance (pause when < 20% visible)
