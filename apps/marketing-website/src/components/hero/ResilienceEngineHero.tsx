@@ -137,7 +137,7 @@ export function ResilienceEngineHero() {
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: -10 }}
-                                        className="flex items-center gap-3 p-4 bg-muted rounded-xl"
+                                        className="flex items-center justify-center gap-3 p-4 bg-muted rounded-xl text-center"
                                     >
                                         <span className="text-2xl">
                                             {currentIndex === 0 ? "🌾" : currentIndex === 1 ? "🪵" : "🧱"}
