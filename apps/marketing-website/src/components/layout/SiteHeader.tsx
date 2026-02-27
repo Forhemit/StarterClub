@@ -9,23 +9,29 @@ import { SuperMenu, SuperMenuTrigger, JourneyLauncher } from "@/components/navig
 
 export function SiteHeader() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const { theme } = useTheme();
+    const { theme, resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
         setMounted(true);
     }, []);
 
-    const isRacetrack = mounted && theme === 'racetrack';
+    // Use resolvedTheme as fallback for SSR consistency
+    const currentTheme = mounted ? theme : resolvedTheme;
+    const isRacetrack = currentTheme === 'racetrack';
 
     const toggleMenu = () => setIsMenuOpen((prev) => !prev);
     const closeMenu = () => setIsMenuOpen(false);
 
     return (
         <>
-            <header className={`fixed top-0 left-0 w-full z-50 bg-background border-b border-border transition-all duration-300 ${
-                isRacetrack ? 'racetrack-header' : ''
-            }`}>
+            <header 
+                className={`fixed top-0 left-0 w-full z-50 border-b border-border backdrop-blur-md transition-all duration-300 ${
+                    isRacetrack 
+                        ? 'bg-background/95 racetrack-header' 
+                        : 'bg-background/95'
+                }`}
+            >
                 <div className="container mx-auto px-4 h-16 flex items-center justify-between">
 
                     {/* Left Side - Logo */}
