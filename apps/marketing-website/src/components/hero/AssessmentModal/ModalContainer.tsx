@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { useQuizEngine } from "./QuizEngine";
 import { QuestionCard } from "./QuestionCard";
 import { VerdictDisplay } from "./VerdictDisplay";
-import { PILLARS } from "./constants";
+import { PILLARS } from "./types";
 
 interface ModalContainerProps {
     isOpen: boolean;
