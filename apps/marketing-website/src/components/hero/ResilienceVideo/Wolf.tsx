@@ -143,14 +143,14 @@ export const Wolf: React.FC<WolfProps> = ({ state }) => {
                 {/* Sweat drops when exhausted */}
                 {isExhausted && exhaustionOpacity > 0.5 && (
                     <g>
-                        <motion.drop
+                        <circle
                             cx="40"
                             cy="50"
                             r="3"
                             fill="#60A5FA"
                             opacity={interpolate(frame % 30, [0, 15, 30], [0, 1, 0])}
                         />
-                        <motion.drop
+                        <circle
                             cx="80"
                             cy="55"
                             r="3"
