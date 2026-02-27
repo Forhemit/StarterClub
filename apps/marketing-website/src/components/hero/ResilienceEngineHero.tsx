@@ -108,21 +108,6 @@ export function ResilienceEngineHero() {
                                 )}
                             </div>
 
-                            {/* Current Label - Rotates with image */}
-                            <div className="text-center mt-4">
-                                <AnimatePresence mode="wait">
-                                    <motion.p
-                                        key={currentIndex}
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -10 }}
-                                        className={`text-lg font-bold uppercase tracking-wider ${currentImage.color}`}
-                                    >
-                                        {currentImage.label}
-                                    </motion.p>
-                                </AnimatePresence>
-                            </div>
-
                             {/* Dot indicators with full labels */}
                             <div className="flex flex-wrap justify-center gap-2 mt-4">
                                 {IMAGES.map((img, idx) => (
@@ -142,6 +127,26 @@ export function ResilienceEngineHero() {
                                         <span>{img.label}</span>
                                     </button>
                                 ))}
+                            </div>
+
+                            {/* Rotating description - under the labels */}
+                            <div className="mt-4">
+                                <AnimatePresence mode="wait">
+                                    <motion.div
+                                        key={currentIndex}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        className="flex items-center gap-3 p-4 bg-muted rounded-xl"
+                                    >
+                                        <span className="text-2xl">
+                                            {currentIndex === 0 ? "🌾" : currentIndex === 1 ? "🪵" : "🧱"}
+                                        </span>
+                                        <p className="text-sm text-muted-foreground">
+                                            {currentImage.description}
+                                        </p>
+                                    </motion.div>
+                                </AnimatePresence>
                             </div>
                         </div>
 
@@ -166,21 +171,6 @@ export function ResilienceEngineHero() {
                                 Most businesses are built on hustle and heroics—they look okay until the wind blows. 
                                 True resilience requires systems that can survive without you.
                             </motion.p>
-
-                            {/* Current image description */}
-                            <motion.div
-                                key={currentIndex}
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                className="flex items-center gap-3 p-4 bg-muted rounded-xl"
-                            >
-                                <span className="text-2xl">
-                                    {currentIndex === 0 ? "🌾" : currentIndex === 1 ? "🪵" : "🧱"}
-                                </span>
-                                <p className="text-sm text-muted-foreground">
-                                    {currentImage.description}
-                                </p>
-                            </motion.div>
 
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
