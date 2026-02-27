@@ -105,7 +105,7 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({ isOpen, onClose 
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
-                                className="p-8 md:p-12 text-center space-y-8 max-w-xl"
+                                className="p-8 md:p-12 text-center space-y-8 max-w-xl bg-background rounded-2xl"
                             >
                                 <div className="space-y-4">
                                     <motion.div
@@ -175,7 +175,7 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({ isOpen, onClose 
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                                className="p-12 text-center space-y-6 flex flex-col items-center justify-center"
+                                className="p-12 text-center space-y-6 flex flex-col items-center justify-center bg-background rounded-2xl"
                             >
                                 <motion.div
                                     animate={{ rotate: 360 }}
