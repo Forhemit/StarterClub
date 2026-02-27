@@ -150,10 +150,7 @@ export function ResilienceEngineHero() {
                                 transition={{ duration: 0.6 }}
                             >
                                 <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-black text-foreground leading-tight tracking-tight">
-                                    The Big Bad Wolf Is Coming.{" "}
-                                    <span className="bg-gradient-to-r from-orange-500 via-amber-500 to-red-600 bg-clip-text text-transparent">
-                                        Is Your Business Built of Straw or Brick?
-                                    </span>
+                                    Will life destroy your business?
                                 </h1>
                             </motion.div>
 
@@ -217,7 +214,7 @@ export function ResilienceEngineHero() {
                                         >
                                             🎯
                                         </motion.span>
-                                        Take the "Real World" Readiness Test
+                                        Take the 3 Question Test
                                         <motion.svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             width="20"
