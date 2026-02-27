@@ -96,11 +96,11 @@ export const House: React.FC<HouseProps> = ({ type, state }) => {
         <g transform={`translate(${550 + woodShake}, 350)`}>
             {/* Detached shingle */}
             {shingleOffset > 0 && (
-                <motion.g
+                <g
                     transform={`translate(15, ${-shingleOffset}) rotate(${shingleOffset * 0.3})`}
                 >
                     <path d="M15 35 L50 5 L85 35" fill="#8B4513" stroke="#654321" strokeWidth="2" />
-                </motion.g>
+                </g>
             )}
 
             {/* Main structure */}
