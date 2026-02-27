@@ -8,22 +8,25 @@ import { AssessmentModal } from "./AssessmentModal";
 const IMAGES = [
     {
         src: "/images/hero/StrawBusiness.png",
-        alt: "Straw Business - The Hustle",
-        label: "THE HUSTLE",
+        alt: "Straw Business",
+        label: "Business Made of Straw",
+        shortLabel: "Straw",
         color: "text-amber-500",
         description: "Built on hustle. Collapses when chaos hits.",
     },
     {
         src: "/images/hero/WoodBusiness.png",
-        alt: "Wood Business - Typical SMB",
-        label: "TYPICAL SMB",
+        alt: "Wood Business",
+        label: "Wood",
+        shortLabel: "Wood",
         color: "text-amber-700",
         description: "Some structure. Survives minor blows, needs repairs.",
     },
     {
         src: "/images/hero/BrickBusiness.png",
-        alt: "Brick Business - Systematized Enterprise",
-        label: "SYSTEMATIZED",
+        alt: "Brick Business",
+        label: "Brick",
+        shortLabel: "Brick",
         color: "text-emerald-500",
         description: "Built to last. Chaos-proof. Transferable.",
     },
@@ -108,36 +111,41 @@ export function ResilienceEngineHero() {
                                 )}
                             </div>
 
-                            {/* Labels below gallery */}
-                            <div className="flex justify-between mt-4 px-4">
-                                {IMAGES.map((img, idx) => (
-                                    <button
-                                        key={img.label}
-                                        onClick={() => setCurrentIndex(idx)}
-                                        className={`text-xs font-bold uppercase tracking-wider transition-all ${
-                                            idx === currentIndex 
-                                                ? img.color 
-                                                : "text-muted-foreground hover:text-foreground"
-                                        }`}
+                            {/* Current Label - Rotates with image */}
+                            <div className="text-center mt-4">
+                                <AnimatePresence mode="wait">
+                                    <motion.p
+                                        key={currentIndex}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        className={`text-lg font-bold uppercase tracking-wider ${currentImage.color}`}
                                     >
-                                        {img.label}
-                                    </button>
-                                ))}
+                                        {currentImage.label}
+                                    </motion.p>
+                                </AnimatePresence>
                             </div>
 
-                            {/* Dot indicators */}
-                            <div className="flex justify-center gap-2 mt-4">
-                                {IMAGES.map((_, idx) => (
+                            {/* Dot indicators with labels */}
+                            <div className="flex justify-center gap-4 mt-4">
+                                {IMAGES.map((img, idx) => (
                                     <button
                                         key={idx}
                                         onClick={() => setCurrentIndex(idx)}
-                                        className={`w-2 h-2 rounded-full transition-all ${
+                                        className={`flex items-center gap-2 px-3 py-1 rounded-full transition-all ${
                                             idx === currentIndex 
-                                                ? "bg-primary w-6" 
-                                                : "bg-muted hover:bg-muted-foreground"
+                                                ? `${img.color} bg-muted` 
+                                                : "text-muted-foreground hover:text-foreground"
                                         }`}
-                                        aria-label={`Go to image ${idx + 1}`}
-                                    />
+                                        aria-label={`Go to ${img.label}`}
+                                    >
+                                        <span className={`w-2 h-2 rounded-full transition-all ${
+                                            idx === currentIndex ? "bg-current" : "bg-current opacity-50"
+                                        }`} />
+                                        <span className="text-xs font-bold uppercase tracking-wider">
+                                            {img.shortLabel}
+                                        </span>
+                                    </button>
                                 ))}
                             </div>
                         </div>
