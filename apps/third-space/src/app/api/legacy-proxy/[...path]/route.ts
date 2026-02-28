@@ -88,9 +88,10 @@ function transformWordPressResponse(data: any, path: string) {
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
-  const path = params.path.join("/");
+  const { path: pathSegments } = await params;
+  const path = pathSegments.join("/");
   const searchParams = request.nextUrl.search;
   const url = `${WORDPRESS_API_URL}/${path}${searchParams}`;
 
@@ -156,9 +157,10 @@ export async function GET(
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
-  const path = params.path.join("/");
+  const { path: pathSegments } = await params;
+  const path = pathSegments.join("/");
   const url = `${WORDPRESS_API_URL}/${path}`;
 
   console.log(`[Legacy Proxy] POST ${path} -> ${url}`);

@@ -1,5 +1,7 @@
 import { PlaceholderPage } from "@/components/placeholder/PlaceholderPage";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "Partner Profile | Starter Club",
   description: "Your partner profile and public information.",

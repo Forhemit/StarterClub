@@ -1,5 +1,7 @@
 import { PlaceholderPage } from "@/components/placeholder/PlaceholderPage";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "Secret Menu | Starter Club",
   description: "Shhh... you found the secret menu!",

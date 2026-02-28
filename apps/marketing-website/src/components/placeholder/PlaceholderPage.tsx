@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 
 interface PlaceholderPageProps {
@@ -36,17 +35,16 @@ export function PlaceholderPage({
 }: PlaceholderPageProps) {
   const [bgImage, setBgImage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
-  const [unsplashData, setUnsplashData] = useState<{ photographer?: string; profileUrl?: string }>({});
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Use provided image URL, or lookup by query, or use default
+    setMounted(true);
     const selectedImage = imageUrl || 
       (imageQuery && DEFAULT_IMAGES[imageQuery]) || 
       DEFAULT_IMAGES.default;
     
     setBgImage(selectedImage);
     
-    // Simulate loading for smooth transition
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 300);
@@ -54,19 +52,27 @@ export function PlaceholderPage({
     return () => clearTimeout(timer);
   }, [imageQuery, imageUrl]);
 
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return (
+      <div className="min-h-screen flex flex-col -mt-16 bg-muted">
+        <div className="flex-1 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col -mt-16">
       <main className="flex-1 relative">
-        {/* Full-screen background image container */}
         <div className="absolute inset-0 w-full h-full">
-          {/* Loading state */}
           {isLoading && (
             <div className="absolute inset-0 bg-muted flex items-center justify-center z-10">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
           )}
           
-          {/* Background image */}
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
@@ -74,28 +80,14 @@ export function PlaceholderPage({
             }}
           />
           
-          {/* Dark overlay for text readability */}
           <div className="absolute inset-0 bg-black/60" />
-          
-          {/* Gradient overlay for depth */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40" />
         </div>
 
-        {/* Content container */}
         <div className="relative z-10 min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-center max-w-4xl mx-auto"
-          >
+          <div className="text-center max-w-4xl mx-auto animate-fade-in">
             {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, delay: 0.4 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-8"
-            >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-8 animate-pulse">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -103,43 +95,23 @@ export function PlaceholderPage({
               <span className="text-sm font-medium text-white/90 uppercase tracking-wider">
                 In Development
               </span>
-            </motion.div>
+            </div>
 
             {/* Main title */}
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6 tracking-tight"
-            >
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6 tracking-tight">
               {title}
-            </motion.h1>
+            </h1>
 
             {/* Subtitle */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto mb-12 leading-relaxed"
-            >
+            <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto mb-12 leading-relaxed">
               {subtitle}
-            </motion.p>
+            </p>
 
             {/* Decorative line */}
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 0.8, delay: 0.7 }}
-              className="w-24 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-12"
-            />
+            <div className="w-24 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-12" />
 
             {/* CTA Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4"
-            >
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a
                 href="/"
                 className="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-primary-foreground bg-primary rounded-lg hover:bg-primary/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
@@ -152,16 +124,11 @@ export function PlaceholderPage({
               >
                 Contact Support
               </a>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
           {/* Unsplash credit */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 1 }}
-            className="absolute bottom-8 right-4 sm:right-8"
-          >
+          <div className="absolute bottom-8 right-4 sm:right-8">
             <a
               href="https://unsplash.com"
               target="_blank"
@@ -170,10 +137,9 @@ export function PlaceholderPage({
             >
               Photo via Unsplash
             </a>
-          </motion.div>
+          </div>
         </div>
       </main>
-
     </div>
   );
 }

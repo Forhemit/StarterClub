@@ -8,12 +8,10 @@ import {
   Syne,
 } from "next/font/google";
 import "./globals.css";
-import { OrganizationProvider } from "@/contexts/OrganizationContext";
-import { ToastProvider } from "@/context/ToastContext";
-import { Toaster } from "@/components/ui/Toaster";
-import { GlobalFormListener } from "@/components/GlobalFormListener";
-import { EnvironmentBanner, ThemeProvider } from "@starter-club/ui";
-import { SiteHeader } from "@/components/layout/SiteHeader";
+import { ClientProviders } from "@/components/providers/ClientProviders";
+import { ThemeWrapper } from "@/components/providers/ThemeWrapper";
+import { EnvironmentBannerWrapper } from "@/components/providers/EnvironmentBannerWrapper";
+import { SiteHeaderWrapper } from "@/components/layout/SiteHeaderWrapper";
 
 // Primary body font - clean, professional, highly legible
 const inter = Inter({
@@ -34,6 +32,8 @@ const bebasNeue = Bebas_Neue({
   subsets: ["latin"],
 });
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Starter Club SF - Coming Soon",
   description: "San Francisco is Done Waiting. It's Time to Start. A workshop for founders, creators, and organizers.",
@@ -53,25 +53,17 @@ export default function RootLayout({
         <body
           className={`${inter.variable} ${syne.variable} ${bebasNeue.variable} antialiased bg-background text-foreground`}
         >
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-            themes={["light", "dark", "racetrack"]}
-          >
-            <EnvironmentBanner />
-            <SiteHeader />
-            <ToastProvider>
+          <ThemeWrapper>
+            <EnvironmentBannerWrapper />
+            <SiteHeaderWrapper />
+            <ClientProviders>
               <main className="pt-16">
                 {children}
               </main>
-              <Toaster />
-              <GlobalFormListener />
-            </ToastProvider>
+            </ClientProviders>
             <Analytics />
             <SpeedInsights />
-          </ThemeProvider>
+          </ThemeWrapper>
         </body>
       </html>
     </ClerkProvider>

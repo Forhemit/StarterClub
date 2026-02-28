@@ -1,4 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
 /**
  * Clerk Authentication Middleware
@@ -59,13 +60,13 @@ async function verifyWordPressJWT(token: string) {
 export default clerkMiddleware(async (auth, req) => {
   // 1. Check if route is public
   if (isPublicRoute(req)) {
-    return Response.next();
+    return NextResponse.next();
   }
 
   // 2. Try Clerk authentication first
   const { userId } = await auth();
   if (userId) {
-    return Response.next();
+    return NextResponse.next();
   }
 
   // 3. Fallback to WordPress JWT during migration period
@@ -76,14 +77,15 @@ export default clerkMiddleware(async (auth, req) => {
     const user = await verifyWordPressJWT(wpToken);
     if (user) {
       // Set user in headers for downstream components
-      const response = Response.next();
+      const response = NextResponse.next();
       response.headers.set("x-legacy-user", JSON.stringify(user));
       return response;
     }
   }
 
   // 4. Redirect to sign in
-  return auth().redirectToSignIn();
+  const authObject = await auth();
+  return authObject.redirectToSignIn();
 });
 
 export const config = {

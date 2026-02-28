@@ -1,5 +1,7 @@
 import { PlaceholderPage } from "@/components/placeholder/PlaceholderPage";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "Admin Settings | Starter Club",
   description: "System-wide configuration and settings.",

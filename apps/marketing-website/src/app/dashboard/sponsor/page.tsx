@@ -1,5 +1,7 @@
 import { PlaceholderPage } from "@/components/placeholder/PlaceholderPage";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "Sponsor Dashboard | Starter Club",
   description: "Your sponsor dashboard and overview.",

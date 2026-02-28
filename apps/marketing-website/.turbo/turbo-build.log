@@ -1,51 +1,66 @@
 
+
 > @starter-club/marketing-website@0.1.0 build
 > next build
 
-⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+[33m[1m⚠[22m[39m Warning: Next.js inferred your workspace root, but it may not be correct.
  We detected multiple lockfiles and selected the directory of /Users/stephenstokes/package-lock.json as the root directory.
  To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
    See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
  Detected additional lockfiles: 
    * /Users/stephenstokes/Downloads/StarterClub/package-lock.json
 
-▲ Next.js 16.1.6 (Turbopack)
+[1m[38;2;173;127;168m▲ Next.js 16.1.6[39m[22m (Turbopack)
 - Environments: .env.local, .env
 - Experiments (use with caution):
   · optimizePackageImports
 
-⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
-  Creating an optimized production build ...
-✓ Compiled successfully in 14.8s
-  Running TypeScript ...
-  Collecting page data using 7 workers ...
-  Generating static pages using 7 workers (0/81) ...
-  Generating static pages using 7 workers (20/81) 
-  Generating static pages using 7 workers (40/81) 
-  Generating static pages using 7 workers (60/81) 
-✓ Generating static pages using 7 workers (81/81) in 407.8ms
-  Finalizing page optimization ...
+[33m[1m⚠[22m[39m The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+[37m[1m [22m[39m Creating an optimized production build ...
+[32m[1m✓[22m[39m Compiled successfully in 33.8s
+[?25l[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[1A[2K[1G[?25h[?25l[37m[1m [22m[39m Finished TypeScript in 16.9s  [36m.[39m[2K[1G[1A[2K[1G[?25h[37m[1m [22m[39m Finished TypeScript in 16.9s    [32m[1m✓[22m[39m Finished TypeScript in 16.9s 
+[?25l[37m[1m [22m[39m Collecting page data using 7 workers  [36m.[39m[2K[1G[1A[2K[1G[1A[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m..[39m[2K[1G[1A[2K[1G[1A[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m...[39m[2K[1G[1A[2K[1G[1A[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m.[39m[2K[1G[1A[2K[1G[1A[2K[1G[?25h[37m[1m [22m[39m Collecting page data using 7 workers in 617.3ms    [32m[1m✓[22m[39m Collecting page data using 7 workers in 617.3ms 
+[?25l[37m[1m [22m[39m Generating static pages using 7 workers (0/128)  [36m[    ][39m[2K[1G[1A[2K[1G[1A[2K[1G[37m[1m [22m[39m Generating static pages using 7 workers (9/128)  [36m[=   ][39m[2K[1G[1A[2K[1G[1A[2K[1G[37m[1m [22m[39m Generating static pages using 7 workers (60/128)  [36m[==  ][39m[2K[1G[1A[2K[1G[1A[2K[1G[37m[1m [22m[39m Generating static pages using 7 workers (98/128)  [36m[=== ][39m[2K[1G[1A[2K[1G[1A[2K[1G[?25h[32m[1m✓[22m[39m Generating static pages using 7 workers (128/128) in 723.0ms
+[?25l[37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m..[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m...[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G[1A[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m..[39m[2K[1G[1A[2K[1G[?25h[37m[1m [22m[39m Finalizing page optimization in 944.7ms    [32m[1m✓[22m[39m Finalizing page optimization in 944.7ms 
 
-Route (app)
+[4mRoute (app)[24m
 ┌ ○ /
 ├ ○ /_not-found
 ├ ○ /about/careers
 ├ ○ /about/impact
 ├ ○ /about/public-benefit
 ├ ○ /about/story
+├ ○ /about/team
 ├ ƒ /admin/finance
 ├ ƒ /admin/finance/journal/new
+├ ○ /admin/knowledge
+├ ○ /admin/ops
+├ ○ /admin/settings
+├ ○ /admin/system
+├ ○ /admin/users
+├ ○ /announcements
 ├ ƒ /api/admin/finance/export
 ├ ƒ /api/webhooks/clerk
 ├ ƒ /api/webhooks/stripe
 ├ ○ /archive/home-refactor-2025-12-26/racetrack
 ├ ○ /archive/home-refactor-2025-12-26/standard
+├ ○ /blog
+├ ○ /builder
 ├ ○ /cockpit
+├ ○ /cockpit/chassis
+├ ○ /cockpit/crew
+├ ○ /cockpit/settings
+├ ○ /cockpit/simulator
+├ ○ /cockpit/vault
+├ ○ /company/settings
 ├ ○ /contact
 ├ ƒ /dashboard
 ├ ƒ /dashboard/admin/test-member
 ├ ƒ /dashboard/debug-org
 ├ ƒ /dashboard/finance
+├ ƒ /dashboard/finance/journal
+├ ƒ /dashboard/finance/reports
+├ ƒ /dashboard/finance/stripe
 ├ ƒ /dashboard/hr
 ├ ƒ /dashboard/hr/analytics
 ├ ƒ /dashboard/hr/benefits
@@ -78,13 +93,24 @@ Route (app)
 ├ ƒ /dashboard/marketplace/personal-credit
 ├ ƒ /dashboard/marketplace/sop-generator
 ├ ƒ /dashboard/marketplace/vendor-management
+├ ƒ /dashboard/partner-admin
+├ ƒ /dashboard/partner-admin/settings
+├ ƒ /dashboard/partner-admin/team
 ├ ƒ /dashboard/partner/clients
 ├ ƒ /dashboard/partner/foundation
+├ ƒ /dashboard/partner/intros
 ├ ƒ /dashboard/partner/marketplace
+├ ƒ /dashboard/partner/profile
 ├ ƒ /dashboard/partner/resources
+├ ƒ /dashboard/partner/roi
 ├ ƒ /dashboard/resilience
 ├ ƒ /dashboard/resilience/[moduleSlug]
+├ ƒ /dashboard/sponsor
+├ ƒ /dashboard/sponsor/roi
+├ ƒ /dashboard/super-admin/logs
+├ ƒ /dashboard/super-admin/users
 ├ ƒ /dashboard/vault-builder
+├ ○ /directory
 ├ ○ /employee-login
 ├ ○ /employee-portal
 ├ ƒ /employee-portal/dashboard/[role]
@@ -94,6 +120,7 @@ Route (app)
 ├ ○ /events/host
 ├ ○ /events/past
 ├ ○ /events/upcoming
+├ ○ /faq
 ├ ○ /grid-access
 ├ ƒ /jobs/embed/[id]
 ├ ○ /legal/california-privacy-rights
@@ -108,9 +135,26 @@ Route (app)
 ├ ○ /partner-login
 ├ ○ /partner-onboarding
 ├ ○ /partner-portal
+├ ○ /partner/impact
+├ ○ /partner/insights
+├ ○ /partner/studio
+├ ○ /partners
+├ ○ /partners/become
+├ ○ /partners/faq
+├ ○ /programs/accelerator
+├ ○ /programs/established
+├ ○ /programs/founders
+├ ○ /resources
+├ ○ /resources/toolkit
+├ ○ /scouts
+├ ○ /secret-menu
 ├ ƒ /sign-in/[[...sign-in]]
 ├ ƒ /sign-up/[[...sign-up]]
+├ ○ /spaces/tour
 ├ ○ /sponsor-onboarding
+├ ○ /sponsor/assets
+├ ○ /sponsor/campaigns
+├ ○ /sponsor/signals
 ├ ○ /stories
 ├ ○ /summit
 ├ ○ /support
@@ -122,3 +166,4 @@ Route (app)
 ○  (Static)   prerendered as static content
 ƒ  (Dynamic)  server-rendered on demand
 
+[?25h⠙[1G[0K
