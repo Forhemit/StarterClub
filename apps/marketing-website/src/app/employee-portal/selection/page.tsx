@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { ArrowRight, UserCircle, Rocket, Smartphone, Monitor } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { APP_URLS } from "@/config/urls";
 
 const roles = [
     { dept: "People & Culture", title: "Senior Lead Partner", id: "people-culture", color: "blue" },
@@ -20,8 +21,8 @@ const roles = [
 ];
 
 const apps = [
-    { name: "Onboard App", desc: "Member Onboarding & Check-in", url: "http://localhost:3002", icon: Smartphone, color: "blue" },
-    { name: "Kiosk / Flight Deck", desc: "Public Display & Interaction", url: "http://localhost:3003", icon: Monitor, color: "orange" },
+    { name: "Onboard App", desc: "Member Onboarding & Check-in", url: APP_URLS.onboard, icon: Smartphone, color: "blue" },
+    { name: "Flight Deck", desc: "Member Dashboard", url: APP_URLS.flightDeck, icon: Monitor, color: "orange" },
 ];
 
 export default function SelectionPage() {

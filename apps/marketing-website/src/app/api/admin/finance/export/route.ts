@@ -1,15 +1,25 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
-
-// Initialize Supabase Client (Service Role needed for Admin export usually, checks handled by middleware/RLS)
-// But here we use createClient from utils usually?
-// Using separate client logic for API route if needed, but RLS on v_journal_entries should hold.
-// We'll use the standard server client creation pattern if applicable, but in API routes we can use:
 import { createSupabaseServerClient as createServerClient } from '@/lib/supabase/server';
+import { limiters } from '@/lib/rate-limit/server';
+
+// Rate limiter for export endpoint
+const exportLimiter = limiters.export;
 
 export async function GET(req: NextRequest) {
-    // Check auth? Assuming Middleware handles protection for /admin routes or we check here.
-    // For safety, we check auth.
+    // Rate limiting check
+    const clientIP = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+    const rateLimit = exportLimiter.check(clientIP);
+    
+    if (!rateLimit.allowed) {
+        return new NextResponse('Rate limit exceeded. Please try again later.', { 
+            status: 429,
+            headers: {
+                'X-RateLimit-Remaining': '0',
+                'X-RateLimit-Reset': Math.ceil(rateLimit.resetTime / 1000).toString(),
+            }
+        });
+    }
 
     const supabase = await createServerClient();
 

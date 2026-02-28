@@ -1,5 +1,7 @@
 import { PlaceholderPage } from "@/components/placeholder/PlaceholderPage";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "FAQ | Starter Club",
   description: "Find answers to commonly asked questions about Starter Club.",

@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { useQuizEngine } from "./QuizEngine";
 import { QuestionCard } from "./QuestionCard";
 import { VerdictDisplay } from "./VerdictDisplay";
+import { UnicornTestModal } from "@/components/UnicornTestModal";
 import { PILLARS } from "./types";
 
 interface ModalContainerProps {
@@ -25,6 +26,16 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({ isOpen, onClose 
         handleReset,
     } = useQuizEngine();
 
+    const [isUnicornOpen, setIsUnicornOpen] = React.useState(false);
+
+    const handleClose = useCallback(() => {
+        // Reset if completed, keep progress if in middle
+        if (state.step === 'verdict') {
+            handleReset();
+        }
+        onClose();
+    }, [state.step, handleReset, onClose]);
+
     // Handle escape key with confirmation if in progress
     const handleEscapeKey = useCallback((e: KeyboardEvent) => {
         if (e.key === 'Escape' && isOpen) {
@@ -35,7 +46,7 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({ isOpen, onClose 
             }
             handleClose();
         }
-    }, [isOpen, state.answers, state.step]);
+    }, [isOpen, state.answers, state.step, handleClose]);
 
     useEffect(() => {
         window.addEventListener('keydown', handleEscapeKey);
@@ -44,18 +55,12 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({ isOpen, onClose 
 
     // Fire analytics when modal opens
     useEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if (isOpen && typeof window !== 'undefined' && (window as any).gtag) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (window as any).gtag('event', 'assessment_started');
         }
     }, [isOpen]);
-
-    const handleClose = () => {
-        // Reset if completed, keep progress if in middle
-        if (state.step === 'verdict') {
-            handleReset();
-        }
-        onClose();
-    };
 
     const scrollToServices = () => {
         handleClose();
@@ -69,8 +74,9 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({ isOpen, onClose 
     };
 
     return (
+        <>
         <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-            <DialogContent className="max-w-3xl bg-background border-border p-0 overflow-hidden shadow-2xl min-h-[500px] [&>div]:bg-background">
+            <DialogContent className="max-w-3xl bg-background border-border p-0 overflow-hidden shadow-2xl min-h-[500px]">
                 <DialogHeader className="sr-only">
                     <DialogTitle>Real World Readiness Test</DialogTitle>
                     <DialogDescription>3 questions to assess your business resilience</DialogDescription>
@@ -207,6 +213,10 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({ isOpen, onClose 
                                 score={state.score}
                                 totalQuestions={3}
                                 onCtaClick={scrollToServices}
+                                onComprehensiveClick={() => {
+                                    handleClose();
+                                    setIsUnicornOpen(true);
+                                }}
                                 onRetake={handleReset}
                             />
                         )}
@@ -214,5 +224,11 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({ isOpen, onClose 
                 </div>
             </DialogContent>
         </Dialog>
+
+        <UnicornTestModal 
+            isOpen={isUnicornOpen} 
+            onClose={() => setIsUnicornOpen(false)} 
+        />
+        </>
     );
 };

@@ -2,6 +2,8 @@ import { DashboardSidebar, DashboardMobileNav } from "@/components/dashboard/Das
 import { UserButton, SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
 import { Menu } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 export default function DashboardLayout({
     children,
 }: {

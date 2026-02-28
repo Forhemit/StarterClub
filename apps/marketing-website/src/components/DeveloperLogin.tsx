@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Lock, ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
+import { APP_URLS } from "@/config/urls";
 
 interface DeveloperLoginProps {
     targetPort?: number;
@@ -15,11 +16,18 @@ export function DeveloperLogin({ targetPort, redirectUrl, title }: DeveloperLogi
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (password === "StarterClub!2025") {
+        const devPassword = process.env.NEXT_PUBLIC_DEV_PASSWORD;
+        if (password === devPassword) {
             if (redirectUrl) {
                 window.location.href = redirectUrl;
-            } else if (targetPort) {
-                window.location.href = `http://localhost:${targetPort}`;
+            } else if (targetPort === 3001) {
+                window.location.href = APP_URLS.superAdmin;
+            } else if (targetPort === 3002) {
+                window.location.href = APP_URLS.onboard;
+            } else if (targetPort === 3003) {
+                window.location.href = APP_URLS.flightDeck;
+            } else {
+                window.location.href = APP_URLS.marketing;
             }
         } else {
             setError(true);

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
@@ -15,6 +15,29 @@ interface SuperMenuTriggerProps {
  * WCAG 2.1 AA compliant with proper ARIA labels.
  */
 export function SuperMenuTrigger({ isOpen, onClick }: SuperMenuTriggerProps) {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    // Prevent SSR issues by rendering a simple button initially
+    if (!mounted) {
+        return (
+            <button
+                className="relative w-11 h-11 flex items-center justify-center
+                     rounded-md bg-muted hover:bg-accent transition-colors
+                     focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background
+                     border border-border shadow-sm"
+                aria-label="Open navigation menu"
+                aria-expanded={false}
+                aria-controls="super-menu-panel"
+            >
+                <Menu className="w-6 h-6 text-foreground" strokeWidth={2.5} />
+            </button>
+        );
+    }
+
     return (
         <motion.button
             onClick={onClick}

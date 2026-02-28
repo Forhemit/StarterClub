@@ -2,6 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { QuestionData } from "./types";
 
@@ -53,8 +54,16 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                 </div>
             </div>
 
-            {/* Icon */}
-            <div className="text-5xl mb-6 text-center">{question.icon}</div>
+            {/* Image */}
+            <div className="relative w-full h-48 md:h-56 mb-8 rounded-xl overflow-hidden shadow-lg border border-border">
+                <Image 
+                    src={question.image} 
+                    alt={question.title}
+                    unoptimized
+                    fill
+                    className="object-cover object-center transition-transform duration-700 hover:scale-105"
+                />
+            </div>
 
             {/* Title */}
             <div className="text-center mb-6">

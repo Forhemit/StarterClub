@@ -85,10 +85,10 @@ export const Sidebar = () => {
 
                 {!collapsed && <div className="px-3 mb-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">Apps</div>}
 
-                {/* External App Links - Assuming ports based on standard Next.js behavior or user setup */}
-                <NavItem href="http://localhost:3001" icon={Rocket} label="Super Admin" external />
-                <NavItem href="http://localhost:3002" icon={Smartphone} label="Onboard App" external />
-                <NavItem href="http://localhost:3003" icon={Monitor} label="Kiosk / Flight Deck" external />
+                {/* External App Links */}
+                <NavItem href={process.env.NEXT_PUBLIC_SUPER_ADMIN_URL || '/dashboard/super-admin'} icon={Rocket} label="Super Admin" external />
+                <NavItem href={process.env.NEXT_PUBLIC_ONBOARD_URL || '/onboard'} icon={Smartphone} label="Onboard App" external />
+                <NavItem href={process.env.NEXT_PUBLIC_FLIGHT_DECK_URL || '/dashboard'} icon={Monitor} label="Flight Deck" external />
             </div>
 
             <div className="p-2 border-t border-zinc-200 dark:border-zinc-800 space-y-1">

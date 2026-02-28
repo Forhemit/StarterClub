@@ -1,5 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 const isDashboardRoute = createRouteMatcher(["/dashboard(.*)"]);
 const isAdminRoute = createRouteMatcher(["/dashboard/super-admin(.*)"]);
@@ -10,24 +11,54 @@ const isPublicAPI = createRouteMatcher(["/api(.*)"]);
 
 import { createClient } from "@supabase/supabase-js";
 
-export default clerkMiddleware(async (auth, req) => {
+// Add security headers to response
+function addSecurityHeaders(response: NextResponse): NextResponse {
+    response.headers.set('X-Frame-Options', 'DENY');
+    response.headers.set('X-Content-Type-Options', 'nosniff');
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+    response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+    
+    // Content Security Policy
+    response.headers.set(
+        'Content-Security-Policy',
+        "default-src 'self'; " +
+        "script-src 'self' 'unsafe-eval' 'unsafe-inline' *.clerk.accounts.dev *.stripe.com; " +
+        "style-src 'self' 'unsafe-inline'; " +
+        "img-src 'self' blob: data: *.supabase.co *.stripe.com o341ovdtm5.ufs.sh; " +
+        "font-src 'self'; " +
+        "connect-src 'self' *.supabase.co *.clerk.accounts.dev *.stripe.com api.stripe.com; " +
+        "frame-ancestors 'none'; " +
+        "form-action 'self';"
+    );
+    
+    return response;
+}
 
+export default clerkMiddleware(async (auth, req) => {
     try {
         // BLOCK DANGEROUS DEV ROUTES IN PRODUCTION
         if (process.env.NODE_ENV === "production") {
             const path = req.nextUrl.pathname;
-            if (path.startsWith("/secret-menu") || path.startsWith("/employee-portal") || path.startsWith("/simple-login")) {
-                return NextResponse.redirect(new URL("/", req.url));
+            const blockedDevRoutes = [
+                "/secret-menu",
+                "/employee-portal", 
+                "/simple-login",
+                "/test-users",
+                "/dev-login",
+                "/developer-login"
+            ];
+            if (blockedDevRoutes.some(route => path.startsWith(route))) {
+                const response = NextResponse.redirect(new URL("/", req.url));
+                return addSecurityHeaders(response);
             }
         }
 
         const { userId, getToken } = await auth();
-        const url = new URL(req.url); // Use standard URL
+        const url = new URL(req.url);
         const pathname = url.pathname;
 
         // Onboarding & Role Check
         if (userId && !isPublicAPI(req)) {
-            // Create authenticated Supabase client for middleware
             const token = await getToken({ template: 'supabase' });
 
             const supabase = createClient(
@@ -40,7 +71,6 @@ export default clerkMiddleware(async (auth, req) => {
                 }
             );
 
-            // Check Supabase profile for role and onboarding status
             const { data: profile } = await supabase
                 .from('profiles')
                 .select('active_roles, primary_role, onboarding_completed_at, primary_intent')
@@ -50,13 +80,13 @@ export default clerkMiddleware(async (auth, req) => {
             const hasRoles = profile?.active_roles && profile.active_roles.length > 0;
             const onboardingCompleted = !!profile?.onboarding_completed_at;
 
-            // 1. Redirect to Onboarding if not completed and NO role assigned
+            // Redirect to Onboarding if not completed and NO role assigned
             if (!onboardingCompleted && !hasRoles && !isOnboardingRoute(req) && !isMemberOnboardingRoute(req) && !isPartnerOnboardingRoute(req)) {
-                return NextResponse.redirect(new URL("/onboarding", req.url));
+                const response = NextResponse.redirect(new URL("/onboarding", req.url));
+                return addSecurityHeaders(response);
             }
 
-            // 2. If has roles, allow dashboard access even if onboarding not complete
-            // (Users can complete onboarding later from dashboard)
+            // If has roles, allow dashboard access even if onboarding not complete
             if (hasRoles && !onboardingCompleted) {
                 const allowedWithoutOnboarding = [
                     '/onboarding',
@@ -68,23 +98,17 @@ export default clerkMiddleware(async (auth, req) => {
                 const isAllowed = allowedWithoutOnboarding.some(route => pathname.startsWith(route));
 
                 if (!isAllowed) {
-                    return NextResponse.redirect(new URL("/dashboard", req.url));
+                    const response = NextResponse.redirect(new URL("/dashboard", req.url));
+                    return addSecurityHeaders(response);
                 }
             }
-
-            // 3. Smart Routing Outcomes
-            // Everyone lands in Home Base, but Home Base is contextualized.
-            // Some intents might require extra orientation.
 
             const hasCompletedOnboarding = !!profile?.onboarding_completed_at;
             const intent = profile?.primary_intent;
 
-            // Handle additional orientation steps based on intent
             if (hasCompletedOnboarding) {
                 if (intent === 'builder' && !isMemberOnboardingRoute(req)) {
                     // Check if member context is needed
-                    // (For now, let's assume it's still tracked in metadata or needs a DB check)
-                    // If we want to be safe, we can check if they've seen it.
                 }
 
                 if (intent === 'partner' && !isPartnerOnboardingRoute(req)) {
@@ -92,7 +116,6 @@ export default clerkMiddleware(async (auth, req) => {
                 }
             }
 
-            // Fallback to existing metadata checks if DB check fails or is skipped?
             const { sessionClaims } = await auth();
             const metadata = sessionClaims?.publicMetadata as { onboardingComplete?: boolean; userTrack?: string; memberContextComplete?: boolean; partnerContextComplete?: boolean };
 
@@ -102,7 +125,8 @@ export default clerkMiddleware(async (auth, req) => {
                 !isMemberOnboardingRoute(req)) {
 
                 const contextUrl = new URL("/member-onboarding", req.url);
-                return NextResponse.redirect(contextUrl);
+                const response = NextResponse.redirect(contextUrl);
+                return addSecurityHeaders(response);
             }
 
             if (hasCompletedOnboarding &&
@@ -111,7 +135,8 @@ export default clerkMiddleware(async (auth, req) => {
                 !isPartnerOnboardingRoute(req)) {
 
                 const partnerContextUrl = new URL("/partner-onboarding", req.url);
-                return NextResponse.redirect(partnerContextUrl);
+                const response = NextResponse.redirect(partnerContextUrl);
+                return addSecurityHeaders(response);
             }
         }
 
@@ -122,7 +147,6 @@ export default clerkMiddleware(async (auth, req) => {
 
     } catch (error) {
         console.error("Middleware Error:", error);
-        // Allow public routes to proceed even if auth fails
         if (!isDashboardRoute(req)) {
             return;
         }
@@ -132,9 +156,7 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
     matcher: [
-        // Skip Next.js internals and all static files, unless found in search params
-        "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-        // Always run for API routes
+        "/((?!_next|[^?]*\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
         "/(api|trpc)(.*)",
     ],
 };
