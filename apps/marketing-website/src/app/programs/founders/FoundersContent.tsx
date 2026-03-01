@@ -2,14 +2,9 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import { RaceTrackFooter } from "@/components/racetrack/RaceTrackFooter";
 
 export function FoundersContent() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-
   return (
     <>
       {/* Hero Section */}
@@ -50,10 +45,10 @@ export function FoundersContent() {
         </div>
       </section>
 
-      {/* Access Pass Sections */}
-      <div ref={containerRef} className="relative">
-        {/* Section 1: Secure Vault - Image Right */}
-        <FeatureSection
+      {/* Stacking Parallax Sections */}
+      <div className="relative">
+        {/* Section 1: Secure Vault - Base background */}
+        <StickyFeatureSection
           number="01"
           title="Secure Vault"
           subtitle="Your Digital Fortress"
@@ -67,13 +62,11 @@ export function FoundersContent() {
           ]}
           image="https://images.unsplash.com/photo-1582139329536-e7284fece509?w=1200&q=85"
           imageAlt="Hand holding a bunch of keys in front of a metal locker"
-          reversed={true}
-          scrollYProgress={scrollYProgress}
           index={0}
         />
 
-        {/* Section 2: Business Health - Image Left */}
-        <FeatureSection
+        {/* Section 2: Business Health - With subtle pattern */}
+        <StickyFeatureSection
           number="02"
           title="Business Health"
           subtitle="Prevent Problems Before They Start"
@@ -87,14 +80,12 @@ export function FoundersContent() {
           ]}
           image="https://images.unsplash.com/photo-1766593771606-6218280a663c?w=1200&q=85"
           imageAlt="White heart drawn on frosted glass"
-          reversed={false}
-          scrollYProgress={scrollYProgress}
           index={1}
-          highlight
+          hasPattern
         />
 
-        {/* Section 3: Founder Network - Image Right */}
-        <FeatureSection
+        {/* Section 3: Founder Network - With gradient */}
+        <StickyFeatureSection
           number="03"
           title="Founder Network"
           subtitle="You're Not Alone"
@@ -108,13 +99,12 @@ export function FoundersContent() {
           ]}
           image="https://images.unsplash.com/photo-1763244737671-c2f6a51d465e?w=1200&q=85"
           imageAlt="Man in suit carrying briefcase on treadmill"
-          reversed={true}
-          scrollYProgress={scrollYProgress}
           index={2}
+          hasGradient
         />
 
-        {/* Section 4: War Games - Image Left */}
-        <FeatureSection
+        {/* Section 4: War Games - With border accent */}
+        <StickyFeatureSection
           number="04"
           title="War Games"
           subtitle="Practice Chaos Before It Finds You"
@@ -128,13 +118,12 @@ export function FoundersContent() {
           ]}
           image="https://images.unsplash.com/photo-1752004034445-5cf104568dd3?w=1200&q=85"
           imageAlt="Symmetrical building art composition in black and white"
-          reversed={false}
-          scrollYProgress={scrollYProgress}
           index={3}
+          hasBorder
         />
 
         {/* CTA Section */}
-        <section className="py-24 bg-gradient-to-b from-background to-muted/20">
+        <section className="relative z-50 py-24 bg-background">
           <div className="container mx-auto px-4 text-center">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -167,12 +156,15 @@ export function FoundersContent() {
           </div>
         </section>
       </div>
+
+      {/* Global Footer */}
+      <RaceTrackFooter />
     </>
   );
 }
 
-// Feature Section Component
-interface FeatureSectionProps {
+// Sticky Feature Section Component
+interface StickyFeatureSectionProps {
   number: string;
   title: string;
   subtitle: string;
@@ -180,13 +172,13 @@ interface FeatureSectionProps {
   features: string[];
   image: string;
   imageAlt: string;
-  reversed: boolean;
-  scrollYProgress: any;
   index: number;
-  highlight?: boolean;
+  hasPattern?: boolean;
+  hasGradient?: boolean;
+  hasBorder?: boolean;
 }
 
-function FeatureSection({ 
+function StickyFeatureSection({ 
   number, 
   title, 
   subtitle, 
@@ -194,65 +186,115 @@ function FeatureSection({
   features, 
   image, 
   imageAlt,
-  reversed,
-  scrollYProgress,
   index,
-  highlight = false
-}: FeatureSectionProps) {
-  // Calculate animation ranges based on index
-  const startRange = index * 0.2;
-  const endRange = startRange + 0.2;
+  hasPattern,
+  hasGradient,
+  hasBorder,
+}: StickyFeatureSectionProps) {
+  const sectionRef = useRef<HTMLDivElement>(null);
   
-  const y = useTransform(scrollYProgress, [startRange, endRange], [80, 0]);
-  const opacity = useTransform(scrollYProgress, [startRange, endRange], [0, 1]);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"]
+  });
+
+  // Smoother transforms for stacking effect
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.92]);
+
+  // Alternate image position
+  const reversed = index % 2 === 1;
+
+  // Get accent color based on index
+  const accentColors = [
+    { text: "text-emerald-500", bg: "bg-emerald-500", border: "border-emerald-500/30" },
+    { text: "text-rose-500", bg: "bg-rose-500", border: "border-rose-500/30" },
+    { text: "text-amber-500", bg: "bg-amber-500", border: "border-amber-500/30" },
+    { text: "text-red-500", bg: "bg-red-500", border: "border-red-500/30" },
+  ];
+  const accent = accentColors[index];
 
   return (
-    <section 
-      className={`py-24 md:py-32 border-b border-border last:border-0 ${
-        highlight ? 'bg-gradient-to-b from-primary/5 to-background' : 'bg-background'
+    <motion.section 
+      ref={sectionRef}
+      style={{ scale, zIndex: 10 + index }}
+      className={`sticky top-0 min-h-screen flex items-center bg-background py-16 md:py-24 ${
+        hasPattern ? 'pattern-section' : ''
+      } ${
+        hasGradient ? 'gradient-section' : ''
+      } ${
+        hasBorder ? 'border-section' : ''
       }`}
     >
-      <div className="container mx-auto px-4">
-        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-stretch`}>
+      {/* Background variations */}
+      {hasPattern && (
+        <div 
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)`,
+            backgroundSize: '32px 32px'
+          }}
+        />
+      )}
+      
+      {hasGradient && (
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 pointer-events-none" />
+      )}
+      
+      {hasBorder && (
+        <>
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
+          <div className="absolute inset-4 border border-primary/10 rounded-3xl pointer-events-none" />
+        </>
+      )}
+
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-stretch">
           {/* Content Column */}
           <motion.div 
-            style={{ opacity, y }}
+            initial={{ opacity: 0, x: reversed ? 60 : -60 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
             className={`flex flex-col ${reversed ? 'lg:order-2' : 'lg:order-1'}`}
           >
             {/* Number Badge */}
-            <div className="flex items-center gap-4 mb-8">
-              <span className="text-7xl md:text-9xl font-black text-primary/10 font-mono leading-none">
+            <div className="flex items-center gap-4 mb-6">
+              <span className={`text-7xl md:text-9xl font-black font-mono leading-none ${accent.text} opacity-20`}>
                 {number}
               </span>
-              <div className="h-px flex-1 bg-gradient-to-r from-primary/30 to-transparent" />
+              <div className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />
             </div>
 
             {/* Title */}
             <h2 className="text-4xl md:text-6xl font-bold text-foreground uppercase tracking-tight mb-3">
               {title}
             </h2>
-            <p className={`text-xl font-medium mb-8 ${highlight ? 'text-primary' : 'text-muted-foreground'}`}>
+            <p className={`text-xl font-medium mb-6 ${accent.text}`}>
               {subtitle}
             </p>
 
             {/* Description */}
-            <p className="text-muted-foreground leading-relaxed mb-10 text-lg max-w-xl">
+            <p className="text-muted-foreground leading-relaxed mb-8 text-lg max-w-xl">
               {description}
             </p>
 
-            {/* Features List - grows to fill space */}
-            <div className="flex-1 flex flex-col justify-end space-y-4">
+            {/* Features List */}
+            <div className="flex-1 flex flex-col justify-end space-y-3">
               {features.map((feature, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, x: -30 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: i * 0.08 }}
-                  className="flex items-center gap-4 p-4 rounded-xl bg-muted/30 border border-border/50 hover:border-primary/30 hover:bg-muted/50 transition-all group"
+                  transition={{ 
+                    duration: 0.5, 
+                    delay: 0.3 + (i * 0.1),
+                    ease: [0.25, 0.1, 0.25, 1]
+                  }}
+                  className={`flex items-center gap-4 p-4 rounded-xl bg-card border border-border hover:${accent.border} transition-all group`}
                 >
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                    <svg className="w-4 h-4 text-primary group-hover:text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className={`w-8 h-8 rounded-lg bg-muted flex items-center justify-center shrink-0 group-hover:${accent.bg} transition-colors duration-300`}>
+                    <svg className={`w-4 h-4 text-[var(--foreground)]`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
@@ -262,52 +304,61 @@ function FeatureSection({
             </div>
           </motion.div>
 
-          {/* Image Column - Matches content height */}
+          {/* Image Column */}
           <motion.div 
-            style={{ opacity, y }}
+            initial={{ opacity: 0, x: reversed ? -60 : 60 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ 
+              duration: 0.8, 
+              delay: 0.2,
+              ease: [0.25, 0.1, 0.25, 1]
+            }}
             className={`flex ${reversed ? 'lg:order-1' : 'lg:order-2'}`}
           >
             <motion.div
-              whileHover={{ scale: 1.01 }}
-              transition={{ duration: 0.4 }}
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
               className="relative group w-full flex"
             >
-              {/* Main Image Container - Fills full height */}
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl ring-1 ring-border w-full flex flex-col">
-                {/* Image fills container height */}
+              {/* Main Image Container */}
+              <div className={`relative rounded-3xl overflow-hidden shadow-2xl w-full flex flex-col ${
+                hasBorder ? `ring-2 ${accent.border}` : 'ring-1 ring-border'
+              }`}>
+                {/* Image */}
                 <div className="flex-1 relative min-h-0">
                   <img
                     src={image}
                     alt={imageAlt}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                   />
                 </div>
 
                 {/* Bottom Info Bar */}
-                <div className="p-6 bg-gradient-to-t from-black/80 via-black/60 to-black/20 shrink-0">
+                <div className="p-6 bg-card/95 backdrop-blur-md shrink-0 border-t border-border">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <span className="px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-xs font-mono text-white">
+                      <span className={`px-3 py-1.5 rounded-full bg-muted border border-border text-xs font-mono ${accent.text}`}>
                         {number} / 04
                       </span>
-                      <span className="text-white/70 text-sm font-medium">
+                      <span className="text-muted-foreground text-sm font-medium">
                         {number === "01" && "Bank-level encryption"}
                         {number === "02" && "500+ companies scanned"}
                         {number === "03" && "200+ active founders"}
                         {number === "04" && "Crisis-tested playbooks"}
                       </span>
                     </div>
-                    <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                    <div className={`w-2 h-2 rounded-full ${accent.bg} animate-pulse`} />
                   </div>
                 </div>
               </div>
 
-              {/* Decorative Shadow Layers */}
-              <div className="absolute -inset-4 rounded-3xl bg-primary/5 -z-10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              {/* Decorative Glow */}
+              <div className={`absolute -inset-4 rounded-3xl ${accent.bg} opacity-0 group-hover:opacity-10 blur-3xl transition-opacity duration-700 pointer-events-none`} />
             </motion.div>
           </motion.div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
