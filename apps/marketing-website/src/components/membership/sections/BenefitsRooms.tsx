@@ -223,7 +223,7 @@ export function BenefitsRooms() {
                     </div>
                     <div className="flex justify-between mt-2 text-xs text-[var(--muted-foreground)]">
                         <span>{filteredRooms.length} rooms</span>
-                        <ScrollProgressLabel x={x} maxScroll={maxScroll} />
+                        <ScrollProgressLabel x={x} maxScroll={maxScroll} totalCards={filteredRooms.length} />
                     </div>
                 </div>
             </div>
@@ -542,24 +542,42 @@ function SpecIcon({ spec }: { spec: string }) {
 }
 
 // ============================================================================
-// Scroll Progress Label - Shows remaining cards
+// Scroll Progress Label - Shows current position
 // ============================================================================
 
-function ScrollProgressLabel({ x, maxScroll }: { x: ReturnType<typeof useMotionValue<number>>; maxScroll: number }) {
-    const [remaining, setRemaining] = useState(0);
+function ScrollProgressLabel({ 
+    x, 
+    maxScroll, 
+    totalCards 
+}: { 
+    x: ReturnType<typeof useMotionValue<number>>; 
+    maxScroll: number;
+    totalCards: number;
+}) {
+    const [currentIndex, setCurrentIndex] = useState(1);
+    const [isEnd, setIsEnd] = useState(false);
     
     React.useEffect(() => {
         const unsubscribe = x.on("change", (currentX) => {
+            if (maxScroll <= 0) {
+                setCurrentIndex(1);
+                setIsEnd(totalCards <= 1);
+                return;
+            }
+            
             const progress = Math.abs(currentX) / maxScroll;
-            const totalCards = Math.ceil(maxScroll / (CARD_WIDTH + CARD_GAP)) + 1;
-            const visibleCards = Math.min(totalCards, Math.floor((typeof window !== 'undefined' ? window.innerWidth : 1200) / (CARD_WIDTH + CARD_GAP)));
-            const scrolledCards = Math.floor(progress * (totalCards - visibleCards + 1));
-            setRemaining(Math.max(0, totalCards - visibleCards - scrolledCards + 1));
+            // Calculate which card is at the left edge (1-indexed)
+            const cardPosition = Math.floor(progress * totalCards) + 1;
+            const clampedIndex = Math.min(cardPosition, totalCards);
+            
+            setCurrentIndex(clampedIndex);
+            setIsEnd(progress >= 0.95 || clampedIndex >= totalCards);
         });
         return unsubscribe;
-    }, [x, maxScroll]);
+    }, [x, maxScroll, totalCards]);
     
-    return <span>{remaining > 0 ? `${remaining} more` : 'End of list'}</span>;
+    if (isEnd) return <span>End of list</span>;
+    return <span>{currentIndex} of {totalCards}</span>;
 }
 
 // ============================================================================
