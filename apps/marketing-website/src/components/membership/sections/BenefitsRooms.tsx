@@ -121,7 +121,7 @@ export function BenefitsRooms() {
     return (
         <section className="py-16 md:py-24 overflow-hidden">
             {/* Section Header */}
-            <div className="px-4 md:px-8 lg:px-16 mb-8">
+            <div className="px-4 md:px-8 lg:px-16 mb-8 text-center">
                 <motion.span
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -143,7 +143,7 @@ export function BenefitsRooms() {
 
             {/* Category Pills */}
             <div className="px-4 md:px-8 lg:px-16 mb-6">
-                <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
+                <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 justify-center">
                     <CategoryPill
                         label="All"
                         isActive={activeCategory === "all"}
