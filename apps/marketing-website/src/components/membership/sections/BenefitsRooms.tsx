@@ -557,24 +557,33 @@ function ScrollProgressLabel({
     const [currentIndex, setCurrentIndex] = useState(1);
     const [isEnd, setIsEnd] = useState(false);
     
+    // Calculate position based on scroll value
+    const calculatePosition = useCallback((currentX: number) => {
+        if (maxScroll <= 0) {
+            setCurrentIndex(1);
+            setIsEnd(totalCards <= 1);
+            return;
+        }
+        
+        const progress = Math.abs(currentX) / maxScroll;
+        // Calculate which card is at the left edge (1-indexed)
+        const cardPosition = Math.floor(progress * totalCards) + 1;
+        const clampedIndex = Math.min(cardPosition, totalCards);
+        
+        setCurrentIndex(clampedIndex);
+        setIsEnd(progress >= 0.95 || clampedIndex >= totalCards);
+    }, [maxScroll, totalCards]);
+    
+    // Set initial value on mount
     React.useEffect(() => {
-        const unsubscribe = x.on("change", (currentX) => {
-            if (maxScroll <= 0) {
-                setCurrentIndex(1);
-                setIsEnd(totalCards <= 1);
-                return;
-            }
-            
-            const progress = Math.abs(currentX) / maxScroll;
-            // Calculate which card is at the left edge (1-indexed)
-            const cardPosition = Math.floor(progress * totalCards) + 1;
-            const clampedIndex = Math.min(cardPosition, totalCards);
-            
-            setCurrentIndex(clampedIndex);
-            setIsEnd(progress >= 0.95 || clampedIndex >= totalCards);
-        });
+        calculatePosition(x.get());
+    }, [calculatePosition, x]);
+    
+    // Subscribe to changes
+    React.useEffect(() => {
+        const unsubscribe = x.on("change", calculatePosition);
         return unsubscribe;
-    }, [x, maxScroll, totalCards]);
+    }, [x, calculatePosition]);
     
     if (isEnd) return <span>End of list</span>;
     return <span>{currentIndex} of {totalCards}</span>;
