@@ -17,6 +17,7 @@ import { SocialProof } from "@/components/content-injection/SocialProof";
 
 // Membership Benefits
 import { BenefitsRooms } from "@/components/membership/sections/BenefitsRooms";
+import { OperationalFragility } from "@/components/membership/sections/OperationalFragility";
 
 // ARCHIVE: For A/B Testing
 // import { ThreeLittlePigsHero } from "@/components/hero";
@@ -36,6 +37,9 @@ export default function RaceTrackHome() {
 
       {/* The Spaces - Benefits Rooms */}
       <BenefitsRooms />
+
+      {/* Operational Fragility Section */}
+      <OperationalFragility />
 
       <ProblemAgitation className="dark bg-background text-foreground" />
       <SolutionStack className="dark bg-background text-foreground" />
