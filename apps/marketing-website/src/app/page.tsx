@@ -11,7 +11,6 @@ import { ResilienceEngineHero } from "@/components/hero";
 
 // Content Injection
 import { SolutionStack } from "@/components/content-injection/SolutionStack";
-import { FreeOffer } from "@/components/content-injection/FreeOffer";
 import { SocialProof } from "@/components/content-injection/SocialProof";
 
 // Membership Benefits
@@ -41,7 +40,6 @@ export default function RaceTrackHome() {
       <OperationalFragility />
 
       <SolutionStack className="dark bg-background text-foreground" />
-      <FreeOffer className="dark bg-background text-foreground" />
       <SocialProof className="dark bg-background text-foreground" />
 
       <DecayVisualizer />
