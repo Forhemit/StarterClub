@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useCallback } from "react";
-import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
 import { benefitRooms } from "../data/membershipData";
 import {
     ChevronLeft,
@@ -52,6 +52,10 @@ export function BenefitsRooms() {
     // Motion values for smooth drag
     const x = useMotionValue(0);
     const springX = useSpring(x, { stiffness: 300, damping: 30 });
+    
+    // Scroll progress for progress bar (0 to 1)
+    const scrollProgress = useTransform(x, [0, -maxScroll], [0, 1]);
+    const progressWidth = useTransform(scrollProgress, [0, 1], ["0%", "100%"]);
 
     // Calculate bounds
     const totalWidth = filteredRooms.length * (CARD_WIDTH + CARD_GAP);
@@ -206,6 +210,22 @@ export function BenefitsRooms() {
                         />
                     ))}
                 </motion.div>
+            </div>
+
+            {/* Scroll Progress Bar */}
+            <div className="px-4 md:px-8 lg:px-16 mt-8">
+                <div className="max-w-xs mx-auto">
+                    <div className="h-1 bg-[var(--muted)]/50 rounded-full overflow-hidden">
+                        <motion.div 
+                            className="h-full bg-[var(--highlight)] rounded-full"
+                            style={{ width: progressWidth }}
+                        />
+                    </div>
+                    <div className="flex justify-between mt-2 text-xs text-[var(--muted-foreground)]">
+                        <span>{filteredRooms.length} rooms</span>
+                        <ScrollProgressLabel x={x} maxScroll={maxScroll} />
+                    </div>
+                </div>
             </div>
 
             {/* Reservation Modal */}
@@ -519,6 +539,27 @@ function SpecIcon({ spec }: { spec: string }) {
     }
     
     return <Zap className="w-4 h-4 text-[var(--highlight)]" />;
+}
+
+// ============================================================================
+// Scroll Progress Label - Shows remaining cards
+// ============================================================================
+
+function ScrollProgressLabel({ x, maxScroll }: { x: ReturnType<typeof useMotionValue<number>>; maxScroll: number }) {
+    const [remaining, setRemaining] = useState(0);
+    
+    React.useEffect(() => {
+        const unsubscribe = x.on("change", (currentX) => {
+            const progress = Math.abs(currentX) / maxScroll;
+            const totalCards = Math.ceil(maxScroll / (CARD_WIDTH + CARD_GAP)) + 1;
+            const visibleCards = Math.min(totalCards, Math.floor((typeof window !== 'undefined' ? window.innerWidth : 1200) / (CARD_WIDTH + CARD_GAP)));
+            const scrolledCards = Math.floor(progress * (totalCards - visibleCards + 1));
+            setRemaining(Math.max(0, totalCards - visibleCards - scrolledCards + 1));
+        });
+        return unsubscribe;
+    }, [x, maxScroll]);
+    
+    return <span>{remaining > 0 ? `${remaining} more` : 'End of list'}</span>;
 }
 
 // ============================================================================
