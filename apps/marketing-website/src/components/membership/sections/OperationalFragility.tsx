@@ -7,9 +7,9 @@ const BACKGROUND_IMAGE = "https://images.unsplash.com/photo-1747409020043-41d140
 export function OperationalFragility() {
     return (
         <section className="relative min-h-[80vh] flex items-center overflow-hidden">
-            {/* Background Image with Theme-Aware Filter */}
+            {/* Background Image with Theme-Aware Filter - Fixed for parallax effect */}
             <div 
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-500"
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed transition-all duration-500"
                 style={{
                     backgroundImage: `url('${BACKGROUND_IMAGE}')`,
                 }}
