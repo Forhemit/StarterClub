@@ -26,6 +26,7 @@ import {
     Zap,
     Flag,
 } from "lucide-react";
+import { PBCTrust } from "@/components/content-injection/PBCTrust";
 
 // ============================================================================
 // DATA
@@ -1068,6 +1069,7 @@ export function PublicBenefitCommitment() {
             <PillarsTableSection />
             <TimelineSection />
             <FutureVisionSection />
+            <PBCTrust />
             <FAQSection />
             <CTASection />
             <LegalFooter />

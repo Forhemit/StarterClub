@@ -4,7 +4,6 @@ import React from "react";
 import { LiveTicker } from "@/components/racetrack/LiveTicker";
 import { DecayVisualizer } from "@/components/racetrack/DecayVisualizer";
 import { WarRoomTerminal } from "@/components/racetrack/WarRoomTerminal";
-import { TierGarage } from "@/components/racetrack/TierGarage";
 import { RaceTrackFooter } from "@/components/racetrack/RaceTrackFooter";
 
 // NEW HERO: Resilience Engine (Remotion-based)
@@ -16,6 +15,9 @@ import { SolutionStack } from "@/components/content-injection/SolutionStack";
 import { PBCTrust } from "@/components/content-injection/PBCTrust";
 import { FreeOffer } from "@/components/content-injection/FreeOffer";
 import { SocialProof } from "@/components/content-injection/SocialProof";
+
+// Membership Benefits
+import { BenefitsRooms } from "@/components/membership/sections/BenefitsRooms";
 
 // ARCHIVE: For A/B Testing
 // import { ThreeLittlePigsHero } from "@/components/hero";
@@ -33,6 +35,9 @@ export default function RaceTrackHome() {
       {/* Active Simulation */}
       <WarRoomTerminal />
 
+      {/* The Spaces - Benefits Rooms */}
+      <BenefitsRooms />
+
       <ProblemAgitation className="dark bg-background text-foreground" />
       <SolutionStack className="dark bg-background text-foreground" />
       <PBCTrust className="dark bg-background text-foreground" />
@@ -40,8 +45,6 @@ export default function RaceTrackHome() {
       <SocialProof className="dark bg-background text-foreground" />
 
       <DecayVisualizer />
-
-      <TierGarage />
 
       <RaceTrackFooter />
 

@@ -190,3 +190,13 @@
     font-family: var(--font-heading), sans-serif;
   }
 }
+
+/* Hide scrollbar for horizontal galleries */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

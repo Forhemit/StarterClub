@@ -15,7 +15,7 @@ export function PBCTrust({ className = "" }: PBCTrustProps) {
 
                 {/* Left: Text Content */}
                 <div className="space-y-8 animate-in slide-in-from-left-8 duration-700">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-bold uppercase tracking-wider">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-wider">
                         <Scale className="w-3 h-3" /> Fiduciary Commitment
                     </div>
 
@@ -32,7 +32,7 @@ export function PBCTrust({ className = "" }: PBCTrustProps) {
                             We are fiduciary-bound to prioritize your long-term resilience, not just our short-term revenue. This means our incentives are perfectly aligned with your success.
                         </p>
                         <p className="flex items-center gap-3 text-foreground font-medium">
-                            <CheckCircle2 className="w-5 h-5 text-green-600" />
+                            <CheckCircle2 className="w-5 h-5 text-primary" />
                             When you become more resilient, we fulfill our mission.
                         </p>
                     </div>
@@ -41,7 +41,7 @@ export function PBCTrust({ className = "" }: PBCTrustProps) {
                 {/* Right: Visual Element (Badge/seal representation) */}
                 <div className="flex justify-center lg:justify-end animate-in slide-in-from-right-8 duration-700 delay-100">
                     <div className="relative w-80 h-80 md:w-96 md:h-96 bg-background rounded-full border-8 border-muted shadow-2xl flex flex-col items-center justify-center p-8 text-center rotate-3 hover:rotate-0 transition-transform duration-500">
-                        <div className="absolute inset-0 rounded-full border border-dashed border-gray-300 m-2 animate-[spin_60s_linear_infinite]" />
+                        <div className="absolute inset-0 rounded-full border border-dashed border-border m-2 animate-[spin_60s_linear_infinite]" />
 
                         {/* Simple CSS Badge Representation if no image is available yet */}
                         <div className="w-24 h-24 bg-foreground text-background rounded-full flex items-center justify-center mb-6">
@@ -51,7 +51,7 @@ export function PBCTrust({ className = "" }: PBCTrustProps) {
                         <h3 className="text-2xl font-bold text-foreground mb-2">Certified Public Benefit Corp</h3>
                         <p className="text-sm text-muted-foreground uppercase tracking-widest">Legal commitment to <br />stakeholder benefit</p>
 
-                        <div className="absolute -bottom-6 -right-6 bg-yellow-400 text-black font-bold text-xs py-2 px-4 rounded-full shadow-lg transform -rotate-6">
+                        <div className="absolute -bottom-6 -right-6 bg-primary text-primary-foreground font-bold text-xs py-2 px-4 rounded-full shadow-lg transform -rotate-6">
                             Officially Chartered
                         </div>
                     </div>
