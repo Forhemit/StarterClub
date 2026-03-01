@@ -1,58 +1,79 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useRef, useCallback } from "react";
+import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
 import { benefitRooms } from "../data/membershipData";
 import {
+    ChevronLeft,
+    ChevronRight,
     Users,
-    Zap,
+    Play,
+    Info,
+    X,
+    Wifi,
     Monitor,
     Mic,
+    Video,
     Coffee,
-    ArrowRight,
-    Maximize2,
-    X,
-    Filter,
-    ArrowUpAZ,
-    ArrowDownAZ,
-    DollarSign,
+    Armchair,
+    Zap,
     Clock,
-    ChevronDown,
-    RotateCcw
+    Calendar,
 } from "lucide-react";
-
-// ============================================================================
-// BENEFIT ROOMS SECTION
-// Corporate: Premium Hotel / Club Vibe. Clean lines, architectural.
-// Racing: Track Facilities Map. Sector-based schematic.
-// ============================================================================
-
 import { RoomReservationModal } from "./RoomReservationModal";
 import { type Room } from "../data/membershipData";
 
+// ============================================================================
+// NETFLIX-STYLE FLIPPING CARD GALLERY
+// Cards flip to show detailed info panel
+// ============================================================================
+
+const CARD_WIDTH = 320;
+const CARD_HEIGHT = 675;
+const CARD_GAP = 24;
+
 export function BenefitsRooms() {
     const [activeCategory, setActiveCategory] = useState("all");
-    const [currentPage, setCurrentPage] = useState(1);
     const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
     const [isReservationOpen, setIsReservationOpen] = useState(false);
-    const [sortBy, setSortBy] = useState<"name-asc" | "name-desc" | "price-asc" | "price-desc" | "availability">("name-asc");
-    const [quickFind, setQuickFind] = useState<string>("");
+    const [flippedCardId, setFlippedCardId] = useState<string | null>(null);
+    const [showLeftArrow, setShowLeftArrow] = useState(false);
+    const [showRightArrow, setShowRightArrow] = useState(true);
+    
+    const trackRef = useRef<HTMLDivElement>(null);
 
-    const ITEMS_PER_PAGE = 4;
+    // Filter rooms
+    const allRooms = benefitRooms.flatMap(category => category.rooms);
+    const filteredRooms = React.useMemo(() => {
+        if (activeCategory === "all") return allRooms;
+        return benefitRooms.find(c => c.id === activeCategory)?.rooms || [];
+    }, [activeCategory, allRooms]);
 
-    // Reset pagination when category changes
-    const handleCategoryChange = (category: string) => {
-        setActiveCategory(category);
-        setQuickFind(""); // Clear quick find
-        setCurrentPage(1);
-    };
+    // Motion values for smooth drag
+    const x = useMotionValue(0);
+    const springX = useSpring(x, { stiffness: 300, damping: 30 });
 
-    const handleClearFilters = () => {
-        setQuickFind("");
-        setActiveCategory("all");
-        setSortBy("name-asc");
-        setCurrentPage(1);
-    };
+    // Calculate bounds
+    const totalWidth = filteredRooms.length * (CARD_WIDTH + CARD_GAP);
+    const maxScroll = Math.max(0, totalWidth - (typeof window !== 'undefined' ? window.innerWidth : 1200) + 200);
+
+    // Update arrow visibility
+    const updateArrows = useCallback(() => {
+        const currentX = x.get();
+        setShowLeftArrow(currentX < -10);
+        setShowRightArrow(currentX > -maxScroll + 10);
+    }, [x, maxScroll]);
+
+    React.useEffect(() => {
+        const unsubscribe = x.on("change", updateArrows);
+        return unsubscribe;
+    }, [x, updateArrows]);
+
+    // Reset when category changes
+    React.useEffect(() => {
+        x.set(0);
+        setFlippedCardId(null);
+    }, [activeCategory, x]);
 
     const handleReserve = (room: Room) => {
         if (room.comingSoon || !room.isReservable) return;
@@ -60,489 +81,494 @@ export function BenefitsRooms() {
         setIsReservationOpen(true);
     };
 
-    // Derived state for filtered and paginated rooms
-    const allRooms = useMemo(() => benefitRooms.flatMap(category => category.rooms), []);
-
-    const filteredRooms = useMemo(() => {
-        if (quickFind) {
-            return allRooms.filter(r => r.id === quickFind);
-        }
-
-        const rooms = activeCategory === "all"
-            ? allRooms
-            : benefitRooms.find(c => c.id === activeCategory)?.rooms || [];
-
-        return [...rooms].sort((a, b) => {
-            const getPrice = (r: Room) => {
-                const priceStr = r.pricing?.guest;
-                if (!priceStr) return 0;
-                return parseInt(priceStr.replace(/[^0-9]/g, '')) || 0;
-            };
-
-            switch (sortBy) {
-                case "name-asc":
-                    return a.name.localeCompare(b.name);
-                case "name-desc":
-                    return b.name.localeCompare(a.name);
-                case "price-asc":
-                    return getPrice(a) - getPrice(b);
-                case "price-desc":
-                    return getPrice(b) - getPrice(a);
-                case "availability":
-                    // Free rooms (no pricing) usually considered available/priority here or we can use isFreeForAll
-                    // Let's explicitly put free rooms first
-                    const aFree = a.isFreeForAll ? 1 : 0;
-                    const bFree = b.isFreeForAll ? 1 : 0;
-                    return bFree - aFree;
-                default:
-                    return 0;
-            }
-        });
-    }, [activeCategory, allRooms, sortBy, quickFind]);
-
-    const totalPages = Math.ceil(filteredRooms.length / ITEMS_PER_PAGE);
-    const paginatedRooms = filteredRooms.slice(
-        (currentPage - 1) * ITEMS_PER_PAGE,
-        currentPage * ITEMS_PER_PAGE
-    );
-
-    const renderButton = (room: Room, variant: "corporate" | "racing") => {
-        if (room.isReservable === false) return null;
-
-        if (room.comingSoon) {
-            if (variant === "racing") {
-                return (
-                    <button
-                        disabled
-                        className="px-3 py-1 bg-muted/10 border border-muted text-muted-foreground text-xs font-mono uppercase cursor-not-allowed opacity-50"
-                    >
-                        [ OFFLINE ]
-                    </button>
-                );
-            }
-            return (
-                <button
-                    disabled
-                    className="px-6 py-2.5 rounded-full bg-muted text-muted-foreground font-semibold text-sm cursor-not-allowed opacity-70"
-                >
-                    Coming Soon
-                </button>
-            );
-        }
-
-        if (variant === "racing") {
-            return (
-                <button
-                    onClick={() => handleReserve(room)}
-                    className="px-3 py-1 bg-signal-green/10 border border-signal-green/30 text-signal-green text-xs font-mono uppercase hover:bg-signal-green hover:text-black transition-colors"
-                >
-                    [ ACCESS ]
-                </button>
-            );
-        }
-
-        return (
-            <button
-                onClick={() => handleReserve(room)}
-                className="px-6 py-2.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity"
-            >
-                Reserve Space
-            </button>
-        );
+    const handleFlip = (roomId: string) => {
+        setFlippedCardId(flippedCardId === roomId ? null : roomId);
     };
 
+    // Scroll handlers
+    const scroll = useCallback((direction: "left" | "right") => {
+        setFlippedCardId(null);
+        const currentX = x.get();
+        const scrollAmount = (CARD_WIDTH + CARD_GAP) * 2;
+        const targetX = direction === "left" 
+            ? Math.min(0, currentX + scrollAmount)
+            : Math.max(-maxScroll, currentX - scrollAmount);
+        x.set(targetX);
+    }, [x, maxScroll]);
+
+    // Wheel handler
+    const handleWheel = useCallback((e: React.WheelEvent) => {
+        e.preventDefault();
+        const delta = e.deltaY || e.deltaX;
+        const currentX = x.get();
+        const newX = Math.max(-maxScroll, Math.min(0, currentX - delta));
+        x.set(newX);
+    }, [x, maxScroll]);
+
+    // Drag end with momentum
+    const handleDragEnd = useCallback((_: any, info: any) => {
+        const currentX = x.get();
+        const velocity = info.velocity.x;
+        const momentum = velocity * 0.2;
+        let targetX = currentX + momentum;
+        targetX = Math.max(-maxScroll, Math.min(0, targetX));
+        const cardPosition = Math.round(-targetX / (CARD_WIDTH + CARD_GAP));
+        targetX = -cardPosition * (CARD_WIDTH + CARD_GAP);
+        targetX = Math.max(-maxScroll, Math.min(0, targetX));
+        x.set(targetX);
+    }, [x, maxScroll]);
+
     return (
-        <section className="relative w-full py-24 md:py-32 overflow-hidden">
+        <section className="py-16 md:py-24 overflow-hidden">
+            {/* Section Header */}
+            <div className="px-4 md:px-8 lg:px-16 mb-8">
+                <motion.span
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="inline-block px-3 py-1 rounded-full text-xs font-medium tracking-widest uppercase bg-[var(--highlight)]/10 text-[var(--highlight)] mb-3"
+                >
+                    Space to Build
+                </motion.span>
+                <motion.h2
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.1 }}
+                    className="text-2xl md:text-3xl lg:text-4xl font-bold text-[var(--foreground)]"
+                >
+                    Every room has a purpose
+                </motion.h2>
+            </div>
+
+            {/* Category Pills */}
+            <div className="px-4 md:px-8 lg:px-16 mb-6">
+                <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
+                    <CategoryPill
+                        label="All"
+                        isActive={activeCategory === "all"}
+                        onClick={() => setActiveCategory("all")}
+                    />
+                    {benefitRooms.map((category) => (
+                        <CategoryPill
+                            key={category.id}
+                            label={category.title}
+                            isActive={activeCategory === category.id}
+                            onClick={() => setActiveCategory(category.id)}
+                        />
+                    ))}
+                </div>
+            </div>
+
+            {/* Gallery Row */}
+            <div 
+                className="relative group"
+                onWheel={handleWheel}
+            >
+                {/* Left Arrow */}
+                <button
+                    onClick={() => scroll("left")}
+                    className={`absolute left-0 top-0 bottom-0 z-20 w-16 bg-gradient-to-r from-[var(--background)] to-transparent flex items-center justify-center transition-opacity duration-300 ${showLeftArrow ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                >
+                    <div className="w-10 h-10 rounded-full bg-[var(--background)]/80 border border-[var(--border)] flex items-center justify-center text-[var(--foreground)] hover:scale-110 transition-transform">
+                        <ChevronLeft className="w-6 h-6" />
+                    </div>
+                </button>
+
+                {/* Right Arrow */}
+                <button
+                    onClick={() => scroll("right")}
+                    className={`absolute right-0 top-0 bottom-0 z-20 w-16 bg-gradient-to-l from-[var(--background)] to-transparent flex items-center justify-center transition-opacity duration-300 ${showRightArrow ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                >
+                    <div className="w-10 h-10 rounded-full bg-[var(--background)]/80 border border-[var(--border)] flex items-center justify-center text-[var(--foreground)] hover:scale-110 transition-transform">
+                        <ChevronRight className="w-6 h-6" />
+                    </div>
+                </button>
+
+                {/* Scrollable Track */}
+                <motion.div
+                    ref={trackRef}
+                    className="flex gap-6 px-4 md:px-8 lg:px-16 cursor-grab active:cursor-grabbing"
+                    style={{ x: springX }}
+                    drag="x"
+                    dragConstraints={{ left: -maxScroll, right: 0 }}
+                    dragElastic={0.05}
+                    dragTransition={{ bounceStiffness: 300, bounceDamping: 30 }}
+                    onDragEnd={handleDragEnd}
+                >
+                    {filteredRooms.map((room) => (
+                        <FlippingCard
+                            key={`${activeCategory}-${room.id}`}
+                            room={room}
+                            isFlipped={flippedCardId === room.id}
+                            onFlip={() => handleFlip(room.id)}
+                            onReserve={() => handleReserve(room)}
+                        />
+                    ))}
+                </motion.div>
+            </div>
+
+            {/* Reservation Modal */}
             <RoomReservationModal
                 room={selectedRoom}
                 isOpen={isReservationOpen}
                 onClose={() => setIsReservationOpen(false)}
             />
+        </section>
+    );
+}
 
-            {/* ================================================================
-                CORPORATE THEME
-            ================================================================ */}
-            <div className="block racetrack:hidden relative z-10">
-                <div className="container mx-auto px-4">
-                    {/* Header */}
+// ============================================================================
+// Flipping Card Component (Front + Back)
+// ============================================================================
+
+function FlippingCard({ 
+    room, 
+    isFlipped,
+    onFlip,
+    onReserve 
+}: { 
+    room: Room; 
+    isFlipped: boolean;
+    onFlip: () => void;
+    onReserve: () => void;
+}) {
+    return (
+        <div className="flex-shrink-0" style={{ width: CARD_WIDTH }}>
+            <AnimatePresence mode="wait">
+                {!isFlipped ? (
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="text-center mb-16"
+                        key="front"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.25 }}
                     >
-                        <span className="inline-block px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary border border-primary/20 bg-primary/5 mb-6">
-                            Pillar 3 · The Spaces
-                        </span>
-                        <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight mb-4">
-                            Quietly Elite. Deeply Useful.
-                        </h2>
-                        <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-sans leading-relaxed">
-                            A collection of rooms that feel premium without feeling precious.
-                            Designed for heads-down execution and serious building.
-                        </p>
-                    </motion.div>
+                        {/* Card Image */}
+                        <div 
+                            className="relative rounded-xl overflow-hidden shadow-lg cursor-pointer bg-[var(--card)] border border-[var(--border)]"
+                            style={{ height: CARD_HEIGHT }}
+                            onClick={onFlip}
+                        >
+                            {/* Background Image/Gradient */}
+                            <div 
+                                className="absolute inset-0 bg-gradient-to-br from-[var(--highlight)]/20 to-[var(--accent)]/20"
+                                style={{
+                                    backgroundImage: room.image ? `url(${room.image})` : undefined,
+                                    backgroundSize: "cover",
+                                    backgroundPosition: "center",
+                                }}
+                            />
+                            
+                            {/* Overlay Gradient */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/20" />
 
-                    {/* Controls & Filter Bar */}
-                    <div className="max-w-7xl mx-auto mb-16 space-y-4">
-
-                        {/* Row 1: Categories */}
-                        <div className="flex justify-center w-full">
-                            <div className="inline-flex items-center gap-1.5 p-1.5 bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl shadow-sm overflow-x-auto max-w-full no-scrollbar">
-                                <button
-                                    onClick={() => handleCategoryChange("all")}
-                                    className={`
-                                        flex-shrink-0 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 select-none
-                                        ${activeCategory === "all" && !quickFind
-                                            ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-100"
-                                            : "bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground hover:scale-105"
-                                        }
-                                    `}
-                                >
-                                    All Spaces
-                                </button>
-                                {benefitRooms.map((category) => (
-                                    <button
-                                        key={category.id}
-                                        onClick={() => handleCategoryChange(category.id)}
-                                        className={`
-                                            flex-shrink-0 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 select-none whitespace-nowrap
-                                            ${activeCategory === category.id && !quickFind
-                                                ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-100"
-                                                : "bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground hover:scale-105"
-                                            }
-                                        `}
-                                    >
-                                        {category.title}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Row 2: Dropdowns */}
-                        <div className="bg-card/50 backdrop-blur-sm border border-border/50 p-2 rounded-2xl shadow-xl flex flex-col md:flex-row items-stretch md:items-center gap-2">
-
-                            {/* Quick Find (Flex Grow) */}
-                            <div className="relative group flex-1">
-                                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-muted-foreground group-hover:text-primary transition-colors">
-                                    <Maximize2 className="w-4 h-4" />
+                            {/* Content */}
+                            <div className="absolute inset-0 p-6 flex flex-col justify-between">
+                                {/* Top Row - Badge & Capacity */}
+                                <div className="flex items-start justify-between">
+                                    <RoomBadge roomId={room.id} />
+                                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/60 backdrop-blur-sm text-white text-xs">
+                                        <Users className="w-3.5 h-3.5" />
+                                        <span>{room.capacity}</span>
+                                    </div>
                                 </div>
-                                <select
-                                    value={quickFind}
-                                    onChange={(e) => {
-                                        setQuickFind(e.target.value);
-                                        setCurrentPage(1);
-                                    }}
-                                    className="w-full h-12 pl-11 pr-10 rounded-xl bg-background/50 hover:bg-background/80 border border-transparent hover:border-border text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer"
-                                    aria-label="Quick find room"
-                                >
-                                    <option value="" className="text-muted-foreground">Quick Find a Room...</option>
-                                    {allRooms
-                                        .sort((a, b) => a.name.localeCompare(b.name))
-                                        .map(room => (
-                                            <option key={room.id} value={room.id}>
-                                                {room.name}
-                                            </option>
+
+                                {/* Spacer */}
+                                <div className="flex-1" />
+
+                                {/* Bottom Section */}
+                                <div className="space-y-5">
+                                    {/* Title & Code */}
+                                    <div>
+                                        <h3 className="text-white font-bold text-2xl leading-tight drop-shadow-lg mb-2">
+                                            {room.name}
+                                        </h3>
+                                        <p className="text-white/60 text-sm font-mono">
+                                            {room.racingCode}
+                                        </p>
+                                    </div>
+
+                                    {/* Specs Row */}
+                                    <div className="flex flex-wrap gap-2">
+                                        {room.specs.slice(0, 3).map((spec, i) => (
+                                            <span 
+                                                key={i}
+                                                className="text-xs px-3 py-1.5 rounded-md bg-white/15 text-white/90 border border-white/10"
+                                            >
+                                                {spec}
+                                            </span>
                                         ))}
-                                </select>
-                                <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-muted-foreground">
-                                    <ChevronDown className="w-4 h-4 opacity-50" />
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Separator (Desktop) */}
-                            <div className="hidden md:block w-px h-8 bg-border/50 mx-2" />
-
-                            {/* Sort (Fixed Width) */}
-                            <div className="relative md:w-64">
-                                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-muted-foreground">
-                                    {sortBy.includes('name') && <Filter className="w-3.5 h-3.5" />}
-                                    {sortBy.includes('price') && <DollarSign className="w-3.5 h-3.5" />}
-                                    {sortBy.includes('availability') && <Clock className="w-3.5 h-3.5" />}
-                                </div>
-                                <select
-                                    value={sortBy}
-                                    onChange={(e) => setSortBy(e.target.value as any)}
-                                    className="w-full h-12 pl-10 pr-10 rounded-xl bg-background/50 hover:bg-background/80 border border-transparent hover:border-border text-xs font-bold uppercase tracking-wide focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer"
-                                    aria-label="Sort rooms"
-                                >
-                                    <option value="name-asc">Name (A-Z)</option>
-                                    <option value="name-desc">Name (Z-A)</option>
-                                    <option value="price-asc">Price (Low-High)</option>
-                                    <option value="price-desc">Price (High-Low)</option>
-                                    <option value="availability">Availability</option>
-                                </select>
-                                <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-muted-foreground">
-                                    <ChevronDown className="w-4 h-4 opacity-50" />
-                                </div>
+                            {/* Vibe Quote - Bottom strip */}
+                            <div className="absolute bottom-0 left-0 right-0 px-6 py-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
+                                <p className="text-sm text-white/60 italic truncate">
+                                    &ldquo;{room.vibe}&rdquo;
+                                </p>
                             </div>
-
-                            {/* Clear Filters Button */}
+                        </div>
+                        
+                        {/* Actions BELOW the card */}
+                        <div className="flex items-center gap-3 mt-4">
                             <button
-                                onClick={handleClearFilters}
-                                className="h-12 w-12 flex items-center justify-center rounded-xl bg-background/50 hover:bg-destructive/10 hover:text-destructive border border-transparent hover:border-destructive/20 transition-all group"
-                                aria-label="Clear filters"
-                                title="Clear all filters"
+                                onClick={onReserve}
+                                disabled={room.comingSoon || !room.isReservable}
+                                className="flex-1 py-3 px-4 rounded-lg bg-[var(--highlight)] text-[var(--highlight-foreground)] font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md active:scale-95"
                             >
-                                <RotateCcw className="w-4 h-4 text-muted-foreground group-hover:text-destructive transition-colors" />
+                                <Play className="w-4 h-4 fill-current" />
+                                {room.comingSoon ? "Coming Soon" : "Reserve Room"}
+                            </button>
+                            <button 
+                                onClick={onFlip}
+                                className="w-12 h-12 rounded-full border-2 border-[var(--border)] flex items-center justify-center text-[var(--foreground)] hover:bg-[var(--muted)] transition-all active:scale-95"
+                                aria-label="More information"
+                            >
+                                <Info className="w-5 h-5" />
                             </button>
                         </div>
-                    </div>
+                    </motion.div>
+                ) : (
+                    <motion.div
+                        key="back"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.25 }}
+                    >
+                        <CardBack 
+                            room={room} 
+                            onFlip={onFlip}
+                            onReserve={onReserve}
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
 
-                    {/* Room Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 max-w-6xl mx-auto mb-12 min-h-[600px]">
-                        <AnimatePresence mode="popLayout">
-                            {paginatedRooms.map((room) => {
-                                const Icon = room.corporateIcon;
-                                const isFeatured = room.isFeatured;
+// ============================================================================
+// Card Back (Info Panel - Netflix Style)
+// ============================================================================
 
-                                if (isFeatured) {
-                                    return (
-                                        <motion.div
-                                            key={room.id}
-                                            layout
-                                            initial={{ opacity: 0, scale: 0.95 }}
-                                            animate={{ opacity: 1, scale: 1 }}
-                                            exit={{ opacity: 0, scale: 0.95 }}
-                                            transition={{ duration: 0.3 }}
-                                            className="md:col-span-2 group relative bg-card border border-border rounded-2xl overflow-hidden hover:shadow-2xl hover:border-primary/30 transition-all duration-500"
-                                        >
-                                            <div className="flex flex-col md:flex-row h-full">
-                                                {/* Content Side */}
-                                                <div className="flex-1 p-8 md:p-12 flex flex-col justify-center relative z-10">
-                                                    <div className="mb-6">
-                                                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mb-6 text-primary ring-1 ring-primary/20 shadow-lg shadow-primary/5 group-hover:scale-110 transition-transform duration-500">
-                                                            <Icon className="w-8 h-8" />
-                                                        </div>
-                                                        <h3 className="text-3xl md:text-4xl font-bold font-display text-foreground mb-4 tracking-tight">
-                                                            {room.name}
-                                                        </h3>
-                                                        <p className="text-muted-foreground text-lg leading-relaxed max-w-xl">
-                                                            {room.description}
-                                                        </p>
-                                                    </div>
+function CardBack({ 
+    room, 
+    onFlip,
+    onReserve 
+}: { 
+    room: Room; 
+    onFlip: () => void;
+    onReserve: () => void;
+}) {
+    return (
+        <div 
+            className="rounded-xl overflow-hidden shadow-xl bg-[var(--card)] border border-[var(--border)] flex flex-col"
+            style={{ height: CARD_HEIGHT + 80 }} // Extra height for action buttons
+        >
+            {/* Header Image with Gradient */}
+            <div className="relative h-48 shrink-0">
+                <div 
+                    className="absolute inset-0 bg-gradient-to-br from-[var(--highlight)]/30 to-[var(--accent)]/30"
+                    style={{
+                        backgroundImage: room.image ? `url(${room.image})` : undefined,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                    }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[var(--card)] via-[var(--card)]/80 to-transparent" />
+                
+                {/* Close Button */}
+                <button 
+                    onClick={onFlip}
+                    className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/60 transition-colors z-10"
+                >
+                    <X className="w-5 h-5" />
+                </button>
 
-                                                    <div className="space-y-8 mt-auto">
-                                                        <div className="flex flex-wrap gap-2">
-                                                            {room.specs.map((spec, i) => (
-                                                                <span key={i} className="px-4 py-1.5 bg-muted/50 border border-border text-sm font-medium rounded-full text-foreground/80">
-                                                                    {spec}
-                                                                </span>
-                                                            ))}
-                                                        </div>
+                {/* Title Overlay */}
+                <div className="absolute bottom-4 left-6 right-6">
+                    <RoomBadge roomId={room.id} />
+                    <h3 className="text-[var(--foreground)] font-bold text-2xl mt-2">
+                        {room.name}
+                    </h3>
+                    <p className="text-[var(--muted-foreground)] text-sm font-mono">
+                        {room.racingCode} • {room.capacity}
+                    </p>
+                </div>
+            </div>
 
-                                                        <div className="pt-6 border-t border-border flex items-center justify-between gap-4">
-                                                            <div className="flex items-center gap-3">
-                                                                <div className="w-8 h-[1px] bg-primary"></div>
-                                                                <p className="text-sm font-medium text-primary italic">
-                                                                    "{room.vibe}"
-                                                                </p>
-                                                            </div>
-                                                            {renderButton(room, "corporate")}
-                                                        </div>
-                                                    </div>
-                                                </div>
+            {/* Content */}
+            <div className="flex-1 p-6 overflow-y-auto">
+                {/* Description */}
+                <div className="mb-6">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)] mb-3">
+                        About this space
+                    </h4>
+                    <p className="text-[var(--foreground)] text-sm leading-relaxed">
+                        {room.description}
+                    </p>
+                </div>
 
-                                                {/* Image Side */}
-                                                <div className="flex-1 relative min-h-[300px] md:min-h-full overflow-hidden">
-                                                    {room.image && (
-                                                        <img
-                                                            src={room.image}
-                                                            alt={room.name}
-                                                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                                        />
-                                                    )}
-                                                    <div className="absolute inset-0 bg-gradient-to-r from-card via-transparent to-transparent md:bg-gradient-to-r md:from-card md:via-card/20 md:to-transparent" />
-                                                </div>
-                                            </div>
-                                        </motion.div>
-                                    );
-                                }
-
-                                return (
-                                    <motion.div
-                                        key={room.id}
-                                        layout
-                                        initial={{ opacity: 0, scale: 0.95 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        exit={{ opacity: 0, scale: 0.95 }}
-                                        transition={{ duration: 0.3 }}
-                                        className="group relative bg-card border border-border rounded-2xl p-8 hover:shadow-xl hover:border-primary/30 transition-all duration-500 overflow-hidden flex flex-col"
-                                    >
-                                        <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
-                                            <Icon className="w-32 h-32" />
-                                        </div>
-
-                                        <div className="relative z-10 flex-1 flex flex-col">
-                                            <div className="flex items-center gap-3 mb-6">
-                                                <div className="p-2.5 bg-primary/10 rounded-xl text-primary ring-1 ring-primary/20">
-                                                    <Icon className="w-6 h-6" />
-                                                </div>
-                                                <h3 className="text-xl font-bold font-display text-foreground">
-                                                    {room.name}
-                                                </h3>
-                                            </div>
-
-                                            <p className="text-muted-foreground mb-8 text-sm leading-relaxed min-h-[3rem]">
-                                                {room.description}
-                                            </p>
-
-                                            <div className="mt-auto space-y-6">
-                                                <div className="flex flex-wrap gap-2">
-                                                    {room.specs.map((spec, i) => (
-                                                        <span key={i} className="px-3 py-1 bg-muted/50 text-xs font-medium rounded-md text-foreground/80">
-                                                            {spec}
-                                                        </span>
-                                                    ))}
-                                                </div>
-
-                                                <div className="pt-4 border-t border-border flex items-center justify-between">
-                                                    <p className="text-sm font-medium text-primary italic">
-                                                        "{room.vibe}"
-                                                    </p>
-                                                    {renderButton(room, "corporate")}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                );
-                            })}
-                        </AnimatePresence>
-                    </div>
-
-                    {/* Pagination Controls */}
-                    {totalPages > 1 && (
-                        <div className="flex justify-center items-center gap-4">
-                            <button
-                                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                                disabled={currentPage === 1}
-                                className="p-2 rounded-full border border-border hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:hover:border-border disabled:hover:text-muted-foreground"
+                {/* Specs Grid */}
+                <div className="mb-6">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)] mb-3">
+                        Amenities
+                    </h4>
+                    <div className="grid grid-cols-2 gap-2">
+                        {room.specs.map((spec, i) => (
+                            <div 
+                                key={i}
+                                className="flex items-center gap-2 text-sm text-[var(--foreground)]"
                             >
-                                <ArrowRight className="w-5 h-5 rotate-180" />
-                            </button>
-                            <span className="text-sm font-medium text-muted-foreground">
-                                Page {currentPage} of {totalPages}
+                                <SpecIcon spec={spec} />
+                                <span className="text-xs">{spec}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Vibe Quote */}
+                <div className="mb-6 p-4 rounded-lg bg-[var(--highlight)]/10 border border-[var(--highlight)]/20">
+                    <p className="text-sm text-[var(--highlight)] italic">
+                        &ldquo;{room.vibe}&rdquo;
+                    </p>
+                </div>
+
+                {/* Availability / Pricing Info */}
+                <div className="space-y-3">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)] mb-3">
+                        Availability
+                    </h4>
+                    <div className="flex items-center justify-between py-2 border-b border-[var(--border)]">
+                        <span className="text-sm text-[var(--muted-foreground)]">Member Access</span>
+                        <span className="text-sm font-medium text-[var(--foreground)]">
+                            {room.isReservable ? "Included" : "Contact us"}
+                        </span>
+                    </div>
+                    {room.pricing?.guest && (
+                        <div className="flex items-center justify-between py-2 border-b border-[var(--border)]">
+                            <span className="text-sm text-[var(--muted-foreground)]">Guest Rate</span>
+                            <span className="text-sm font-medium text-[var(--foreground)]">
+                                {room.pricing.guest}
                             </span>
-                            <button
-                                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                                disabled={currentPage === totalPages}
-                                className="p-2 rounded-full border border-border hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:hover:border-border disabled:hover:text-muted-foreground"
-                            >
-                                <ArrowRight className="w-5 h-5" />
-                            </button>
                         </div>
                     )}
                 </div>
             </div>
 
-            {/* ================================================================
-                RACING THEME
-            ================================================================ */}
-            <div className="hidden racetrack:block relative z-10 bg-background border-y border-border py-16">
-                <div className="container mx-auto px-4">
-                    {/* Header */}
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        className="flex flex-col md:flex-row items-end justify-between mb-16 border-b border-border pb-8"
-                    >
-                        <div>
-                            <div className="flex items-center gap-3 mb-2">
-                                <div className="w-2 h-2 bg-signal-green animate-pulse rounded-full" />
-                                <span className="font-mono text-xs text-signal-green uppercase tracking-widest">
-                                    Facility Schematic
-                                </span>
-                            </div>
-                            <h2 className="font-sans text-4xl md:text-5xl font-bold uppercase tracking-tighter text-foreground">
-                                Track Facilities
-                            </h2>
-                        </div>
-                        <div className="text-right mt-4 md:mt-0">
-                            <div className="font-mono text-xs text-muted-foreground uppercase">Sector Status</div>
-                            <div className="font-mono text-xl text-signal-green">ALL SYSTEMS NOMINAL</div>
-                        </div>
-                    </motion.div>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                        {/* Sidebar Navigation */}
-                        <div className="space-y-4">
-                            {benefitRooms.map((category) => (
-                                <button
-                                    key={category.id}
-                                    onClick={() => handleCategoryChange(category.id)}
-                                    className={`
-                                        w-full text-left p-4 border transition-all duration-300
-                                        ${activeCategory === category.id
-                                            ? "border-signal-green bg-signal-green/10"
-                                            : "border-border bg-carbon-light hover:border-signal-green/30"
-                                        }
-                                    `}
-                                >
-                                    <div className="font-mono text-[10px] text-muted-foreground uppercase mb-1">
-                                        {category.sectorName}
-                                    </div>
-                                    <div className={`font-sans font-bold uppercase ${activeCategory === category.id ? "text-signal-green" : "text-foreground"}`}>
-                                        {category.title}
-                                    </div>
-                                </button>
-                            ))}
-                        </div>
-
-                        {/* Main Display */}
-                        <div className="lg:col-span-3 bg-carbon-light border border-border p-1 relative min-h-[500px]">
-                            {/* Grid overlay */}
-                            <div
-                                className="absolute inset-0 opacity-10 pointer-events-none"
-                                style={{
-                                    backgroundImage: `linear-gradient(rgba(0, 255, 157, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 157, 0.1) 1px, transparent 1px)`,
-                                    backgroundSize: '20px 20px'
-                                }}
-                            />
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 relative z-10">
-                                {paginatedRooms.map((room) => (
-                                    <motion.div
-                                        key={room.id}
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        className="border border-border bg-background p-6 hover:border-signal-green transition-colors group cursor-crosshair flex flex-col"
-                                    >
-                                        <div className="flex justify-between items-start mb-4">
-                                            <div className="font-mono text-xs text-signal-green border border-signal-green px-2 py-0.5">
-                                                {room.racingCode}
-                                            </div>
-                                            <Maximize2 className="w-4 h-4 text-muted-foreground group-hover:text-signal-green transition-colors" />
-                                        </div>
-
-                                        <h3 className="font-sans text-xl font-bold uppercase text-foreground mb-2">
-                                            {room.name}
-                                        </h3>
-                                        <p className="font-mono text-sm text-muted-foreground mb-6 border-l-2 border-border pl-3 group-hover:border-signal-green transition-colors">
-                                            {room.description}
-                                        </p>
-
-                                        <div className="grid grid-cols-2 gap-2 mb-4">
-                                            {room.specs.slice(0, 4).map((spec, i) => (
-                                                <div key={i} className="text-[10px] font-mono text-foreground/70 bg-muted/50 px-2 py-1 truncate">
-                                                    {spec}
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        <div className="mt-auto flex items-center justify-between pt-4 border-t border-border">
-                                            <div>
-                                                <span className="font-mono text-[10px] text-muted-foreground uppercase block">CAPACITY</span>
-                                                <span className="font-mono text-xs text-foreground">{room.capacity}</span>
-                                            </div>
-                                            {renderButton(room, "racing")}
-                                        </div>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            {/* Footer Actions */}
+            <div className="p-6 border-t border-[var(--border)] bg-[var(--muted)]/30 space-y-3">
+                <button
+                    onClick={onReserve}
+                    disabled={room.comingSoon || !room.isReservable}
+                    className="w-full py-3 px-4 rounded-lg bg-[var(--highlight)] text-[var(--highlight-foreground)] font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md active:scale-95"
+                >
+                    <Calendar className="w-4 h-4" />
+                    {room.comingSoon ? "Coming Soon" : "Book This Room"}
+                </button>
+                <button
+                    onClick={onFlip}
+                    className="w-full py-2 px-4 rounded-lg bg-[var(--muted)] text-[var(--foreground)] font-medium text-sm flex items-center justify-center gap-2 hover:bg-[var(--muted)]/80 transition-all"
+                >
+                    <X className="w-4 h-4" />
+                    Back to Gallery
+                </button>
             </div>
-        </section>
+        </div>
+    );
+}
+
+// ============================================================================
+// Spec Icon Helper
+// ============================================================================
+
+function SpecIcon({ spec }: { spec: string }) {
+    const lowerSpec = spec.toLowerCase();
+    
+    if (lowerSpec.includes("wifi") || lowerSpec.includes("internet")) {
+        return <Wifi className="w-4 h-4 text-[var(--highlight)]" />;
+    }
+    if (lowerSpec.includes("monitor") || lowerSpec.includes("screen") || lowerSpec.includes("display")) {
+        return <Monitor className="w-4 h-4 text-[var(--highlight)]" />;
+    }
+    if (lowerSpec.includes("mic") || lowerSpec.includes("audio")) {
+        return <Mic className="w-4 h-4 text-[var(--highlight)]" />;
+    }
+    if (lowerSpec.includes("camera") || lowerSpec.includes("video")) {
+        return <Video className="w-4 h-4 text-[var(--highlight)]" />;
+    }
+    if (lowerSpec.includes("coffee") || lowerSpec.includes("tea")) {
+        return <Coffee className="w-4 h-4 text-[var(--highlight)]" />;
+    }
+    if (lowerSpec.includes("chair") || lowerSpec.includes("seating")) {
+        return <Armchair className="w-4 h-4 text-[var(--highlight)]" />;
+    }
+    if (lowerSpec.includes("hour") || lowerSpec.includes("time")) {
+        return <Clock className="w-4 h-4 text-[var(--highlight)]" />;
+    }
+    
+    return <Zap className="w-4 h-4 text-[var(--highlight)]" />;
+}
+
+// ============================================================================
+// Category Pill
+// ============================================================================
+
+function CategoryPill({ 
+    label, 
+    isActive, 
+    onClick 
+}: { 
+    label: string; 
+    isActive: boolean; 
+    onClick: () => void;
+}) {
+    return (
+        <button
+            onClick={onClick}
+            className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                isActive
+                    ? "bg-[var(--highlight)] text-[var(--highlight-foreground)]"
+                    : "bg-[var(--muted)]/50 text-[var(--muted-foreground)] hover:bg-[var(--muted)]"
+            }`}
+        >
+            {label}
+        </button>
+    );
+}
+
+// ============================================================================
+// Room Badge
+// ============================================================================
+
+function RoomBadge({ roomId }: { roomId: string }) {
+    const badgeConfig: Record<string, { label: string; bg: string }> = {
+        "room-build": { label: "Focus Zone", bg: "bg-emerald-500" },
+        "room-strategy": { label: "Strategy", bg: "bg-blue-500" },
+        "room-lab": { label: "Maker Lab", bg: "bg-amber-500" },
+        "room-money": { label: "War Room", bg: "bg-green-600" },
+        "room-crunch": { label: "Deep Work", bg: "bg-violet-500" },
+        "room-create": { label: "Creator Studio", bg: "bg-pink-500" },
+        "room-podcast": { label: "Podcast Lab", bg: "bg-purple-500" },
+        "room-stream": { label: "Stream Room", bg: "bg-red-500" },
+        "room-zoom": { label: "Zoom Booth", bg: "bg-cyan-500" },
+        "room-deal": { label: "Deal Room", bg: "bg-indigo-500" },
+        "room-board": { label: "Board Room", bg: "bg-slate-600" },
+        "room-legal": { label: "Legal Lab", bg: "bg-stone-500" },
+        "room-recharge": { label: "Recharge", bg: "bg-teal-500" },
+        "room-nap": { label: "Nap Pod", bg: "bg-sky-400" },
+        "room-speaker": { label: "Speaker", bg: "bg-orange-500" },
+        "room-event": { label: "Event Hall", bg: "bg-rose-500" },
+    };
+
+    const config = badgeConfig[roomId] || { label: "Room", bg: "bg-gray-500" };
+
+    return (
+        <span className={`inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow-lg ${config.bg}`}>
+            {config.label}
+        </span>
     );
 }
