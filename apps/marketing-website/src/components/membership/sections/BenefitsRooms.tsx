@@ -243,13 +243,16 @@ function FlippingCard({
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ duration: 0.25 }}
+                        className="group/card"
                     >
-                        {/* Card Image */}
-                        <div 
-                            className="relative rounded-xl overflow-hidden shadow-lg cursor-pointer bg-[var(--card)] border border-[var(--border)]"
-                            style={{ height: CARD_HEIGHT }}
-                            onClick={onFlip}
-                        >
+                        {/* Bordered Container - Card + Actions */}
+                        <div className="rounded-2xl border-2 border-[var(--border)] bg-[var(--card)] p-3 transition-all duration-300 ease-out hover:border-[var(--highlight)]/50 hover:shadow-2xl hover:shadow-[var(--highlight)]/10 hover:-translate-y-1">
+                            {/* Card Image */}
+                            <div 
+                                className="relative rounded-xl overflow-hidden shadow-lg cursor-pointer"
+                                style={{ height: CARD_HEIGHT }}
+                                onClick={onFlip}
+                            >
                             {/* Background Image/Gradient */}
                             <div 
                                 className="absolute inset-0 bg-gradient-to-br from-[var(--highlight)]/20 to-[var(--accent)]/20"
@@ -311,23 +314,24 @@ function FlippingCard({
                             </div>
                         </div>
                         
-                        {/* Actions BELOW the card */}
-                        <div className="flex items-center gap-3 mt-4">
+                        {/* Actions BELOW the card - inside border */}
+                        <div className="flex items-center gap-3 mt-3 px-1 pb-1">
                             <button
                                 onClick={onReserve}
                                 disabled={room.comingSoon || !room.isReservable}
-                                className="flex-1 py-3 px-4 rounded-lg bg-[var(--highlight)] text-[var(--highlight-foreground)] font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md active:scale-95"
+                                className="flex-1 py-3 px-4 rounded-lg bg-[var(--highlight)] text-[var(--highlight-foreground)] font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md active:scale-95 group-hover/card:shadow-lg group-hover/card:shadow-[var(--highlight)]/30"
                             >
                                 <Play className="w-4 h-4 fill-current" />
                                 {room.comingSoon ? "Coming Soon" : "Reserve Room"}
                             </button>
                             <button 
                                 onClick={onFlip}
-                                className="w-12 h-12 rounded-full border-2 border-[var(--border)] flex items-center justify-center text-[var(--foreground)] hover:bg-[var(--muted)] transition-all active:scale-95"
+                                className="w-12 h-12 rounded-full border-2 border-[var(--border)] flex items-center justify-center text-[var(--foreground)] hover:bg-[var(--muted)] hover:border-[var(--highlight)] transition-all active:scale-95"
                                 aria-label="More information"
                             >
                                 <Info className="w-5 h-5" />
                             </button>
+                        </div>
                         </div>
                     </motion.div>
                 ) : (
@@ -337,12 +341,16 @@ function FlippingCard({
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ duration: 0.25 }}
+                        className="group/card"
                     >
-                        <CardBack 
-                            room={room} 
-                            onFlip={onFlip}
-                            onReserve={onReserve}
-                        />
+                        {/* Bordered Container for Back Card */}
+                        <div className="rounded-2xl border-2 border-[var(--highlight)]/30 bg-[var(--card)] p-1 shadow-xl shadow-[var(--highlight)]/5 transition-all duration-300 ease-out">
+                            <CardBack 
+                                room={room} 
+                                onFlip={onFlip}
+                                onReserve={onReserve}
+                            />
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -365,8 +373,8 @@ function CardBack({
 }) {
     return (
         <div 
-            className="rounded-xl overflow-hidden shadow-xl bg-[var(--card)] border border-[var(--border)] flex flex-col"
-            style={{ height: CARD_HEIGHT + 80 }} // Extra height for action buttons
+            className="rounded-xl overflow-hidden bg-[var(--card)] flex flex-col"
+            style={{ height: CARD_HEIGHT + 76 }} // Extra height for action buttons
         >
             {/* Header Image with Gradient */}
             <div className="relative h-48 shrink-0">
