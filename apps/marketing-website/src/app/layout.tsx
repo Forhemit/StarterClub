@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -57,9 +58,11 @@ export default function RootLayout({
             <EnvironmentBannerWrapper />
             <SiteHeaderWrapper />
             <ClientProviders>
-              <main className="pt-16">
-                {children}
-              </main>
+              <Suspense fallback={<div className="pt-16 min-h-screen" />}>
+                <main className="pt-16">
+                  {children}
+                </main>
+              </Suspense>
             </ClientProviders>
             <Analytics />
             <SpeedInsights />

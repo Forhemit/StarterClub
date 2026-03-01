@@ -7,23 +7,90 @@ import { motion } from "framer-motion";
 export function TierGarage() {
     const [showFactory, setShowFactory] = useState(false);
 
+    // Animation variants
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.2,
+                delayChildren: 0.1,
+            },
+        },
+    };
+
+    const slideInLeft = {
+        hidden: { x: -100, opacity: 0 },
+        visible: {
+            x: 0,
+            opacity: 1,
+            transition: {
+                type: "spring" as const,
+                stiffness: 100,
+                damping: 20,
+            },
+        },
+    };
+
+    const slideInRight = {
+        hidden: { x: 100, opacity: 0 },
+        visible: {
+            x: 0,
+            opacity: 1,
+            transition: {
+                type: "spring" as const,
+                stiffness: 100,
+                damping: 20,
+            },
+        },
+    };
+
+    const fadeInUp = {
+        hidden: { y: 30, opacity: 0 },
+        visible: {
+            y: 0,
+            opacity: 1,
+            transition: {
+                type: "spring" as const,
+                stiffness: 100,
+                damping: 20,
+            },
+        },
+    };
+
     return (
         <section className="w-full py-24 bg-background relative">
             <div className="container mx-auto px-4">
 
                 {/* Section Header */}
-                <div className="text-center mb-16 space-y-4">
+                <motion.div 
+                    className="text-center mb-16 space-y-4"
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-100px" }}
+                    variants={fadeInUp}
+                >
                     <h2 className="text-muted-foreground font-mono text-sm uppercase tracking-widest">Membership Plans</h2>
                     <h3 className="text-4xl md:text-5xl font-bold text-foreground uppercase tracking-tighter">
                         Choose Your <span className="text-signal-green">Level.</span>
                     </h3>
-                </div>
+                </motion.div>
 
                 {/* The Grid (Standard Tiers) */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto relative z-10">
+                <motion.div 
+                    className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto relative z-10"
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-50px" }}
+                    variants={containerVariants}
+                >
 
-                    {/* Bay 1: The Paddock (Free) */}
-                    <div className="border border-border bg-card p-8 rounded-lg relative hover:border-border/80 transition-all group">
+                    {/* Bay 1: The Paddock (Free) - Slides in from LEFT */}
+                    <motion.div 
+                        className="border border-border bg-card p-8 rounded-lg relative hover:border-border/80 transition-all group"
+                        variants={slideInLeft}
+                        whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
+                    >
                         <div className="absolute top-0 left-0 w-full h-1 bg-white/20" />
                         <h4 className="font-mono text-muted-foreground uppercase tracking-widest mb-2">Starter Access</h4>
                         <div className="text-3xl font-bold text-foreground mb-6">Free</div>
@@ -32,13 +99,17 @@ export function TierGarage() {
                             <li className="flex gap-3 text-muted-foreground text-sm"><Check className="w-4 h-4 text-muted-foreground" /> Basic Checklists</li>
                             <li className="flex gap-3 text-muted-foreground text-sm"><Check className="w-4 h-4 text-muted-foreground" /> Initial Business Report</li>
                         </ul>
-                        <button className="w-full py-3 border border-border text-foreground font-mono uppercase text-xs tracking-widest hover:bg-secondary">
+                        <button className="w-full py-3 border border-border text-foreground font-mono uppercase text-xs tracking-widest hover:bg-secondary transition-colors">
                             Get Started
                         </button>
-                    </div>
+                    </motion.div>
 
-                    {/* Bay 2: Grid Access (Member) */}
-                    <div className="border border-signal-green bg-card p-8 rounded-lg relative shadow-[0_0_30px_rgba(0,255,157,0.1)]">
+                    {/* Bay 2: Grid Access (Member) - Slides in from RIGHT */}
+                    <motion.div 
+                        className="border border-signal-green bg-card p-8 rounded-lg relative shadow-[0_0_30px_rgba(0,255,157,0.1)]"
+                        variants={slideInRight}
+                        whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
+                    >
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-signal-green text-carbon text-xs font-bold px-3 py-1 uppercase tracking-widest">
                             Recommended
                         </div>
@@ -52,14 +123,20 @@ export function TierGarage() {
                             <li className="flex gap-3 text-foreground text-sm"><Check className="w-4 h-4 text-signal-green" /> <strong>War Room</strong> Simulator</li>
                             <li className="flex gap-3 text-foreground text-sm"><Check className="w-4 h-4 text-signal-green" /> <strong>Expert</strong> Verification</li>
                         </ul>
-                        <button className="w-full py-3 bg-signal-green text-carbon font-bold uppercase text-xs tracking-widest hover:bg-signal-green/90 clip-corner-button">
+                        <button className="w-full py-3 bg-signal-green text-carbon font-bold uppercase text-xs tracking-widest hover:bg-signal-green/90 clip-corner-button transition-colors">
                             Join Membership
                         </button>
-                    </div>
-                </div>
+                    </motion.div>
+                </motion.div>
 
                 {/* Factory Team Toggle / Banner */}
-                <div className="mt-16 max-w-4xl mx-auto">
+                <motion.div 
+                    className="mt-16 max-w-4xl mx-auto"
+                    initial={{ y: 60, opacity: 0 }}
+                    whileInView={{ y: 0, opacity: 1 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ type: "spring", stiffness: 80, damping: 20, delay: 0.4 }}
+                >
                     <motion.div
                         initial={false}
                         animate={{ height: showFactory ? 'auto' : '60px' }}
@@ -110,7 +187,7 @@ export function TierGarage() {
                         </div>
 
                     </motion.div>
-                </div>
+                </motion.div>
 
             </div>
         </section>

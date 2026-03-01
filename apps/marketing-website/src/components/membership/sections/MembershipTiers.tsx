@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { useTheme } from "next-themes";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -18,6 +19,8 @@ export function MembershipTiers() {
     const [activeBenefit, setActiveBenefit] = useState<TierBenefit | null>(null);
     const [hoveredCard, setHoveredCard] = useState<string | null>(null);
     const shouldReduceMotion = useReducedMotion();
+    const { resolvedTheme } = useTheme();
+    const isDark = resolvedTheme === "dark" || resolvedTheme === "racetrack";
 
     return (
         <section className="relative w-full py-24 overflow-hidden">
@@ -64,6 +67,7 @@ export function MembershipTiers() {
                                 onClick={() => setActiveTier(activeTier === tier.id ? null : tier.id)}
                                 onBenefitClick={setActiveBenefit}
                                 shouldReduceMotion={!!shouldReduceMotion}
+                                isDark={isDark}
                             />
                         ))}
                     </div>
@@ -127,9 +131,9 @@ export function MembershipTiers() {
                         transition={{ duration: 0.8 }}
                         className="text-center mb-16"
                     >
-                        <div className="inline-flex items-center gap-2 px-4 py-2 border border-signal-green/30 bg-signal-green/10 mb-4">
-                            <Gauge className="w-4 h-4 text-signal-green" />
-                            <span className="font-mono text-xs text-signal-green uppercase tracking-widest">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 border border-primary/30 bg-primary/10 mb-4">
+                            <Gauge className="w-4 h-4 text-primary" />
+                            <span className="font-mono text-xs text-primary uppercase tracking-widest">
                                 Vehicle Selection
                             </span>
                         </div>
@@ -175,6 +179,7 @@ interface TierCardProps {
     onClick: () => void;
     onBenefitClick: (benefit: TierBenefit) => void;
     shouldReduceMotion: boolean;
+    isDark: boolean;
 }
 
 function TierCard({
@@ -187,38 +192,70 @@ function TierCard({
     onClick,
     onBenefitClick,
     shouldReduceMotion,
+    isDark,
 }: TierCardProps) {
     const isFounder = tier.id === "starter-founder";
     const isBuilder = tier.id === "starter-builder";
 
-    // Material styles based on tier
+    // Material styles based on tier - adapts to light/dark theme
     const getMaterialStyle = () => {
-        switch (tier.corporateMaterial) {
-            case "carbon-gold":
-                return {
-                    background: `linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 50%, #151515 100%)`,
-                    border: "1px solid rgba(212, 175, 55, 0.4)",
-                    boxShadow: isHovered
-                        ? "0 25px 80px rgba(212, 175, 55, 0.2), inset 0 1px 0 rgba(255,255,255,0.1)"
-                        : "0 15px 50px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.05)",
-                };
-            case "brushed-aluminum":
-                return {
-                    background: `linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 50%, #252525 100%)`,
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
-                    boxShadow: isHovered
-                        ? "0 20px 60px rgba(0, 0, 0, 0.4)"
-                        : "0 10px 40px rgba(0, 0, 0, 0.2)",
-                };
-            default:
-                return {
-                    background: `rgba(255, 255, 255, 0.02)`,
-                    backdropFilter: "blur(20px)",
-                    border: "1px solid rgba(255, 255, 255, 0.08)",
-                    boxShadow: isHovered
-                        ? "0 15px 50px rgba(0, 0, 0, 0.3)"
-                        : "0 8px 30px rgba(0, 0, 0, 0.15)",
-                };
+        if (isDark) {
+            // Dark theme - luxury dark aesthetic
+            switch (tier.corporateMaterial) {
+                case "carbon-gold":
+                    return {
+                        background: `linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 50%, #151515 100%)`,
+                        border: "1px solid rgba(212, 175, 55, 0.4)",
+                        boxShadow: isHovered
+                            ? "0 25px 80px rgba(212, 175, 55, 0.2), inset 0 1px 0 rgba(255,255,255,0.1)"
+                            : "0 15px 50px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.05)",
+                    };
+                case "brushed-aluminum":
+                    return {
+                        background: `linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 50%, #252525 100%)`,
+                        border: "1px solid rgba(255, 255, 255, 0.1)",
+                        boxShadow: isHovered
+                            ? "0 20px 60px rgba(0, 0, 0, 0.4)"
+                            : "0 10px 40px rgba(0, 0, 0, 0.2)",
+                    };
+                default:
+                    return {
+                        background: `rgba(255, 255, 255, 0.02)`,
+                        backdropFilter: "blur(20px)",
+                        border: "1px solid rgba(255, 255, 255, 0.08)",
+                        boxShadow: isHovered
+                            ? "0 15px 50px rgba(0, 0, 0, 0.3)"
+                            : "0 8px 30px rgba(0, 0, 0, 0.15)",
+                    };
+            }
+        } else {
+            // Light theme - clean light aesthetic
+            switch (tier.corporateMaterial) {
+                case "carbon-gold":
+                    return {
+                        background: `linear-gradient(135deg, #fafafa 0%, #f5f5f5 50%, #fafafa 100%)`,
+                        border: "1px solid hsl(var(--primary) / 0.4)",
+                        boxShadow: isHovered
+                            ? "0 25px 80px hsl(var(--primary) / 0.15), inset 0 1px 0 rgba(0,0,0,0.02)"
+                            : "0 15px 50px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(0,0,0,0.02)",
+                    };
+                case "brushed-aluminum":
+                    return {
+                        background: `linear-gradient(135deg, #ffffff 0%, #f8f8f8 50%, #ffffff 100%)`,
+                        border: "1px solid rgba(0, 0, 0, 0.08)",
+                        boxShadow: isHovered
+                            ? "0 20px 60px rgba(0, 0, 0, 0.12)"
+                            : "0 10px 40px rgba(0, 0, 0, 0.06)",
+                    };
+                default:
+                    return {
+                        background: `linear-gradient(135deg, #ffffff 0%, #f5f5f5 50%, #fafafa 100%)`,
+                        border: "1px solid rgba(0, 0, 0, 0.06)",
+                        boxShadow: isHovered
+                            ? "0 15px 50px rgba(0, 0, 0, 0.08)"
+                            : "0 8px 30px rgba(0, 0, 0, 0.04)",
+                    };
+            }
         }
     };
 
@@ -357,15 +394,21 @@ function TierCard({
                     <div
                         className="absolute inset-0 pointer-events-none opacity-30"
                         style={{
-                            backgroundImage: `
-                                repeating-linear-gradient(
+                            backgroundImage: isDark
+                                ? `repeating-linear-gradient(
                                     45deg,
                                     transparent,
                                     transparent 2px,
                                     rgba(255,255,255,0.02) 2px,
                                     rgba(255,255,255,0.02) 4px
-                                )
-                            `,
+                                )`
+                                : `repeating-linear-gradient(
+                                    45deg,
+                                    transparent,
+                                    transparent 2px,
+                                    rgba(0,0,0,0.02) 2px,
+                                    rgba(0,0,0,0.02) 4px
+                                )`,
                         }}
                     />
                 )}
@@ -426,16 +469,16 @@ function VehicleSpecCard({
             `}
         >
             <div className={`
-                relative bg-carbon border p-6 h-full
-                ${isRaceCar ? "border-signal-green" : isCoupe ? "border-signal-yellow" : "border-border"}
-                hover:border-signal-green transition-colors duration-300
+                relative bg-card border p-6 h-full
+                ${isRaceCar ? "border-primary" : isCoupe ? "border-accent" : "border-border"}
+                hover:border-primary transition-colors duration-300
             `}>
                 {/* Vehicle Class Badge */}
                 <div className="flex items-center justify-between mb-6">
                     <div className={`
                         inline-flex items-center gap-2 px-3 py-1 text-xs font-mono uppercase tracking-widest
-                        ${isRaceCar ? "bg-signal-green/20 text-signal-green" :
-                            isCoupe ? "bg-signal-yellow/20 text-signal-yellow" :
+                        ${isRaceCar ? "bg-primary/20 text-primary" :
+                            isCoupe ? "bg-accent/20 text-accent" :
                                 "bg-muted text-muted-foreground"}
                     `}>
                         <Car className="w-3 h-3" />
@@ -476,13 +519,13 @@ function VehicleSpecCard({
                             >
                                 <div className={`
                                     w-1.5 h-1.5 rounded-full
-                                    ${isRaceCar ? "bg-signal-green" : isCoupe ? "bg-signal-yellow" : "bg-muted-foreground"}
+                                    ${isRaceCar ? "bg-primary" : isCoupe ? "bg-accent" : "bg-muted-foreground"}
                                 `} />
                                 <span className="text-foreground">{benefit.racingLabel || benefit.title}</span>
                             </div>
                         ))}
                         {!isActive && tier.benefits.length > 3 && (
-                            <button className="text-signal-green text-xs font-mono hover:underline">
+                            <button className="text-primary text-xs font-mono hover:underline">
                                 +{tier.benefits.length - 3} MORE SPECS
                             </button>
                         )}
@@ -493,8 +536,8 @@ function VehicleSpecCard({
                 <button className={`
                     w-full mt-6 py-3 font-mono text-sm font-bold uppercase tracking-widest transition-all
                     ${isRaceCar
-                        ? "bg-signal-green text-carbon hover:bg-signal-green/90"
-                        : "border border-border text-foreground hover:border-signal-green hover:text-signal-green"
+                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                        : "border border-border text-foreground hover:border-primary hover:text-primary"
                     }
                 `}>
                     {isRaceCar ? "⚡ Join Factory Team" : "Select Chassis"}
@@ -504,12 +547,12 @@ function VehicleSpecCard({
                 {isRaceCar && (
                     <>
                         <div className="absolute top-0 right-0 w-12 h-12">
-                            <div className="absolute top-0 right-0 w-full h-0.5 bg-signal-green" />
-                            <div className="absolute top-0 right-0 h-full w-0.5 bg-signal-green" />
+                            <div className="absolute top-0 right-0 w-full h-0.5 bg-primary" />
+                            <div className="absolute top-0 right-0 h-full w-0.5 bg-primary" />
                         </div>
                         <div className="absolute bottom-0 left-0 w-12 h-12">
-                            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-signal-green" />
-                            <div className="absolute bottom-0 left-0 h-full w-0.5 bg-signal-green" />
+                            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />
+                            <div className="absolute bottom-0 left-0 h-full w-0.5 bg-primary" />
                         </div>
                     </>
                 )}
@@ -530,6 +573,20 @@ interface StatBarProps {
 }
 
 function StatBar({ label, value, color, icon: Icon }: StatBarProps) {
+    // Map color names to CSS custom properties
+    const getColorVar = () => {
+        switch (color) {
+            case "signal-green":
+                return "hsl(var(--primary))";
+            case "signal-yellow":
+                return "hsl(var(--accent))";
+            case "hud-cyan":
+                return "hsl(var(--secondary))";
+            default:
+                return "hsl(var(--primary))";
+        }
+    };
+
     return (
         <div className="space-y-1">
             <div className="flex items-center justify-between text-xs font-mono">
@@ -537,16 +594,16 @@ function StatBar({ label, value, color, icon: Icon }: StatBarProps) {
                     <Icon className="w-3 h-3" />
                     {label}
                 </div>
-                <span className={`text-${color}`}>{value}%</span>
+                <span style={{ color: getColorVar() }}>{value}%</span>
             </div>
-            <div className="h-1.5 bg-carbon-light rounded-full overflow-hidden">
+            <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                 <motion.div
                     initial={{ width: 0 }}
                     whileInView={{ width: `${value}%` }}
                     viewport={{ once: true }}
                     transition={{ duration: 1, delay: 0.3 }}
-                    className={`h-full bg-${color}`}
-                    style={{ backgroundColor: color === "signal-green" ? "#00ff9d" : color === "signal-yellow" ? "#ffbf00" : "#00f0ff" }}
+                    className="h-full"
+                    style={{ backgroundColor: getColorVar() }}
                 />
             </div>
         </div>

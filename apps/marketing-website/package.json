@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 5050",
+    "dev": "next dev -p 5051",
     "build": "next build",
-    "start": "next start -p 5050",
+    "start": "next start -p 5051",
     "lint": "eslint",
     "analyze": "cross-env ANALYZE=true next build --webpack",
     "gen:types": "npx supabase gen types typescript --project-id exancwcrkqivoaqhmapr --schema public > src/lib/database.types.ts",
