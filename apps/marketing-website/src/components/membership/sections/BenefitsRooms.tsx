@@ -49,17 +49,17 @@ export function BenefitsRooms() {
         return benefitRooms.find(c => c.id === activeCategory)?.rooms || [];
     }, [activeCategory, allRooms]);
 
+    // Calculate bounds FIRST (needed for useTransform)
+    const totalWidth = filteredRooms.length * (CARD_WIDTH + CARD_GAP);
+    const maxScroll = Math.max(0, totalWidth - (typeof window !== 'undefined' ? window.innerWidth : 1200) + 200);
+
     // Motion values for smooth drag
     const x = useMotionValue(0);
     const springX = useSpring(x, { stiffness: 300, damping: 30 });
     
-    // Scroll progress for progress bar (0 to 1)
+    // Scroll progress for progress bar (0 to 1) - uses maxScroll which is now defined
     const scrollProgress = useTransform(x, [0, -maxScroll], [0, 1]);
     const progressWidth = useTransform(scrollProgress, [0, 1], ["0%", "100%"]);
-
-    // Calculate bounds
-    const totalWidth = filteredRooms.length * (CARD_WIDTH + CARD_GAP);
-    const maxScroll = Math.max(0, totalWidth - (typeof window !== 'undefined' ? window.innerWidth : 1200) + 200);
 
     // Update arrow visibility
     const updateArrows = useCallback(() => {
