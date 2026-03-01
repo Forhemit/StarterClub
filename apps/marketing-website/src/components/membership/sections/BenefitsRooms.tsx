@@ -39,8 +39,10 @@ export function BenefitsRooms() {
     const [flippedCardId, setFlippedCardId] = useState<string | null>(null);
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(true);
+    const [visibleCardIndex, setVisibleCardIndex] = useState(0); // Track first visible card
     
     const trackRef = useRef<HTMLDivElement>(null);
+    const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
     // Filter rooms
     const allRooms = benefitRooms.flatMap(category => category.rooms);
@@ -77,7 +79,38 @@ export function BenefitsRooms() {
     React.useEffect(() => {
         x.set(0);
         setFlippedCardId(null);
+        setVisibleCardIndex(0);
     }, [activeCategory, x]);
+
+    // Track visible cards using IntersectionObserver
+    React.useEffect(() => {
+        if (!trackRef.current) return;
+        
+        const observer = new IntersectionObserver(
+            (entries) => {
+                // Find the first visible card (leftmost)
+                const visibleEntries = entries
+                    .filter(e => e.isIntersecting)
+                    .sort((a, b) => a.boundingClientRect.left - b.boundingClientRect.left);
+                
+                if (visibleEntries.length > 0) {
+                    const index = parseInt(visibleEntries[0].target.getAttribute('data-index') || '0', 10);
+                    setVisibleCardIndex(index);
+                }
+            },
+            { 
+                root: null,
+                threshold: 0.5 // Card must be 50% visible
+            }
+        );
+        
+        // Observe all card elements
+        cardRefs.current.forEach((ref) => {
+            if (ref) observer.observe(ref);
+        });
+        
+        return () => observer.disconnect();
+    }, [filteredRooms]);
 
     const handleReserve = (room: Room) => {
         if (room.comingSoon || !room.isReservable) return;
@@ -200,14 +233,19 @@ export function BenefitsRooms() {
                     dragTransition={{ bounceStiffness: 300, bounceDamping: 30 }}
                     onDragEnd={handleDragEnd}
                 >
-                    {filteredRooms.map((room) => (
-                        <FlippingCard
+                    {filteredRooms.map((room, index) => (
+                        <div 
                             key={`${activeCategory}-${room.id}`}
-                            room={room}
-                            isFlipped={flippedCardId === room.id}
-                            onFlip={() => handleFlip(room.id)}
-                            onReserve={() => handleReserve(room)}
-                        />
+                            ref={(el) => { cardRefs.current[index] = el; }}
+                            data-index={index}
+                        >
+                            <FlippingCard
+                                room={room}
+                                isFlipped={flippedCardId === room.id}
+                                onFlip={() => handleFlip(room.id)}
+                                onReserve={() => handleReserve(room)}
+                            />
+                        </div>
                     ))}
                 </motion.div>
             </div>
@@ -223,7 +261,12 @@ export function BenefitsRooms() {
                     </div>
                     <div className="flex justify-between mt-2 text-xs text-[var(--muted-foreground)]">
                         <span>{filteredRooms.length} rooms</span>
-                        <ScrollProgressLabel x={x} maxScroll={maxScroll} totalCards={filteredRooms.length} />
+                        <span>
+                            {visibleCardIndex >= filteredRooms.length - 1 
+                                ? 'End of list' 
+                                : `${visibleCardIndex + 1} of ${filteredRooms.length}`
+                            }
+                        </span>
                     </div>
                 </div>
             </div>
@@ -539,54 +582,6 @@ function SpecIcon({ spec }: { spec: string }) {
     }
     
     return <Zap className="w-4 h-4 text-[var(--highlight)]" />;
-}
-
-// ============================================================================
-// Scroll Progress Label - Shows current position
-// ============================================================================
-
-function ScrollProgressLabel({ 
-    x, 
-    maxScroll, 
-    totalCards 
-}: { 
-    x: ReturnType<typeof useMotionValue<number>>; 
-    maxScroll: number;
-    totalCards: number;
-}) {
-    const [currentIndex, setCurrentIndex] = useState(1);
-    const [isEnd, setIsEnd] = useState(false);
-    
-    // Calculate position based on scroll value
-    const calculatePosition = useCallback((currentX: number) => {
-        if (maxScroll <= 0) {
-            setCurrentIndex(1);
-            setIsEnd(totalCards <= 1);
-            return;
-        }
-        
-        const progress = Math.abs(currentX) / maxScroll;
-        // Calculate which card is at the left edge (1-indexed)
-        const cardPosition = Math.floor(progress * totalCards) + 1;
-        const clampedIndex = Math.min(cardPosition, totalCards);
-        
-        setCurrentIndex(clampedIndex);
-        setIsEnd(progress >= 0.95 || clampedIndex >= totalCards);
-    }, [maxScroll, totalCards]);
-    
-    // Set initial value on mount
-    React.useEffect(() => {
-        calculatePosition(x.get());
-    }, [calculatePosition, x]);
-    
-    // Subscribe to changes
-    React.useEffect(() => {
-        const unsubscribe = x.on("change", calculatePosition);
-        return unsubscribe;
-    }, [x, calculatePosition]);
-    
-    if (isEnd) return <span>End of list</span>;
-    return <span>{currentIndex} of {totalCards}</span>;
 }
 
 // ============================================================================
