@@ -10,7 +10,6 @@ import { RaceTrackFooter } from "@/components/racetrack/RaceTrackFooter";
 import { ResilienceEngineHero } from "@/components/hero";
 
 // Content Injection
-import { ProblemAgitation } from "@/components/content-injection/ProblemAgitation";
 import { SolutionStack } from "@/components/content-injection/SolutionStack";
 import { FreeOffer } from "@/components/content-injection/FreeOffer";
 import { SocialProof } from "@/components/content-injection/SocialProof";
@@ -41,7 +40,6 @@ export default function RaceTrackHome() {
       {/* Operational Fragility Section */}
       <OperationalFragility />
 
-      <ProblemAgitation className="dark bg-background text-foreground" />
       <SolutionStack className="dark bg-background text-foreground" />
       <FreeOffer className="dark bg-background text-foreground" />
       <SocialProof className="dark bg-background text-foreground" />
