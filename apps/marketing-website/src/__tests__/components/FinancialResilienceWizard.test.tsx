@@ -208,10 +208,8 @@ describe('FinancialResilienceWizard', () => {
       const user = userEvent.setup()
       render(<FinancialResilienceWizard />)
 
-      await waitFor(() => {
-        const saveButton = screen.getByRole('button', { name: /^Save$/i })
-        user.click(saveButton)
-      })
+      const saveButton = await screen.findByRole('button', { name: /^Save$/i })
+      await user.click(saveButton)
 
       await waitFor(() => {
         expect(screen.getByText(/^Saved$/i)).toBeInTheDocument()
@@ -263,15 +261,11 @@ describe('FinancialResilienceWizard', () => {
       const user = userEvent.setup()
       render(<FinancialResilienceWizard />)
 
-      await waitFor(() => {
-        const menuButton = screen.getByRole('button', { name: /Options/i })
-        user.click(menuButton)
-      })
+      const menuButton = await screen.findByRole('button', { name: /Options/i })
+      await user.click(menuButton)
 
-      await waitFor(() => {
-        const resetMenuItem = screen.getByText(/Reset Form/i)
-        user.click(resetMenuItem)
-      })
+      const resetMenuItem = await screen.findByText(/Reset Form/i)
+      await user.click(resetMenuItem)
 
       await waitFor(() => {
         expect(screen.getByText(/Reset Form\?/i)).toBeInTheDocument()
@@ -282,20 +276,14 @@ describe('FinancialResilienceWizard', () => {
       const user = userEvent.setup()
       render(<FinancialResilienceWizard />)
 
-      await waitFor(() => {
-        const menuButton = screen.getByRole('button', { name: /Options/i })
-        user.click(menuButton)
-      })
+      const menuButton = await screen.findByRole('button', { name: /Options/i })
+      await user.click(menuButton)
 
-      await waitFor(() => {
-        const resetMenuItem = screen.getByText(/Reset Form/i)
-        user.click(resetMenuItem)
-      })
+      const resetMenuItem = await screen.findByText(/Reset Form/i)
+      await user.click(resetMenuItem)
 
-      await waitFor(() => {
-        const cancelButton = screen.getByRole('button', { name: /Cancel/i })
-        user.click(cancelButton)
-      })
+      const cancelButton = await screen.findByRole('button', { name: /Cancel/i })
+      await user.click(cancelButton)
 
       await waitFor(() => {
         expect(screen.queryByText(/Reset Form\?/i)).not.toBeInTheDocument()
@@ -329,15 +317,11 @@ describe('FinancialResilienceWizard', () => {
       const user = userEvent.setup()
       render(<FinancialResilienceWizard />)
 
-      await waitFor(() => {
-        const menuButton = screen.getByRole('button', { name: /Options/i })
-        user.click(menuButton)
-      })
+      const menuButton = await screen.findByRole('button', { name: /Options/i })
+      await user.click(menuButton)
 
-      await waitFor(() => {
-        const deleteMenuItem = screen.getByText(/Delete All Data/i)
-        user.click(deleteMenuItem)
-      })
+      const deleteMenuItem = await screen.findByText(/Delete All Data/i)
+      await user.click(deleteMenuItem)
 
       await waitFor(() => {
         expect(screen.getByText(/Delete All Financial Resilience Data\?/i)).toBeInTheDocument()
@@ -348,15 +332,11 @@ describe('FinancialResilienceWizard', () => {
       const user = userEvent.setup()
       render(<FinancialResilienceWizard />)
 
-      await waitFor(() => {
-        const menuButton = screen.getByRole('button', { name: /Options/i })
-        user.click(menuButton)
-      })
+      const menuButton = await screen.findByRole('button', { name: /Options/i })
+      await user.click(menuButton)
 
-      await waitFor(() => {
-        const deleteMenuItem = screen.getByText(/Delete All Data/i)
-        user.click(deleteMenuItem)
-      })
+      const deleteMenuItem = await screen.findByText(/Delete All Data/i)
+      await user.click(deleteMenuItem)
 
       await waitFor(() => {
         expect(screen.getByText(/permanently delete/i)).toBeInTheDocument()
@@ -439,15 +419,11 @@ describe('FinancialResilienceWizard', () => {
       const user = userEvent.setup()
       render(<FinancialResilienceWizard />)
 
-      await waitFor(() => {
-        const previewButton = screen.getByRole('button', { name: /Preview/i })
-        user.click(previewButton)
-      })
+      const previewButton = await screen.findByRole('button', { name: /Preview/i })
+      await user.click(previewButton)
 
-      await waitFor(() => {
-        const editButton = screen.getByRole('button', { name: /Edit/i })
-        user.click(editButton)
-      })
+      const editButton = await screen.findByRole('button', { name: /Edit/i })
+      await user.click(editButton)
 
       await waitFor(() => {
         // Back to edit mode, should see Overview step

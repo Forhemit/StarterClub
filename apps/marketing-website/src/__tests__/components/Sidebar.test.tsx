@@ -54,7 +54,7 @@ describe('Sidebar', () => {
         expect(screen.getByText(/Role Selection/i)).toBeInTheDocument()
         expect(screen.getByText(/Super Admin/i)).toBeInTheDocument()
         expect(screen.getByText(/Onboard App/i)).toBeInTheDocument()
-        expect(screen.getByText(/Kiosk/i)).toBeInTheDocument()
+        expect(screen.getByText(/Flight Deck/i)).toBeInTheDocument()
       })
     })
 
@@ -273,13 +273,13 @@ describe('Sidebar', () => {
 
       await waitFor(() => {
         const superAdminLink = screen.getByText(/Super Admin/i).closest('a')
-        expect(superAdminLink).toHaveAttribute('href', 'http://localhost:3001')
+        expect(superAdminLink).toHaveAttribute('href', '/dashboard/super-admin')
 
         const onboardAppLink = screen.getByText(/Onboard App/i).closest('a')
-        expect(onboardAppLink).toHaveAttribute('href', 'http://localhost:3002')
+        expect(onboardAppLink).toHaveAttribute('href', '/onboard')
 
-        const kioskLink = screen.getByText(/Kiosk/i).closest('a')
-        expect(kioskLink).toHaveAttribute('href', 'http://localhost:3003')
+        const flightDeckLink = screen.getByText(/Flight Deck/i).closest('a')
+        expect(flightDeckLink).toHaveAttribute('href', '/dashboard')
       })
     })
 
