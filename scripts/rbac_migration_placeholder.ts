@@ -2,7 +2,13 @@
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = 'https://exancwcrkqivoaqhmapr.supabase.co'
-const supabaseServiceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4YW5jd2Nya3Fpdm9hcWhtYXByIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTQxODE1NiwiZXhwIjoyMDgwOTk0MTU2fQ.5fCB8vywjDNlLusxaKahW0GjvsMR5ih_ZoYgiWl6M98'
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+if (!supabaseServiceKey) {
+  throw new Error(
+    'SUPABASE_SERVICE_ROLE_KEY is not set. Copy .env.example to .env.local and provide the service role key before running this script.'
+  )
+}
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
