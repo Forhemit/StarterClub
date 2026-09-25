@@ -191,10 +191,8 @@ describe('ComplianceTrackingWizard', () => {
       const user = userEvent.setup()
       render(<ComplianceTrackingWizard onCancel={mockOnCancel} />)
 
-      await waitFor(() => {
-        const backButton = screen.getByRole('button', { name: /Back to Marketplace/i })
-        user.click(backButton)
-      })
+      const backButton = await screen.findByRole('button', { name: /Back to Marketplace/i })
+      await user.click(backButton)
 
       await waitFor(() => {
         expect(mockOnCancel).toHaveBeenCalled()
@@ -231,10 +229,8 @@ describe('ComplianceTrackingWizard', () => {
 
       render(<ComplianceTrackingWizard onSave={mockOnSave} />)
 
-      await waitFor(() => {
-        const saveButton = screen.getByRole('button', { name: /^Save$/i })
-        user.click(saveButton)
-      })
+      const saveButton = await screen.findByRole('button', { name: /^Save$/i })
+      await user.click(saveButton)
 
       await waitFor(() => {
         expect(screen.getByText(/Saving\.\.\./i)).toBeInTheDocument()
@@ -245,10 +241,8 @@ describe('ComplianceTrackingWizard', () => {
       const user = userEvent.setup()
       render(<ComplianceTrackingWizard onSave={mockOnSave} />)
 
-      await waitFor(() => {
-        const saveButton = screen.getByRole('button', { name: /^Save$/i })
-        user.click(saveButton)
-      })
+      const saveButton = await screen.findByRole('button', { name: /^Save$/i })
+      await user.click(saveButton)
 
       await waitFor(() => {
         expect(screen.getByText(/^Saved$/i)).toBeInTheDocument()
@@ -289,10 +283,8 @@ describe('ComplianceTrackingWizard', () => {
       const user = userEvent.setup()
       render(<ComplianceTrackingWizard />)
 
-      await waitFor(() => {
-        const menuButton = screen.getByRole('button', { name: /Options/i })
-        user.click(menuButton)
-      })
+      const menuButton = await screen.findByRole('button', { name: /Options/i })
+      await user.click(menuButton)
 
       await waitFor(() => {
         const resetMenuItem = screen.getByText(/Reset Form/i)
@@ -304,10 +296,8 @@ describe('ComplianceTrackingWizard', () => {
       const user = userEvent.setup()
       render(<ComplianceTrackingWizard />)
 
-      await waitFor(() => {
-        const menuButton = screen.getByRole('button', { name: /Options/i })
-        user.click(menuButton)
-      })
+      const menuButton = await screen.findByRole('button', { name: /Options/i })
+      await user.click(menuButton)
 
       await waitFor(() => {
         const resetMenuItem = screen.getByText(/Reset Form/i)
@@ -323,15 +313,11 @@ describe('ComplianceTrackingWizard', () => {
       const user = userEvent.setup()
       render(<ComplianceTrackingWizard onReset={mockOnReset} />)
 
-      await waitFor(() => {
-        const menuButton = screen.getByRole('button', { name: /Options/i })
-        user.click(menuButton)
-      })
+      const menuButton = await screen.findByRole('button', { name: /Options/i })
+      await user.click(menuButton)
 
-      await waitFor(() => {
-        const deleteMenuItem = screen.getByText(/Delete All Data/i)
-        user.click(deleteMenuItem)
-      })
+      const deleteMenuItem = await screen.findByText(/Delete All Data/i)
+      await user.click(deleteMenuItem)
 
       await waitFor(() => {
         expect(screen.getByText(/Delete All Compliance Data\?/i)).toBeInTheDocument()
@@ -348,20 +334,14 @@ describe('ComplianceTrackingWizard', () => {
 
       render(<ComplianceTrackingWizard initialData={initialData} onReset={mockOnReset} />)
 
-      await waitFor(() => {
-        const menuButton = screen.getByRole('button', { name: /Options/i })
-        user.click(menuButton)
-      })
+      const menuButton = await screen.findByRole('button', { name: /Options/i })
+      await user.click(menuButton)
 
-      await waitFor(() => {
-        const deleteMenuItem = screen.getByText(/Delete All Data/i)
-        user.click(deleteMenuItem)
-      })
+      const deleteMenuItem = await screen.findByText(/Delete All Data/i)
+      await user.click(deleteMenuItem)
 
-      await waitFor(() => {
-        const confirmButton = screen.getByRole('button', { name: /Delete All Data/i })
-        user.click(confirmButton)
-      })
+      const confirmButton = await screen.findByRole('button', { name: /Delete All Data/i })
+      await user.click(confirmButton)
 
       await waitFor(() => {
         expect(mockOnReset).toHaveBeenCalledWith('test-id')
@@ -372,20 +352,14 @@ describe('ComplianceTrackingWizard', () => {
       const user = userEvent.setup()
       render(<ComplianceTrackingWizard onReset={mockOnReset} />)
 
-      await waitFor(() => {
-        const menuButton = screen.getByRole('button', { name: /Options/i })
-        user.click(menuButton)
-      })
+      const menuButton = await screen.findByRole('button', { name: /Options/i })
+      await user.click(menuButton)
 
-      await waitFor(() => {
-        const deleteMenuItem = screen.getByText(/Delete All Data/i)
-        user.click(deleteMenuItem)
-      })
+      const deleteMenuItem = await screen.findByText(/Delete All Data/i)
+      await user.click(deleteMenuItem)
 
-      await waitFor(() => {
-        const cancelButton = screen.getByRole('button', { name: /Cancel/i })
-        user.click(cancelButton)
-      })
+      const cancelButton = await screen.findByRole('button', { name: /Cancel/i })
+      await user.click(cancelButton)
 
       await waitFor(() => {
         expect(screen.queryByText(/Delete All Compliance Data\?/i)).not.toBeInTheDocument()
@@ -410,10 +384,8 @@ describe('ComplianceTrackingWizard', () => {
         await user.click(nextButton)
       }
 
-      await waitFor(() => {
-        const completeButton = screen.getByRole('button', { name: /Complete/i })
-        user.click(completeButton)
-      })
+      const completeButton = await screen.findByRole('button', { name: /Complete/i })
+      await user.click(completeButton)
 
       await waitFor(() => {
         expect(mockOnSave).toHaveBeenCalled()
@@ -435,10 +407,8 @@ describe('ComplianceTrackingWizard', () => {
         await user.click(nextButton)
       }
 
-      await waitFor(() => {
-        const completeButton = screen.getByRole('button', { name: /Complete/i })
-        user.click(completeButton)
-      })
+      const completeButton = await screen.findByRole('button', { name: /Complete/i })
+      await user.click(completeButton)
 
       await waitFor(() => {
         // Should be in preview mode after completion
@@ -471,15 +441,11 @@ describe('ComplianceTrackingWizard', () => {
       const user = userEvent.setup()
       render(<ComplianceTrackingWizard />)
 
-      await waitFor(() => {
-        const previewButton = screen.getByRole('button', { name: /Preview/i })
-        user.click(previewButton)
-      })
+      const previewButton = await screen.findByRole('button', { name: /Preview/i })
+      await user.click(previewButton)
 
-      await waitFor(() => {
-        const editButton = screen.getByRole('button', { name: /Edit/i })
-        user.click(editButton)
-      })
+      const editButton = await screen.findByRole('button', { name: /Edit/i })
+      await user.click(editButton)
 
       await waitFor(() => {
         // Back to edit mode, should see Tax Filings step

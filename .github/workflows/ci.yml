@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    name: Typecheck & test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Typechecks shared-types, ui, utils, and third-space. The four
+      # apps with pre-existing type errors (marketing-website, onboard-app,
+      # super-admin, flight-deck) are excluded until their errors are fixed.
+      - name: Typecheck
+        run: npx turbo run check-types
+
+      - name: Test
+        run: npm test
+        env:
+          CI: true

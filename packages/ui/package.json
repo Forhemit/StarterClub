@@ -6,6 +6,7 @@
     "license": "MIT",
     "scripts": {
         "lint": "echo 'No lint for ui'",
+        "check-types": "tsc --noEmit",
         "clean": "rm -rf .turbo node_modules",
         "build": "tsc"
     },
